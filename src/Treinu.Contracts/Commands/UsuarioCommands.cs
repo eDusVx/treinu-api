@@ -1,5 +1,5 @@
 using FluentResults;
-using MediatR;
+using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Dtos;
 using Treinu.Domain.Enums;
 

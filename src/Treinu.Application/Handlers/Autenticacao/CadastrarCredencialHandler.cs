@@ -1,4 +1,4 @@
-using MediatR;
+using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Events;
 using Treinu.Domain.Repositories;

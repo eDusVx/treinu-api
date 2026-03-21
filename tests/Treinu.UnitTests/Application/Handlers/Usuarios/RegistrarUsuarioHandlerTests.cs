@@ -1,5 +1,5 @@
 using FluentAssertions;
-using MediatR;
+using Treinu.Domain.Core.Mediator;
 using Moq;
 using Treinu.Application.Handlers.Usuarios;
 using Treinu.Contracts.Commands;

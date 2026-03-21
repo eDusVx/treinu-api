@@ -1,4 +1,4 @@
-using MediatR;
+using Treinu.Domain.Core.Mediator;
 
 namespace Treinu.Domain.Core;
 

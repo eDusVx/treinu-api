@@ -1,4 +1,4 @@
-using MediatR;
+using Treinu.Domain.Core.Mediator;
 using Microsoft.EntityFrameworkCore;
 using Treinu.Domain.Core;
 using Treinu.Domain.Entities;

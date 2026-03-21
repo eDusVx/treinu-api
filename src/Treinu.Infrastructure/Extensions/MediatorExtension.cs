@@ -1,4 +1,4 @@
-using MediatR;
+using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Core;
 using Treinu.Infrastructure.Data;
 

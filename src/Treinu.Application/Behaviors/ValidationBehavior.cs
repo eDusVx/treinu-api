@@ -1,5 +1,5 @@
 using FluentValidation;
-using MediatR;
+using Treinu.Domain.Core.Mediator;
 
 namespace Treinu.Application.Behaviors;
 

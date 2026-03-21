@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Treinu.Application.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -33,10 +34,7 @@ builder.Services.AddScoped<AvaliacaoFisicaFactory>();
 builder.Services.AddScoped<Treinu.Application.Interfaces.ITokenService, Treinu.Infrastructure.Security.TokenService>();
 
 builder.Services.AddValidatorsFromAssembly(typeof(RegistrarUsuarioHandler).Assembly);
-builder.Services.AddMediatR(cfg => {
-    cfg.RegisterServicesFromAssembly(typeof(RegistrarUsuarioHandler).Assembly);
-    cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
-});
+builder.Services.AddCustomMediator(typeof(RegistrarUsuarioHandler).Assembly);
 
 builder.Services.AddExceptionHandler<Treinu.Api.Middlewares.GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
