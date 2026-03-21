@@ -11,4 +11,7 @@
     <Project Path="src/Treinu.Domain/Treinu.Domain.csproj" />
     <Project Path="src/Treinu.Infrastructure/Treinu.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Treinu.UnitTests/Treinu.UnitTests.csproj" />
+  </Folder>
 </Solution>
