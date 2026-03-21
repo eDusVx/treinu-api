@@ -1,0 +1,16 @@
+services:
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: treinu-db
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-treinu_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-treinu_pass}
+      POSTGRES_DB: ${DB_DATABASE:-treinu_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - treinu_pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  treinu_pgdata:

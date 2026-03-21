@@ -1,0 +1,149 @@
+using Treinu.Domain.Dtos;
+using Treinu.Domain.Entities;
+using Treinu.Domain.Enums;
+using Treinu.Domain.Exceptions;
+
+namespace Treinu.Domain.Factories;
+
+public record UsuarioBaseProps(
+    string NomeCompleto,
+    string Email,
+    string Senha,
+    DateTime DataNascimento,
+    GeneroEnum Genero,
+    string Cpf,
+    bool Ativo,
+    bool AceiteTermoAdesao,
+    PerfilEnum TipoUsuario,
+    List<ContatoDto> Contatos,
+    AuthProviderEnum Provider
+);
+
+public record CriarUsuarioAlunoProps(
+    string NomeCompleto,
+    string Email,
+    string Senha,
+    DateTime DataNascimento,
+    GeneroEnum Genero,
+    string Cpf,
+    bool Ativo,
+    bool AceiteTermoAdesao,
+    PerfilEnum TipoUsuario,
+    List<ContatoDto> Contatos,
+    AuthProviderEnum Provider,
+    ObjetivoEnum Objetivo,
+    List<AvaliacaoFisicaDto>? AvaliacoesFisicas = null
+) : UsuarioBaseProps(NomeCompleto, Email, Senha, DataNascimento, Genero, Cpf, Ativo, AceiteTermoAdesao, TipoUsuario, Contatos, Provider);
+
+public record CriarUsuarioTreinadorProps(
+    string NomeCompleto,
+    string Email,
+    string Senha,
+    DateTime DataNascimento,
+    GeneroEnum Genero,
+    string Cpf,
+    bool Ativo,
+    bool AceiteTermoAdesao,
+    PerfilEnum TipoUsuario,
+    List<ContatoDto> Contatos,
+    AuthProviderEnum Provider,
+    List<CertificadoDto>? Certificados = null,
+    List<string>? Especializacoes = null
+) : UsuarioBaseProps(NomeCompleto, Email, Senha, DataNascimento, Genero, Cpf, Ativo, AceiteTermoAdesao, TipoUsuario, Contatos, Provider);
+
+
+public class UsuarioFactory
+{
+    private readonly AvaliacaoFisicaFactory _avaliacaoFisicaFactory;
+
+    public UsuarioFactory(AvaliacaoFisicaFactory avaliacaoFisicaFactory)
+    {
+        _avaliacaoFisicaFactory = avaliacaoFisicaFactory;
+    }
+
+    public Usuario Fabricar(UsuarioBaseProps props)
+    {
+        switch (props.TipoUsuario)
+        {
+            case PerfilEnum.TREINADOR:
+                if (props is CriarUsuarioTreinadorProps treinadorProps)
+                    return CriarTreinador(treinadorProps);
+                throw new UsuarioException("Props needs to be CriarUsuarioTreinadorProps");
+            case PerfilEnum.ALUNO:
+                if (props is CriarUsuarioAlunoProps alunoProps)
+                    return CriarAluno(alunoProps);
+                throw new UsuarioException("Props needs to be CriarUsuarioAlunoProps");
+            default:
+                throw new UsuarioException($"Tipo de usuário inválido: {props.TipoUsuario}");
+        }
+    }
+
+    private Treinador CriarTreinador(CriarUsuarioTreinadorProps props)
+    {
+        var contatos = CriarContatos(props.Contatos);
+        var certificados = CriarCertificados(props.Certificados ?? new List<CertificadoDto>());
+
+        return Treinador.Criar(new CriarTreinadorProps(
+            props.NomeCompleto,
+            props.Email,
+            props.Senha,
+            props.DataNascimento,
+            props.Genero,
+            contatos,
+            props.Cpf,
+            props.Ativo,
+            props.AceiteTermoAdesao,
+            props.Provider,
+            certificados,
+            props.Especializacoes ?? new List<string>()
+        ));
+    }
+
+    private Aluno CriarAluno(CriarUsuarioAlunoProps props)
+    {
+        if (!Enum.IsDefined(typeof(ObjetivoEnum), props.Objetivo))
+        {
+            throw new UsuarioException("Objetivo é obrigatório para alunos");
+        }
+
+        var contatos = CriarContatos(props.Contatos);
+        var avaliacoesFisicas = _avaliacaoFisicaFactory.Fabricar(props.AvaliacoesFisicas ?? new List<AvaliacaoFisicaDto>());
+
+        return Aluno.Criar(new CriarAlunoProps(
+            props.NomeCompleto,
+            props.Email,
+            props.Senha,
+            props.DataNascimento,
+            props.Genero,
+            contatos,
+            props.Cpf,
+            props.Ativo,
+            props.AceiteTermoAdesao,
+            props.Provider,
+            props.Objetivo,
+            avaliacoesFisicas
+        ));
+    }
+
+    private List<Contato> CriarContatos(IEnumerable<ContatoDto> contatos)
+    {
+        return contatos.Select(contato => Contato.Criar(new CriarContatoProps(
+            contato.Tipo,
+            contato.Valor,
+            contato.Descricao,
+            contato.Principal,
+            contato.Plataforma,
+            contato.NomeExibicao
+        ))).ToList();
+    }
+
+    private List<Certificado> CriarCertificados(IEnumerable<CertificadoDto> certificados)
+    {
+        return certificados.Select(certificado => Certificado.Criar(new CriarCertificadoProps(
+            certificado.Nome,
+            certificado.ArquivoPdf,
+            certificado.DataUpload,
+            certificado.Validado
+        ))).ToList();
+    }
+}

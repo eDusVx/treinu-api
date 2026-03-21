@@ -1,0 +1,6 @@
+@Treinu.Api_HostAddress = http://localhost:5009
+
+GET {{Treinu.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

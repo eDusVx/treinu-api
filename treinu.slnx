@@ -1,0 +1,14 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/src/">
+    <Project Path="src/Treinu.Api/Treinu.Api.csproj" />
+    <Project Path="src/Treinu.Application/Treinu.Application.csproj" />
+    <Project Path="src/Treinu.Contracts/Treinu.Contracts.csproj" />
+    <Project Path="src/Treinu.Domain/Treinu.Domain.csproj" />
+    <Project Path="src/Treinu.Infrastructure/Treinu.Infrastructure.csproj" />
+  </Folder>
+</Solution>
