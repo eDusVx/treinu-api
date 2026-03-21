@@ -25,4 +25,16 @@ public class CredencialRepository : ICredencialRepository
         return await _context.Credenciais
             .FirstOrDefaultAsync(c => c.Email == email);
     }
+
+    public async Task<Credencial?> BuscarCredencialPorRefreshTokenAsync(string refreshToken)
+    {
+        return await _context.Credenciais
+            .FirstOrDefaultAsync(c => c.RefreshToken == refreshToken);
+    }
+
+    public async Task AtualizarCredencialAsync(Credencial credencial)
+    {
+        _context.Credenciais.Update(credencial);
+        await _context.SaveChangesAsync();
+    }
 }

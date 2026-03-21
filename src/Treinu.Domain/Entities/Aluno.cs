@@ -15,7 +15,6 @@ public record CriarAlunoProps(
     string Cpf,
     bool Ativo,
     bool AceiteTermoAdesao,
-    AuthProviderEnum Provider,
     ObjetivoEnum Objetivo,
     List<AvaliacaoFisica.AvaliacaoFisica>? AvaliacaoFisica = null
 );
@@ -50,7 +49,6 @@ public class Aluno : Usuario
         instance.SetContato(props.Contato ?? new List<Contato>());
         instance.SetObjetivo(props.Objetivo);
         instance.SetAvaliacaoFisica(props.AvaliacaoFisica ?? new List<AvaliacaoFisica.AvaliacaoFisica>());
-        instance.SetProvider(props.Provider);
         
         instance.Apply(
             new UsuarioCadastradoEvent(
@@ -58,8 +56,7 @@ public class Aluno : Usuario
                 instance.Email,
                 instance.Senha,
                 instance.Perfil,
-                instance.Ativo,
-                instance.Provider
+                instance.Ativo
             )
         );
         
@@ -82,7 +79,6 @@ public class Aluno : Usuario
         instance.CarregarSenha(props.Senha);
         instance.SetObjetivo(props.Objetivo);
         instance.SetAvaliacaoFisica(props.AvaliacaoFisica ?? new List<AvaliacaoFisica.AvaliacaoFisica>());
-        instance.SetProvider(props.Provider);
         
         return instance;
     }

@@ -15,7 +15,6 @@ public record RegistrarUsuarioCommand(
     bool AceiteTermoAdesao,
     PerfilEnum TipoUsuario,
     List<ContatoDto> Contatos,
-    AuthProviderEnum Provider,
     ObjetivoEnum? Objetivo = null,
     List<AvaliacaoFisicaDto>? AvaliacoesFisicas = null,
     List<CertificadoDto>? Certificados = null,

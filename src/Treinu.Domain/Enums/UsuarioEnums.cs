@@ -1,11 +1,5 @@
 namespace Treinu.Domain.Enums;
 
-public enum AuthProviderEnum
-{
-    LOCAL,
-    GOOGLE
-}
-
 public enum GeneroEnum
 {
     MASCULINO,

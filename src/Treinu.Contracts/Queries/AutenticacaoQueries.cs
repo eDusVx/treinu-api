@@ -8,6 +8,6 @@ public record AutenticarUsuarioLocalQuery(
     string Senha
 ) : IRequest<TokenDto>;
 
-public record AutenticarUsuarioGoogleQuery(
-    string Token
+public record RenovarTokenQuery(
+    string RefreshToken
 ) : IRequest<TokenDto>;

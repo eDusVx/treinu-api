@@ -16,8 +16,7 @@ public record CriarUsuarioProps(
     List<Contato> Contato,
     string Cpf,
     bool Ativo,
-    bool AceiteTermoAdesao,
-    AuthProviderEnum Provider
+    bool AceiteTermoAdesao
 );
 
 public abstract class Usuario : AggregateRoot
@@ -35,7 +34,6 @@ public abstract class Usuario : AggregateRoot
     public PerfilEnum Perfil { get; private set; }
     public bool Ativo { get; private set; }
     public bool AceiteTermoAdesao { get; private set; }
-    public AuthProviderEnum Provider { get; private set; }
 
     protected Usuario() { } // EF constructor
 
@@ -126,14 +124,6 @@ public abstract class Usuario : AggregateRoot
             throw new UsuarioException("perfil nao pode ser vazio");
             
         Perfil = perfil;
-    }
-
-    protected void SetProvider(AuthProviderEnum provider)
-    {
-        if (!Enum.IsDefined(typeof(AuthProviderEnum), provider))
-            throw new UsuarioException("provider nao pode ser vazio");
-            
-        Provider = provider;
     }
 
     protected void SetAtivo(bool ativo)

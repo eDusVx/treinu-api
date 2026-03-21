@@ -27,9 +27,9 @@ public class AuthController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpPost("google")]
+    [HttpPost("refresh")]
     [ProducesResponseType(typeof(TokenDto), 200)]
-    public async Task<IActionResult> GoogleAuth([FromBody] AutenticarUsuarioGoogleQuery query)
+    public async Task<IActionResult> Refresh([FromBody] RenovarTokenQuery query)
     {
         var result = await _mediator.Send(query);
         return Ok(result);

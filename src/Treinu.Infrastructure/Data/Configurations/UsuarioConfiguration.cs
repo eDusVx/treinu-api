@@ -32,10 +32,6 @@ public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
             
         builder.HasIndex(u => u.Cpf).IsUnique();
 
-        builder.Property(u => u.Provider)
-            .HasConversion<string>()
-            .HasMaxLength(50);
-
         builder.Property(u => u.Genero)
             .HasConversion<string>()
             .HasMaxLength(20);

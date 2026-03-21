@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using FluentValidation;
+using Treinu.Application.Behaviors;
 using Treinu.Application.Handlers.Usuarios;
 using Treinu.Domain.Factories;
 using Treinu.Domain.Repositories;
@@ -31,10 +33,13 @@ builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ICredencialRepository, CredencialRepository>();
 builder.Services.AddScoped<UsuarioFactory>();
 builder.Services.AddScoped<AvaliacaoFisicaFactory>();
+builder.Services.AddScoped<Treinu.Application.Interfaces.ITokenService, Treinu.Infrastructure.Security.TokenService>();
 
-// MediatR
+// MediatR & FluentValidation
+builder.Services.AddValidatorsFromAssembly(typeof(RegistrarUsuarioCommandHandler).Assembly);
 builder.Services.AddMediatR(cfg => {
     cfg.RegisterServicesFromAssembly(typeof(RegistrarUsuarioCommandHandler).Assembly);
+    cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
 });
 
 // Exception Handler

@@ -15,8 +15,7 @@ public record UsuarioBaseProps(
     bool Ativo,
     bool AceiteTermoAdesao,
     PerfilEnum TipoUsuario,
-    List<ContatoDto> Contatos,
-    AuthProviderEnum Provider
+    List<ContatoDto> Contatos
 );
 
 public record CriarUsuarioAlunoProps(
@@ -30,10 +29,9 @@ public record CriarUsuarioAlunoProps(
     bool AceiteTermoAdesao,
     PerfilEnum TipoUsuario,
     List<ContatoDto> Contatos,
-    AuthProviderEnum Provider,
     ObjetivoEnum Objetivo,
     List<AvaliacaoFisicaDto>? AvaliacoesFisicas = null
-) : UsuarioBaseProps(NomeCompleto, Email, Senha, DataNascimento, Genero, Cpf, Ativo, AceiteTermoAdesao, TipoUsuario, Contatos, Provider);
+) : UsuarioBaseProps(NomeCompleto, Email, Senha, DataNascimento, Genero, Cpf, Ativo, AceiteTermoAdesao, TipoUsuario, Contatos);
 
 public record CriarUsuarioTreinadorProps(
     string NomeCompleto,
@@ -46,10 +44,9 @@ public record CriarUsuarioTreinadorProps(
     bool AceiteTermoAdesao,
     PerfilEnum TipoUsuario,
     List<ContatoDto> Contatos,
-    AuthProviderEnum Provider,
     List<CertificadoDto>? Certificados = null,
     List<string>? Especializacoes = null
-) : UsuarioBaseProps(NomeCompleto, Email, Senha, DataNascimento, Genero, Cpf, Ativo, AceiteTermoAdesao, TipoUsuario, Contatos, Provider);
+) : UsuarioBaseProps(NomeCompleto, Email, Senha, DataNascimento, Genero, Cpf, Ativo, AceiteTermoAdesao, TipoUsuario, Contatos);
 
 
 public class UsuarioFactory
@@ -93,7 +90,6 @@ public class UsuarioFactory
             props.Cpf,
             props.Ativo,
             props.AceiteTermoAdesao,
-            props.Provider,
             certificados,
             props.Especializacoes ?? new List<string>()
         ));
@@ -119,7 +115,6 @@ public class UsuarioFactory
             props.Cpf,
             props.Ativo,
             props.AceiteTermoAdesao,
-            props.Provider,
             props.Objetivo,
             avaliacoesFisicas
         ));

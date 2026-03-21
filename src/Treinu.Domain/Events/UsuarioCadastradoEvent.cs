@@ -10,15 +10,13 @@ public class UsuarioCadastradoEvent : IDomainEvent
     public string Senha { get; }
     public PerfilEnum Perfil { get; }
     public bool Ativo { get; }
-    public AuthProviderEnum Provider { get; }
 
-    public UsuarioCadastradoEvent(Guid id, string email, string senha, PerfilEnum perfil, bool ativo, AuthProviderEnum provider)
+    public UsuarioCadastradoEvent(Guid id, string email, string senha, PerfilEnum perfil, bool ativo)
     {
         Id = id;
         Email = email;
         Senha = senha;
         Perfil = perfil;
         Ativo = ativo;
-        Provider = provider;
     }
 }

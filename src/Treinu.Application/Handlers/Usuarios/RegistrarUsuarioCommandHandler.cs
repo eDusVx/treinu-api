@@ -1,6 +1,5 @@
 using MediatR;
 using Treinu.Contracts.Commands;
-using Treinu.Contracts.Events;
 using Treinu.Domain.Enums;
 using Treinu.Domain.Factories;
 using Treinu.Domain.Repositories;
@@ -42,7 +41,6 @@ public class RegistrarUsuarioCommandHandler : IRequestHandler<RegistrarUsuarioCo
                 request.AceiteTermoAdesao,
                 request.TipoUsuario,
                 request.Contatos,
-                request.Provider,
                 request.Objetivo.GetValueOrDefault(),
                 request.AvaliacoesFisicas
             );
@@ -60,7 +58,6 @@ public class RegistrarUsuarioCommandHandler : IRequestHandler<RegistrarUsuarioCo
                 request.AceiteTermoAdesao,
                 request.TipoUsuario,
                 request.Contatos,
-                request.Provider,
                 request.Certificados,
                 request.Especializacoes
             );
@@ -70,18 +67,7 @@ public class RegistrarUsuarioCommandHandler : IRequestHandler<RegistrarUsuarioCo
 
         await _usuarioRepository.SalvarUsuarioAsync(usuario);
 
-        // Publish domain events dynamically or specifically trigger the integration event
-        // The typescript version triggered a Domain Event that the CadastrarCredencial.handler heard.
-        var integrationEvent = new UsuarioCadastradoNotification(
-            usuario.Id,
-            usuario.Email,
-            usuario.Senha,
-            usuario.Perfil,
-            usuario.Ativo,
-            usuario.Provider
-        );
-
-        await _mediator.Publish(integrationEvent, cancellationToken);
+        // Events will be dispatched automatically by SaveChangesAsync in DbContext
 
         if (usuario is Treinu.Domain.Entities.Aluno aluno)
             return aluno.ToDto();

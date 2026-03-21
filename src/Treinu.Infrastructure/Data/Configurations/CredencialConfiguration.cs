@@ -27,13 +27,12 @@ public class CredencialConfiguration : IEntityTypeConfiguration<Credencial>
             .HasMaxLength(255)
             .IsRequired(false);
 
-        builder.Property(c => c.Provider)
-            .HasConversion(
-                v => v.ToString(),
-                v => (AuthProviderEnum)Enum.Parse(typeof(AuthProviderEnum), v)
-            )
-            .IsRequired()
-            .HasColumnType("varchar(30)");
+        builder.Property(c => c.RefreshToken)
+            .HasMaxLength(255)
+            .IsRequired(false);
+
+        builder.Property(c => c.RefreshTokenExpiryTime)
+            .IsRequired(false);
 
         builder.Property(c => c.TipoUsuario)
             .HasConversion(

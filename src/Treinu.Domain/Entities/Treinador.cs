@@ -15,7 +15,6 @@ public record CriarTreinadorProps(
     string Cpf,
     bool Ativo,
     bool AceiteTermoAdesao,
-    AuthProviderEnum Provider,
     List<Certificado>? Certificados = null,
     List<string>? Especializacoes = null
 );
@@ -51,7 +50,6 @@ public class Treinador : Usuario
         instance.SetContato(props.Contato ?? new List<Contato>());
         instance.SetCertificados(props.Certificados ?? new List<Certificado>());
         instance.SetEspecializacoes(props.Especializacoes ?? new List<string>());
-        instance.SetProvider(props.Provider);
         
         instance.Apply(
             new UsuarioCadastradoEvent(
@@ -59,8 +57,7 @@ public class Treinador : Usuario
                 instance.Email,
                 instance.Senha,
                 instance.Perfil,
-                instance.Ativo,
-                instance.Provider
+                instance.Ativo
             )
         );
         
@@ -83,7 +80,6 @@ public class Treinador : Usuario
         instance.CarregarSenha(props.Senha);
         instance.SetCertificados(props.Certificados ?? new List<Certificado>());
         instance.SetEspecializacoes(props.Especializacoes ?? new List<string>());
-        instance.SetProvider(props.Provider);
         
         return instance;
     }

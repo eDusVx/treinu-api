@@ -1,13 +1,19 @@
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Treinu.Domain.Core;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Entities.AvaliacaoFisica;
+using Treinu.Infrastructure.Extensions;
 
 namespace Treinu.Infrastructure.Data;
 
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    private readonly IMediator _mediator;
+
+    public AppDbContext(DbContextOptions<AppDbContext> options, IMediator mediator) : base(options)
     {
+        _mediator = mediator;
     }
 
     public DbSet<Usuario> Usuarios => Set<Usuario>();
@@ -29,5 +35,13 @@ public class AppDbContext : DbContext
         
         // Apply all IEntityTypeConfiguration classes found in this assembly
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        // Dispatch domain events before saving changes (just like the Medium tutorial pattern)
+        await _mediator.DispatchDomainEventsAsync(this);
+            
+        return await base.SaveChangesAsync(cancellationToken);
     }
 }

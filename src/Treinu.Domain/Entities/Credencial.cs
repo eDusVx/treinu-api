@@ -10,7 +10,6 @@ public record CriarCredencialProps(
     string Email,
     PerfilEnum TipoUsuario,
     bool Ativo,
-    AuthProviderEnum Provider,
     string? Senha = null
 );
 
@@ -19,7 +18,8 @@ public class Credencial : Entity
     public Guid UsuarioId { get; private set; }
     public string Email { get; private set; } = string.Empty;
     public string? Senha { get; private set; }
-    public AuthProviderEnum Provider { get; private set; }
+    public string? RefreshToken { get; private set; }
+    public DateTime? RefreshTokenExpiryTime { get; private set; }
     public PerfilEnum TipoUsuario { get; private set; }
     public bool Ativo { get; private set; }
 
@@ -36,7 +36,7 @@ public class Credencial : Entity
         instance.SetEmail(props.Email);
         instance.TipoUsuario = props.TipoUsuario;
         instance.Ativo = props.Ativo;
-        instance.SetProvider(props.Provider, props.Senha);
+        instance.SetSenhaLocal(props.Senha);
 
         return instance;
     }
@@ -48,34 +48,28 @@ public class Credencial : Entity
         Email = email;
     }
 
-    private void SetProvider(AuthProviderEnum provider, string? senha)
+    private void SetSenhaLocal(string? senha)
     {
-        if (provider == AuthProviderEnum.LOCAL)
-        {
-            if (string.IsNullOrWhiteSpace(senha))
-                throw new InvalidOperationException("Provider LOCAL requires a password");
-            
-            Senha = senha;
-        }
-        else
-        {
-            Senha = null; // No password for GOOGLE etc
-        }
-
-        Provider = provider;
+        if (string.IsNullOrWhiteSpace(senha))
+            throw new InvalidOperationException("Credencial requires a password");
+        
+        Senha = senha;
     }
 
-    public void VerificarProvider(AuthProviderEnum provider)
+    public void AtualizarRefreshToken(string refreshToken, DateTime expiryTime)
     {
-        if (Provider != provider)
-            throw new UnauthorizedAccessException("Usuário cadastrado com outro provedor de autenticação.");
+        RefreshToken = refreshToken;
+        RefreshTokenExpiryTime = expiryTime;
+    }
+
+    public void RevogarRefreshToken()
+    {
+        RefreshToken = null;
+        RefreshTokenExpiryTime = null;
     }
 
     public void VerificarSenha(string senha)
     {
-        if (Provider != AuthProviderEnum.LOCAL)
-            throw new UnauthorizedAccessException("Credencial não utiliza autenticação local.");
-            
         if (string.IsNullOrWhiteSpace(Senha) || !BCrypt.Net.BCrypt.Verify(senha, Senha))
             throw new UnauthorizedAccessException("E-mail ou senha incorretos.");
     }
