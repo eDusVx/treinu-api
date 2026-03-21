@@ -2,7 +2,6 @@ using FluentAssertions;
 using Treinu.Domain.Dtos;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
-using Treinu.Domain.Exceptions;
 using Treinu.Domain.Factories;
 
 namespace Treinu.UnitTests.Domain;
@@ -27,7 +26,9 @@ public class UsuarioFactoryTests
             new List<ContatoDto>(), ObjetivoEnum.HIPERTROFIA
         );
 
-        var usuario = _factory.Fabricar(props);
+        var usuarioResult = _factory.Fabricar(props);
+        usuarioResult.IsSuccess.Should().BeTrue();
+        var usuario = usuarioResult.Value;
 
         usuario.Should().BeOfType<Aluno>();
         usuario.Perfil.Should().Be(PerfilEnum.ALUNO);
@@ -42,7 +43,9 @@ public class UsuarioFactoryTests
             new List<ContatoDto>(), new List<CertificadoDto>(), new List<string>()
         );
 
-        var usuario = _factory.Fabricar(props);
+        var usuarioResult = _factory.Fabricar(props);
+        usuarioResult.IsSuccess.Should().BeTrue();
+        var usuario = usuarioResult.Value;
 
         usuario.Should().BeOfType<Treinador>();
         usuario.Perfil.Should().Be(PerfilEnum.TREINADOR);
@@ -57,8 +60,8 @@ public class UsuarioFactoryTests
             new List<ContatoDto>(), ObjetivoEnum.HIPERTROFIA
         );
 
-        var action = () => _factory.Fabricar(props);
+        var result = _factory.Fabricar(props);
 
-        action.Should().Throw<UsuarioException>();
+        result.IsFailed.Should().BeTrue();
     }
 }

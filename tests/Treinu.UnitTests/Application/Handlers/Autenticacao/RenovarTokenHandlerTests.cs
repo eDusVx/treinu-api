@@ -26,33 +26,33 @@ public class RenovarTokenHandlerTests
     }
 
     [Fact]
-    public async Task Handle_Deve_Lancar_Exception_Quando_RefreshToken_Inexistente()
+    public async Task Handle_Deve_Retornar_FailedResult_Quando_RefreshToken_Inexistente()
     {
         var query = new RenovarTokenQuery("token-invalido");
         _credencialRepositoryMock.Setup(repo => repo.BuscarCredencialPorRefreshTokenAsync(It.IsAny<string>()))
             .ReturnsAsync((Credencial?)null);
 
-        var action = async () => await _handler.Handle(query, CancellationToken.None);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
-        await action.Should().ThrowAsync<UnauthorizedAccessException>().WithMessage("Refresh Token inválido ou expirado. Faça login novamente.");
+        result.IsFailed.Should().BeTrue();
     }
 
     [Fact]
-    public async Task Handle_Deve_Lancar_Exception_E_Revogar_Quando_RefreshToken_Expirado()
+    public async Task Handle_Deve_Retornar_FailedResult_E_Revogar_Quando_RefreshToken_Expirado()
     {
         var query = new RenovarTokenQuery("token-expirado");
         var fakeHash = BCrypt.Net.BCrypt.HashPassword("senha", 4);
         var credencialProps = new CriarCredencialProps(Guid.NewGuid(), "t@t.com", PerfilEnum.ALUNO, true, fakeHash);
-        var credencial = Credencial.Criar(credencialProps);
+        var credencial = Credencial.Criar(credencialProps).Value;
         
         credencial.AtualizarRefreshToken("token-expirado", DateTime.UtcNow.AddDays(-1));
         
         _credencialRepositoryMock.Setup(repo => repo.BuscarCredencialPorRefreshTokenAsync(It.IsAny<string>()))
             .ReturnsAsync(credencial);
 
-        var action = async () => await _handler.Handle(query, CancellationToken.None);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
-        await action.Should().ThrowAsync<UnauthorizedAccessException>().WithMessage("Refresh Token inválido ou expirado. Faça login novamente.");
+        result.IsFailed.Should().BeTrue();
         
         credencial.RefreshToken.Should().BeNull();
         _credencialRepositoryMock.Verify(repo => repo.AtualizarCredencialAsync(It.IsAny<Credencial>()), Times.Once);
@@ -64,7 +64,7 @@ public class RenovarTokenHandlerTests
         var query = new RenovarTokenQuery("token-valido");
         var fakeHash = BCrypt.Net.BCrypt.HashPassword("senha", 4);
         var credencialProps = new CriarCredencialProps(Guid.NewGuid(), "t@t.com", PerfilEnum.ALUNO, true, fakeHash);
-        var credencial = Credencial.Criar(credencialProps);
+        var credencial = Credencial.Criar(credencialProps).Value;
         
         credencial.AtualizarRefreshToken("token-valido", DateTime.UtcNow.AddDays(1));
         
@@ -79,9 +79,9 @@ public class RenovarTokenHandlerTests
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
-        result.Should().NotBeNull();
-        result.AccessToken.Should().Be("novo_jwt_valido");
-        result.RefreshToken.Should().Be("novo_refresh_valido");
+        result.IsSuccess.Should().BeTrue();
+        result.Value.AccessToken.Should().Be("novo_jwt_valido");
+        result.Value.RefreshToken.Should().Be("novo_refresh_valido");
         
         credencial.RefreshToken.Should().Be("novo_refresh_valido");
         _credencialRepositoryMock.Verify(repo => repo.AtualizarCredencialAsync(It.IsAny<Credencial>()), Times.Once);

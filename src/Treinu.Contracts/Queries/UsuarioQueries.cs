@@ -1,3 +1,4 @@
+using FluentResults;
 using MediatR;
 using Treinu.Contracts.Responses;
 using Treinu.Domain.Enums;
@@ -8,4 +9,4 @@ public record BuscarUsuariosQuery(
     PerfilEnum? TipoUsuario = null,
     int Page = 1,
     int Limit = 10
-) : IRequest<PaginationResponse<object>>;
+) : IRequest<Result<PaginationResponse<object>>>;

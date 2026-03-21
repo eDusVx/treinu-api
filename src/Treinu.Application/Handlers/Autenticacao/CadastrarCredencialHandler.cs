@@ -1,7 +1,6 @@
 using MediatR;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Events;
-using Treinu.Domain.Enums;
 using Treinu.Domain.Repositories;
 
 namespace Treinu.Application.Handlers.Autenticacao;
@@ -25,9 +24,10 @@ public class CadastrarCredencialHandler : INotificationHandler<UsuarioCadastrado
             notification.Senha
         );
 
-        var credencial = Credencial.Criar(props);
+        var credencialResult = Credencial.Criar(props);
+        if (credencialResult.IsFailed)
+            throw new InvalidOperationException(credencialResult.Errors.First().Message);
 
-        await _credencialRepository.SalvarCredencialAsync(credencial);
+        await _credencialRepository.SalvarCredencialAsync(credencialResult.Value);
     }
 }
-

@@ -1,7 +1,6 @@
 using FluentAssertions;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
-using Treinu.Domain.Exceptions;
 
 namespace Treinu.UnitTests.Domain;
 
@@ -16,7 +15,10 @@ public class UsuarioTests
         );
 
         var validProps = props with { Cpf = "11144477735" };
-        var aluno = Aluno.Criar(validProps);
+        var alunoResult = Aluno.Criar(validProps);
+        
+        alunoResult.IsSuccess.Should().BeTrue();
+        var aluno = alunoResult.Value;
 
         aluno.NomeCompleto.Should().Be("Testinho da Silva");
         aluno.Senha.Should().NotBeNullOrEmpty();
@@ -32,9 +34,9 @@ public class UsuarioTests
             GeneroEnum.MASCULINO, new List<Contato>(), "00000000000", true, true, ObjetivoEnum.EMAGRECIMENTO
         );
 
-        var action = () => Aluno.Criar(props);
+        var result = Aluno.Criar(props);
 
-        action.Should().Throw<UsuarioException>().WithMessage("cpf nao é valido");
+        result.IsFailed.Should().BeTrue();
     }
 
     [Fact]
@@ -45,8 +47,8 @@ public class UsuarioTests
             GeneroEnum.MASCULINO, new List<Contato>(), "11144477735", true, true, ObjetivoEnum.EMAGRECIMENTO
         );
 
-        var action = () => Aluno.Criar(props);
+        var result = Aluno.Criar(props);
 
-        action.Should().Throw<UsuarioException>();
+        result.IsFailed.Should().BeTrue();
     }
 }

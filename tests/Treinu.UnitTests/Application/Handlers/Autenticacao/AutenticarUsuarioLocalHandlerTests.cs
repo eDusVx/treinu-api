@@ -32,7 +32,7 @@ public class AutenticarUsuarioLocalHandlerTests
         var query = new AutenticarUsuarioLocalQuery("teste@teste.com", "senha123");
         var fakeHash = BCrypt.Net.BCrypt.HashPassword("senha123", 4);
         var credencialProps = new CriarCredencialProps(Guid.NewGuid(), "teste@teste.com", PerfilEnum.ALUNO, true, fakeHash);
-        var credencial = Credencial.Criar(credencialProps);
+        var credencial = Credencial.Criar(credencialProps).Value;
 
         _credencialRepositoryMock.Setup(repo => repo.BuscarCredencialPorEmailAsync(It.IsAny<string>()))
             .ReturnsAsync(credencial);
@@ -45,22 +45,22 @@ public class AutenticarUsuarioLocalHandlerTests
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
-        result.Should().NotBeNull();
-        result.AccessToken.Should().Be("fake_jwt_token");
-        result.RefreshToken.Should().Be("fake_refresh_token");
+        result.IsSuccess.Should().BeTrue();
+        result.Value.AccessToken.Should().Be("fake_jwt_token");
+        result.Value.RefreshToken.Should().Be("fake_refresh_token");
         
         _credencialRepositoryMock.Verify(repo => repo.AtualizarCredencialAsync(It.IsAny<Credencial>()), Times.Once);
     }
 
     [Fact]
-    public async Task Handle_Deve_Lancar_RepositoryException_Quando_Usuario_Nao_Existe()
+    public async Task Handle_Deve_Retornar_FailedResult_Quando_Usuario_Nao_Existe()
     {
         var query = new AutenticarUsuarioLocalQuery("fake@teste.com", "senha123");
         _credencialRepositoryMock.Setup(repo => repo.BuscarCredencialPorEmailAsync(It.IsAny<string>()))
             .ReturnsAsync((Credencial?)null);
 
-        var action = async () => await _handler.Handle(query, CancellationToken.None);
+        var result = await _handler.Handle(query, CancellationToken.None);
 
-        await action.Should().ThrowAsync<RepositoryException>().WithMessage("Usuário não encontrado.");
+        result.IsFailed.Should().BeTrue();
     }
 }

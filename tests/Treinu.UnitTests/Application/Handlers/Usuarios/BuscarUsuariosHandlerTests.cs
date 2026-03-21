@@ -30,7 +30,7 @@ public class BuscarUsuariosHandlerTests
             "Teste", "b@b.com", "Senh@123", new DateTime(1990,1,1),
             GeneroEnum.MASCULINO, new(), "11144477735", true, true, ObjetivoEnum.SAUDE
         );
-        var mockAluno = Aluno.Criar(mockProps);
+        var mockAluno = Aluno.Criar(mockProps).Value;
 
         var usuarios = new List<Usuario> { mockAluno };
         
@@ -39,10 +39,11 @@ public class BuscarUsuariosHandlerTests
 
         var result = await _handler.Handle(request, CancellationToken.None);
 
-        result.Should().BeOfType<PaginationResponse<object>>();
-        result.Total.Should().Be(1);
-        result.TotalPages.Should().Be(1);
-        result.Data.Should().HaveCount(1);
-        result.Data.First().Should().BeOfType<AlunoDto>();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeOfType<PaginationResponse<object>>();
+        result.Value.Total.Should().Be(1);
+        result.Value.TotalPages.Should().Be(1);
+        result.Value.Data.Should().HaveCount(1);
+        result.Value.Data.First().Should().BeOfType<AlunoDto>();
     }
 }

@@ -41,7 +41,8 @@ public class RegistrarUsuarioHandlerTests
 
         var result = await _handler.Handle(request, CancellationToken.None);
 
-        result.Should().BeOfType<AlunoDto>();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeOfType<AlunoDto>();
         _repoMock.Verify(r => r.SalvarUsuarioAsync(It.IsAny<Usuario>()), Times.Once);
     }
 
@@ -59,7 +60,8 @@ public class RegistrarUsuarioHandlerTests
 
         var result = await _handler.Handle(request, CancellationToken.None);
 
-        result.Should().BeOfType<TreinadorDto>();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeOfType<TreinadorDto>();
         _repoMock.Verify(r => r.SalvarUsuarioAsync(It.IsAny<Usuario>()), Times.Once);
     }
 }

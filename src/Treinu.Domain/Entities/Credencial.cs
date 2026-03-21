@@ -1,7 +1,8 @@
 using BCrypt.Net;
+using FluentResults;
 using Treinu.Domain.Core;
 using Treinu.Domain.Enums;
-using Treinu.Domain.Exceptions;
+using Treinu.Domain.Errors;
 
 namespace Treinu.Domain.Entities;
 
@@ -27,33 +28,40 @@ public class Credencial : Entity
 
     private Credencial(Guid id) : base(id) { }
 
-    public static Credencial Criar(CriarCredencialProps props)
+    public static Result<Credencial> Criar(CriarCredencialProps props)
     {
         var id = Guid.NewGuid();
         var instance = new Credencial(id);
         
         instance.UsuarioId = props.UsuarioId;
-        instance.SetEmail(props.Email);
+        
+        var emailResult = instance.SetEmail(props.Email);
+        if(emailResult.IsFailed) return Result.Fail<Credencial>(emailResult.Errors);
+        
         instance.TipoUsuario = props.TipoUsuario;
         instance.Ativo = props.Ativo;
-        instance.SetSenhaLocal(props.Senha);
+        
+        var senhaResult = instance.SetSenhaLocal(props.Senha);
+        if(senhaResult.IsFailed) return Result.Fail<Credencial>(senhaResult.Errors);
 
-        return instance;
+        return Result.Ok(instance);
     }
 
-    private void SetEmail(string email)
+    private Result SetEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
-            throw new InvalidOperationException("Email cannot be empty");
+            return Result.Fail(DomainErrors.Usuario.DadosVazios);
         Email = email;
+        return Result.Ok();
     }
 
-    private void SetSenhaLocal(string? senha)
+    private Result SetSenhaLocal(string? senha)
     {
         if (string.IsNullOrWhiteSpace(senha))
-            throw new InvalidOperationException("Credencial requires a password");
+            return Result.Fail(DomainErrors.Usuario.DadosVazios);
         
         Senha = senha;
+        return Result.Ok();
     }
 
     public void AtualizarRefreshToken(string refreshToken, DateTime expiryTime)
@@ -68,9 +76,11 @@ public class Credencial : Entity
         RefreshTokenExpiryTime = null;
     }
 
-    public void VerificarSenha(string senha)
+    public Result VerificarSenha(string senha)
     {
         if (string.IsNullOrWhiteSpace(Senha) || !BCrypt.Net.BCrypt.Verify(senha, Senha))
-            throw new UnauthorizedAccessException("E-mail ou senha incorretos.");
+            return Result.Fail(DomainErrors.Credencial.SenhaIncorreta);
+            
+        return Result.Ok();
     }
 }

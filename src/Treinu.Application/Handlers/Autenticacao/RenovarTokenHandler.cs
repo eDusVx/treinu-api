@@ -1,12 +1,14 @@
+using FluentResults;
 using MediatR;
 using Treinu.Application.Interfaces;
 using Treinu.Contracts.Queries;
 using Treinu.Contracts.Responses;
+using Treinu.Domain.Errors;
 using Treinu.Domain.Repositories;
 
 namespace Treinu.Application.Handlers.Autenticacao;
 
-public class RenovarTokenHandler : IRequestHandler<RenovarTokenQuery, TokenDto>
+public class RenovarTokenHandler : IRequestHandler<RenovarTokenQuery, Result<TokenDto>>
 {
     private readonly ICredencialRepository _credencialRepository;
     private readonly ITokenService _tokenService;
@@ -17,7 +19,7 @@ public class RenovarTokenHandler : IRequestHandler<RenovarTokenQuery, TokenDto>
         _tokenService = tokenService;
     }
 
-    public async Task<TokenDto> Handle(RenovarTokenQuery request, CancellationToken cancellationToken)
+    public async Task<Result<TokenDto>> Handle(RenovarTokenQuery request, CancellationToken cancellationToken)
     {
         var credencial = await _credencialRepository.BuscarCredencialPorRefreshTokenAsync(request.RefreshToken);
 
@@ -28,7 +30,7 @@ public class RenovarTokenHandler : IRequestHandler<RenovarTokenQuery, TokenDto>
                 credencial.RevogarRefreshToken();
                 await _credencialRepository.AtualizarCredencialAsync(credencial);
             }
-            throw new UnauthorizedAccessException("Refresh Token inválido ou expirado. Faça login novamente.");
+            return Result.Fail<TokenDto>(DomainErrors.Credencial.TokenExpirado);
         }
 
         var newToken = _tokenService.GerarJwt(credencial.Email, credencial.TipoUsuario.ToString(), credencial.UsuarioId.ToString());
@@ -37,6 +39,6 @@ public class RenovarTokenHandler : IRequestHandler<RenovarTokenQuery, TokenDto>
         credencial.AtualizarRefreshToken(newRefreshToken, DateTime.UtcNow.AddDays(7));
         await _credencialRepository.AtualizarCredencialAsync(credencial);
 
-        return new TokenDto(newToken, newRefreshToken);
+        return Result.Ok(new TokenDto(newToken, newRefreshToken));
     }
 }

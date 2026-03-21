@@ -1,7 +1,6 @@
 using FluentAssertions;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
-using Treinu.Domain.Exceptions;
 
 namespace Treinu.UnitTests.Domain;
 
@@ -16,7 +15,9 @@ public class TreinadorTests
             new List<Certificado>(), new List<string> { "Musculação", "Crossfit" }
         );
 
-        var treinador = Treinador.Criar(props);
+        var treinadorResult = Treinador.Criar(props);
+        treinadorResult.IsSuccess.Should().BeTrue();
+        var treinador = treinadorResult.Value;
 
         treinador.NomeCompleto.Should().Be("Treinador Mestre");
         treinador.Especializacoes.Should().HaveCount(2);
@@ -31,10 +32,11 @@ public class TreinadorTests
             GeneroEnum.FEMININO, new List<Contato>(), "11144477735", true, true,
             new List<Certificado>(), new List<string>()
         );
-        var treinador = Treinador.Criar(props);
+        var treinador = Treinador.Criar(props).Value;
 
-        treinador.AdicionarEspecializacao("Nutrição");
+        var result = treinador.AdicionarEspecializacao("Nutrição");
 
+        result.IsSuccess.Should().BeTrue();
         treinador.Especializacoes.Should().Contain("Nutrição");
     }
 
@@ -46,10 +48,10 @@ public class TreinadorTests
             GeneroEnum.FEMININO, new List<Contato>(), "11144477735", true, true,
             new List<Certificado>(), new List<string>()
         );
-        var treinador = Treinador.Criar(props);
+        var treinador = Treinador.Criar(props).Value;
 
-        var action = () => treinador.AdicionarEspecializacao("");
+        var result = treinador.AdicionarEspecializacao("");
 
-        action.Should().Throw<UsuarioException>();
+        result.IsFailed.Should().BeTrue();
     }
 }

@@ -1,13 +1,13 @@
+using FluentResults;
 using MediatR;
 using Treinu.Contracts.Queries;
 using Treinu.Contracts.Responses;
-using Treinu.Domain.Repositories;
 using Treinu.Domain.Entities;
-using Treinu.Domain.Dtos;
+using Treinu.Domain.Repositories;
 
 namespace Treinu.Application.Handlers.Usuarios;
 
-public class BuscarUsuariosHandler : IRequestHandler<BuscarUsuariosQuery, PaginationResponse<object>>
+public class BuscarUsuariosHandler : IRequestHandler<BuscarUsuariosQuery, Result<PaginationResponse<object>>>
 {
     private readonly IUsuarioRepository _usuarioRepository;
     
@@ -16,7 +16,7 @@ public class BuscarUsuariosHandler : IRequestHandler<BuscarUsuariosQuery, Pagina
         _usuarioRepository = usuarioRepository;
     }
 
-    public async Task<PaginationResponse<object>> Handle(BuscarUsuariosQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PaginationResponse<object>>> Handle(BuscarUsuariosQuery request, CancellationToken cancellationToken)
     {
         var (total, usuariosList) = await _usuarioRepository.BuscarUsuariosPaginadoAsync(
             request.TipoUsuario, 
@@ -29,19 +29,17 @@ public class BuscarUsuariosHandler : IRequestHandler<BuscarUsuariosQuery, Pagina
         {
             if (u is Aluno a) return (object)a.ToDto();
             if (u is Treinador t) return (object)t.ToDto();
-            throw new InvalidOperationException("Unrecognized kind of user.");
-        }).ToList();
+            return null;
+        }).Where(u => u != null).ToList();
 
         var totalPages = (int)Math.Ceiling(total / (double)request.Limit);
 
-        return new PaginationResponse<object>(
-            data,
+        return Result.Ok(new PaginationResponse<object>(
+            data!,
             total,
             request.Page,
             request.Limit,
             totalPages
-        );
+        ));
     }
 }
-
-

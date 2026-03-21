@@ -1,3 +1,4 @@
+using FluentResults;
 using MediatR;
 using Treinu.Domain.Dtos;
 using Treinu.Domain.Enums;
@@ -19,6 +20,4 @@ public record RegistrarUsuarioCommand(
     List<AvaliacaoFisicaDto>? AvaliacoesFisicas = null,
     List<CertificadoDto>? Certificados = null,
     List<string>? Especializacoes = null
-) : IRequest<object>; // The original returns UsuarioDto (TreinadorDto | AlunoDto). In C# we might need to return a base class or object. I will return object and cast it, or create a BaseUsuarioDto.
-
-// Let's refine the return type: I'll use `object` or a shared interface if possible. I'll use `object` to avoid complex inheritance now.
+) : IRequest<Result<object>>; 

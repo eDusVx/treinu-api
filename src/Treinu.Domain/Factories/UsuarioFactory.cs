@@ -1,11 +1,14 @@
+using FluentResults;
+using Treinu.Domain.Core;
 using Treinu.Domain.Dtos;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
-using Treinu.Domain.Exceptions;
+using Treinu.Domain.Errors;
 
 namespace Treinu.Domain.Factories;
 
 public record UsuarioBaseProps(
+    // ...
     string NomeCompleto,
     string Email,
     string Senha,
@@ -48,7 +51,6 @@ public record CriarUsuarioTreinadorProps(
     List<string>? Especializacoes = null
 ) : UsuarioBaseProps(NomeCompleto, Email, Senha, DataNascimento, Genero, Cpf, Ativo, AceiteTermoAdesao, TipoUsuario, Contatos);
 
-
 public class UsuarioFactory
 {
     private readonly AvaliacaoFisicaFactory _avaliacaoFisicaFactory;
@@ -58,24 +60,34 @@ public class UsuarioFactory
         _avaliacaoFisicaFactory = avaliacaoFisicaFactory;
     }
 
-    public Usuario Fabricar(UsuarioBaseProps props)
+    public Result<Usuario> Fabricar(UsuarioBaseProps props)
     {
         switch (props.TipoUsuario)
         {
             case PerfilEnum.TREINADOR:
                 if (props is CriarUsuarioTreinadorProps treinadorProps)
-                    return CriarTreinador(treinadorProps);
-                throw new UsuarioException("Props needs to be CriarUsuarioTreinadorProps");
+                {
+                    var resultT = CriarTreinador(treinadorProps);
+                    if (resultT.IsFailed) return Result.Fail<Usuario>(resultT.Errors);
+                    return Result.Ok<Usuario>(resultT.Value);
+                }
+                return Result.Fail<Usuario>(DomainErrors.Usuario.DadosVazios);
+                
             case PerfilEnum.ALUNO:
                 if (props is CriarUsuarioAlunoProps alunoProps)
-                    return CriarAluno(alunoProps);
-                throw new UsuarioException("Props needs to be CriarUsuarioAlunoProps");
+                {
+                    var resultA = CriarAluno(alunoProps);
+                    if (resultA.IsFailed) return Result.Fail<Usuario>(resultA.Errors);
+                    return Result.Ok<Usuario>(resultA.Value);
+                }
+                return Result.Fail<Usuario>(DomainErrors.Usuario.DadosVazios);
+                
             default:
-                throw new UsuarioException($"Tipo de usuário inválido: {props.TipoUsuario}");
+                return Result.Fail<Usuario>(DomainErrors.Usuario.DadosVazios);
         }
     }
 
-    private Treinador CriarTreinador(CriarUsuarioTreinadorProps props)
+    private Result<Treinador> CriarTreinador(CriarUsuarioTreinadorProps props)
     {
         var contatos = CriarContatos(props.Contatos);
         var certificados = CriarCertificados(props.Certificados ?? new List<CertificadoDto>());
@@ -95,13 +107,8 @@ public class UsuarioFactory
         ));
     }
 
-    private Aluno CriarAluno(CriarUsuarioAlunoProps props)
+    private Result<Aluno> CriarAluno(CriarUsuarioAlunoProps props)
     {
-        if (!Enum.IsDefined(typeof(ObjetivoEnum), props.Objetivo))
-        {
-            throw new UsuarioException("Objetivo é obrigatório para alunos");
-        }
-
         var contatos = CriarContatos(props.Contatos);
         var avaliacoesFisicas = _avaliacaoFisicaFactory.Fabricar(props.AvaliacoesFisicas ?? new List<AvaliacaoFisicaDto>());
 

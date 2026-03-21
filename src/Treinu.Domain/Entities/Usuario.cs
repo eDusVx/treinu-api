@@ -1,13 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
+using FluentResults;
 using Treinu.Domain.Core;
 using Treinu.Domain.Enums;
-using Treinu.Domain.Exceptions;
-using BCrypt.Net;
+using Treinu.Domain.Errors;
 
 namespace Treinu.Domain.Entities;
 
 public record CriarUsuarioProps(
+    // ...
     string NomeCompleto,
     string Email,
     string Senha,
@@ -35,105 +36,114 @@ public abstract class Usuario : AggregateRoot
     public bool Ativo { get; private set; }
     public bool AceiteTermoAdesao { get; private set; }
 
-    protected Usuario() { } // EF constructor
+    protected Usuario() { }
 
     protected Usuario(Guid id) : base(id)
     {
     }
 
-    protected void SetNomeCompleto(string nomeCompleto)
+    protected Result SetNomeCompleto(string nomeCompleto)
     {
         if (string.IsNullOrWhiteSpace(nomeCompleto))
-            throw new UsuarioException("nome nao pode ser vazio");
+            return Result.Fail(DomainErrors.Usuario.DadosVazios);
         
         NomeCompleto = nomeCompleto;
+        return Result.Ok();
     }
 
-    protected void SetEmail(string email)
+    protected Result SetEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
-            throw new UsuarioException("email nao pode ser vazio");
+            return Result.Fail(DomainErrors.Usuario.EmailInvalido);
             
         if (!new EmailAddressAttribute().IsValid(email))
-            throw new UsuarioException("email invalido");
+            return Result.Fail(DomainErrors.Usuario.EmailInvalido);
             
         Email = email;
+        return Result.Ok();
     }
 
-    protected void SetSenha(string senha)
+    protected Result SetSenha(string senha)
     {
         if (string.IsNullOrWhiteSpace(senha))
-            throw new UsuarioException("senha nao pode ser vazia");
+            return Result.Fail(DomainErrors.Usuario.SenhaFraca);
             
         if (senha.Length > 20)
-            throw new UsuarioException("senha deve ter no maximo 20 caracteres");
+            return Result.Fail(DomainErrors.Usuario.SenhaFraca);
 
-        // password must contain at least 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 symbol (@,$,%.!)
         var rx = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$");
         if (!rx.IsMatch(senha))
-            throw new UsuarioException("senha deve conter pelo menos 8 caracteres, com letras maiusculas, numeros e simbolos (@,$,%.!)");
+            return Result.Fail(DomainErrors.Usuario.SenhaFraca);
 
         Senha = BCrypt.Net.BCrypt.HashPassword(senha, 10);
+        return Result.Ok();
     }
 
-    protected void SetDataNascimento(DateTime dataNascimento)
+    protected Result SetDataNascimento(DateTime dataNascimento)
     {
         if (dataNascimento == default)
-            throw new UsuarioException("data nao pode ser vazia");
+            return Result.Fail(DomainErrors.Usuario.DataNascimentoInvalida);
             
         var hoje = DateTime.Now.Date;
         var minimoData = new DateTime(1930, 1, 1);
         
         if (dataNascimento >= hoje || dataNascimento <= minimoData)
-            throw new UsuarioException("data nao pode ser menor que 01-01-1930 ou superior ao dia atual");
+            return Result.Fail(DomainErrors.Usuario.DataNascimentoInvalida);
             
         DataNascimento = dataNascimento;
+        return Result.Ok();
     }
 
-    protected void SetGenero(GeneroEnum genero)
+    protected Result SetGenero(GeneroEnum genero)
     {
         if (!Enum.IsDefined(typeof(GeneroEnum), genero))
-            throw new UsuarioException("Genero invalido.Utilizar apenas 'MASCULINO' ou'FEMININO'");
+            return Result.Fail(DomainErrors.Usuario.GeneroInvalido);
             
         Genero = genero;
+        return Result.Ok();
     }
 
-    protected void SetContato(List<Contato> contato)
+    protected Result SetContato(List<Contato> contato)
     {
         if (contato == null)
-            throw new UsuarioException("contato nao pode ser vazio");
+            return Result.Fail(DomainErrors.Usuario.DadosVazios);
             
         _contato.Clear();
         _contato.AddRange(contato);
+        return Result.Ok();
     }
 
-    protected void SetCpf(string cpf)
+    protected Result SetCpf(string cpf)
     {
         if (string.IsNullOrWhiteSpace(cpf))
-            throw new UsuarioException("cpf nao deve ser vazio");
+            return Result.Fail(DomainErrors.Usuario.CpfInvalido);
             
         if (!IsCpfValido(cpf))
-            throw new UsuarioException("cpf nao é valido");
+            return Result.Fail(DomainErrors.Usuario.CpfInvalido);
             
         Cpf = cpf;
+        return Result.Ok();
     }
 
-    protected void SetPerfil(PerfilEnum perfil)
+    protected Result SetPerfil(PerfilEnum perfil)
     {
         if (!Enum.IsDefined(typeof(PerfilEnum), perfil))
-            throw new UsuarioException("perfil nao pode ser vazio");
+            return Result.Fail(DomainErrors.Usuario.DadosVazios);
             
         Perfil = perfil;
+        return Result.Ok();
     }
 
-    protected void SetAtivo(bool ativo)
+    protected Result SetAtivo(bool ativo)
     {
         Ativo = ativo;
+        return Result.Ok();
     }
 
-    protected void SetAceiteTermoAdesao(bool aceiteTermoAdesao)
+    protected Result SetAceiteTermoAdesao(bool aceiteTermoAdesao)
     {
         AceiteTermoAdesao = aceiteTermoAdesao;
+        return Result.Ok();
     }
 
     protected void CarregarSenha(string senha)

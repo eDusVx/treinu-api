@@ -1,7 +1,6 @@
 using FluentAssertions;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
-using Treinu.Domain.Exceptions;
 
 namespace Treinu.UnitTests.Domain;
 
@@ -13,7 +12,9 @@ public class CredencialTests
         var fakeHash = BCrypt.Net.BCrypt.HashPassword("senha123", 4);
         var props = new CriarCredencialProps(Guid.NewGuid(), "teste@teste.com", PerfilEnum.ALUNO, true, fakeHash);
 
-        var credencial = Credencial.Criar(props);
+        var credencialResult = Credencial.Criar(props);
+        credencialResult.IsSuccess.Should().BeTrue();
+        var credencial = credencialResult.Value;
 
         credencial.Email.Should().Be("teste@teste.com");
         credencial.Senha.Should().Be(fakeHash);
@@ -24,23 +25,23 @@ public class CredencialTests
     {
         var fakeHash = BCrypt.Net.BCrypt.HashPassword("senha123", 4);
         var props = new CriarCredencialProps(Guid.NewGuid(), "teste@teste.com", PerfilEnum.ALUNO, true, fakeHash);
-        var credencial = Credencial.Criar(props);
+        var credencial = Credencial.Criar(props).Value;
 
-        var action = () => credencial.VerificarSenha("senha123");
+        var result = credencial.VerificarSenha("senha123");
 
-        action.Should().NotThrow<UnauthorizedAccessException>();
+        result.IsSuccess.Should().BeTrue();
     }
 
     [Fact]
-    public void VerificarSenha_Deve_Lancar_UnauthorizedAccessException_Quando_Senha_Incorreta()
+    public void VerificarSenha_Deve_Falhar_Quando_Senha_Incorreta()
     {
         var fakeHash = BCrypt.Net.BCrypt.HashPassword("senha123", 4);
         var props = new CriarCredencialProps(Guid.NewGuid(), "teste@teste.com", PerfilEnum.ALUNO, true, fakeHash);
-        var credencial = Credencial.Criar(props);
+        var credencial = Credencial.Criar(props).Value;
 
-        var action = () => credencial.VerificarSenha("senhaErrada");
+        var result = credencial.VerificarSenha("senhaErrada");
 
-        action.Should().Throw<UnauthorizedAccessException>();
+        result.IsFailed.Should().BeTrue();
     }
 
     [Fact]
@@ -48,7 +49,7 @@ public class CredencialTests
     {
         var fakeHash = BCrypt.Net.BCrypt.HashPassword("senha123", 4);
         var props = new CriarCredencialProps(Guid.NewGuid(), "teste@teste.com", PerfilEnum.ALUNO, true, fakeHash);
-        var credencial = Credencial.Criar(props);
+        var credencial = Credencial.Criar(props).Value;
         credencial.AtualizarRefreshToken("some_token", DateTime.UtcNow.AddDays(7));
         
         credencial.RevogarRefreshToken();
