@@ -13,7 +13,8 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         _validators = validators;
     }
 
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
     {
         if (_validators.Any())
         {
@@ -27,10 +28,7 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
                 .SelectMany(r => r.Errors)
                 .ToList();
 
-            if (failures.Count != 0)
-            {
-                throw new ValidationException(failures);
-            }
+            if (failures.Count != 0) throw new ValidationException(failures);
         }
 
         return await next();

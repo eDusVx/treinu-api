@@ -1,7 +1,7 @@
 using FluentResults;
 using Microsoft.AspNetCore.Mvc;
-using Treinu.Domain.Errors;
 using Treinu.Domain.Enums;
+using Treinu.Domain.Errors;
 
 namespace Treinu.Api.Controllers.Base;
 
@@ -13,7 +13,7 @@ public abstract class ApiController : ControllerBase
         if (result.IsSuccess) throw new InvalidOperationException();
 
         var domainError = result.Errors.FirstOrDefault() as DomainError;
-        
+
         if (domainError == null)
             return BadRequest(new ProblemDetails
             {

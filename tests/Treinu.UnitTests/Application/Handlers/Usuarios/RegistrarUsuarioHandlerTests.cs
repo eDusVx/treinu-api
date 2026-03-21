@@ -1,8 +1,8 @@
 using FluentAssertions;
-using Treinu.Domain.Core.Mediator;
 using Moq;
 using Treinu.Application.Handlers.Usuarios;
 using Treinu.Contracts.Commands;
+using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Dtos;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
@@ -13,9 +13,9 @@ namespace Treinu.UnitTests.Application.Handlers.Usuarios;
 
 public class RegistrarUsuarioHandlerTests
 {
-    private readonly Mock<IUsuarioRepository> _repoMock;
-    private readonly Mock<IMediator> _mediatorMock;
     private readonly RegistrarUsuarioHandler _handler;
+    private readonly Mock<IMediator> _mediatorMock;
+    private readonly Mock<IUsuarioRepository> _repoMock;
 
     public RegistrarUsuarioHandlerTests()
     {

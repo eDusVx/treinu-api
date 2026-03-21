@@ -13,25 +13,24 @@ public record MedidaDto(
 [JsonDerivedType(typeof(QuestionarioDto), "QUESTIONARIO")]
 public abstract record AvaliacaoFisicaDto
 {
-    [JsonIgnore]
-    public abstract TipoAvaliacaoEnum ContextoAvaliacao { get; }
+    [JsonIgnore] public abstract TipoAvaliacaoEnum ContextoAvaliacao { get; }
+
     public DateTime Data { get; init; }
 }
 
 public record DocumentoDto : AvaliacaoFisicaDto
 {
-    [JsonIgnore]
-    public override TipoAvaliacaoEnum ContextoAvaliacao => TipoAvaliacaoEnum.DOCUMENTO;
+    [JsonIgnore] public override TipoAvaliacaoEnum ContextoAvaliacao => TipoAvaliacaoEnum.DOCUMENTO;
+
     public string Nome { get; init; } = string.Empty;
     public string Arquivo { get; init; } = string.Empty;
 }
 
 public record QuestionarioDto : AvaliacaoFisicaDto
 {
-    [JsonIgnore]
-    public override TipoAvaliacaoEnum ContextoAvaliacao => TipoAvaliacaoEnum.QUESTIONARIO;
+    [JsonIgnore] public override TipoAvaliacaoEnum ContextoAvaliacao => TipoAvaliacaoEnum.QUESTIONARIO;
+
     public double Altura { get; init; }
     public double Peso { get; init; }
     public List<MedidaDto> Medidas { get; init; } = new();
 }
-

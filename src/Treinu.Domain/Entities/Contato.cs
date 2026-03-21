@@ -16,6 +16,14 @@ public record CriarContatoProps(
 
 public class Contato : Entity
 {
+    protected Contato()
+    {
+    } // EF Constructor
+
+    private Contato(Guid id) : base(id)
+    {
+    }
+
     public TipoContatoEnum Tipo { get; private set; }
     public string Valor { get; private set; } = string.Empty;
     public string? Descricao { get; private set; }
@@ -23,27 +31,18 @@ public class Contato : Entity
     public PlataformaRedeSocialEnum? Plataforma { get; private set; }
     public string? NomeExibicao { get; private set; }
 
-    protected Contato() { } // EF Constructor
-
-    private Contato(Guid id) : base(id)
-    {
-    }
-
     public static Contato Criar(CriarContatoProps props)
     {
         var id = Guid.NewGuid();
         var instance = new Contato(id);
-        
+
         instance.SetTipo(props.Tipo);
         instance.SetValor(props.Valor);
         instance.SetDescricao(props.Descricao);
         instance.SetPrincipal(props.Principal ?? false);
         instance.SetNomeExibicao(props.NomeExibicao);
 
-        if (props.Tipo == TipoContatoEnum.REDE_SOCIAL)
-        {
-            instance.SetPlataforma(props.Plataforma);
-        }
+        if (props.Tipo == TipoContatoEnum.REDE_SOCIAL) instance.SetPlataforma(props.Plataforma);
 
         return instance;
     }
@@ -51,17 +50,14 @@ public class Contato : Entity
     public static Contato Carregar(CriarContatoProps props, Guid id)
     {
         var instance = new Contato(id);
-        
+
         instance.SetTipo(props.Tipo);
         instance.SetValor(props.Valor);
         instance.SetDescricao(props.Descricao);
         instance.SetPrincipal(props.Principal ?? false);
         instance.SetNomeExibicao(props.NomeExibicao);
 
-        if (props.Tipo == TipoContatoEnum.REDE_SOCIAL)
-        {
-            instance.SetPlataforma(props.Plataforma);
-        }
+        if (props.Tipo == TipoContatoEnum.REDE_SOCIAL) instance.SetPlataforma(props.Plataforma);
 
         return instance;
     }
@@ -77,7 +73,7 @@ public class Contato : Entity
     private void SetValor(string valor)
     {
         valor = valor.Trim();
-        
+
         switch (Tipo)
         {
             case TipoContatoEnum.TELEFONE:
@@ -108,23 +104,16 @@ public class Contato : Entity
     {
         if (!Uri.TryCreate(url, UriKind.Absolute, out var uriResult) ||
             (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps))
-        {
             throw new ContatoException("URL da rede social inválida. Deve incluir http:// ou https://");
-        }
     }
 
     private void ValidarSite(string url)
     {
         if (!Uri.TryCreate(url, UriKind.Absolute, out var uriResult) ||
             (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps))
-        {
             throw new ContatoException("Site inválido. Deve ser uma URL válida com http:// ou https://");
-        }
 
-        if (uriResult.HostNameType != UriHostNameType.Dns)
-        {
-            throw new ContatoException("Domínio do site inválido");
-        }
+        if (uriResult.HostNameType != UriHostNameType.Dns) throw new ContatoException("Domínio do site inválido");
     }
 
     private void SetPlataforma(PlataformaRedeSocialEnum? plataforma)

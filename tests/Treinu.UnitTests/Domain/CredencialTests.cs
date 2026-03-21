@@ -51,7 +51,7 @@ public class CredencialTests
         var props = new CriarCredencialProps(Guid.NewGuid(), "teste@teste.com", PerfilEnum.ALUNO, true, fakeHash);
         var credencial = Credencial.Criar(props).Value;
         credencial.AtualizarRefreshToken("some_token", DateTime.UtcNow.AddDays(7));
-        
+
         credencial.RevogarRefreshToken();
 
         credencial.RefreshToken.Should().BeNull();

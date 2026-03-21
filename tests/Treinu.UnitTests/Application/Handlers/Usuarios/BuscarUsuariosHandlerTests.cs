@@ -12,8 +12,8 @@ namespace Treinu.UnitTests.Application.Handlers.Usuarios;
 
 public class BuscarUsuariosHandlerTests
 {
-    private readonly Mock<IUsuarioRepository> _repoMock;
     private readonly BuscarUsuariosHandler _handler;
+    private readonly Mock<IUsuarioRepository> _repoMock;
 
     public BuscarUsuariosHandlerTests()
     {
@@ -24,17 +24,18 @@ public class BuscarUsuariosHandlerTests
     [Fact]
     public async Task Handle_Deve_Retornar_PaginationResponse_Com_Dtos()
     {
-        var request = new BuscarUsuariosQuery(PerfilEnum.ALUNO, 1, 10);
-        
+        var request = new BuscarUsuariosQuery(PerfilEnum.ALUNO);
+
         var mockProps = new CriarAlunoProps(
-            "Teste", "b@b.com", "Senh@123", new DateTime(1990,1,1),
-            GeneroEnum.MASCULINO, new(), "11144477735", true, true, ObjetivoEnum.SAUDE
+            "Teste", "b@b.com", "Senh@123", new DateTime(1990, 1, 1),
+            GeneroEnum.MASCULINO, new List<Contato>(), "11144477735", true, true, ObjetivoEnum.SAUDE
         );
         var mockAluno = Aluno.Criar(mockProps).Value;
 
         var usuarios = new List<Usuario> { mockAluno };
-        
-        _repoMock.Setup(r => r.BuscarUsuariosPaginadoAsync(It.IsAny<PerfilEnum?>(), 1, 10, It.IsAny<CancellationToken>()))
+
+        _repoMock.Setup(r =>
+                r.BuscarUsuariosPaginadoAsync(It.IsAny<PerfilEnum?>(), 1, 10, It.IsAny<CancellationToken>()))
             .ReturnsAsync((1, usuarios));
 
         var result = await _handler.Handle(request, CancellationToken.None);

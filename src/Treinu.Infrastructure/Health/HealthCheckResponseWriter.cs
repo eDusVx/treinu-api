@@ -1,6 +1,6 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using System.Text.Json;
 
 namespace Treinu.Infrastructure.Health;
 
@@ -18,10 +18,11 @@ public static class HealthCheckResponseWriter
                 Nome = e.Key,
                 Status = e.Value.Status.ToString(),
                 Mensagem = e.Value.Description,
-                Tags = e.Value.Tags,
+                e.Value.Tags,
                 Latencia = e.Value.Duration.ToString()
             })
         };
-        await context.Response.WriteAsync(JsonSerializer.Serialize(response, new JsonSerializerOptions { WriteIndented = true }));
+        await context.Response.WriteAsync(JsonSerializer.Serialize(response,
+            new JsonSerializerOptions { WriteIndented = true }));
     }
 }

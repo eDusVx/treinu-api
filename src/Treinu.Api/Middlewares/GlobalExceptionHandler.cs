@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,12 +28,12 @@ public class GlobalExceptionHandler : IExceptionHandler
             Instance = httpContext.Request.Path
         };
 
-        if (exception is FluentValidation.ValidationException validationException)
+        if (exception is ValidationException validationException)
         {
             var errors = validationException.Errors
                 .GroupBy(x => x.PropertyName)
                 .ToDictionary(g => g.Key, g => g.Select(x => x.ErrorMessage).ToArray());
-                
+
             problemDetails.Extensions.Add("errors", errors);
         }
 
@@ -43,17 +44,25 @@ public class GlobalExceptionHandler : IExceptionHandler
         return true;
     }
 
-    private static int GetStatusCode(Exception exception) => exception switch
+    private static int GetStatusCode(Exception exception)
     {
-        FluentValidation.ValidationException => StatusCodes.Status400BadRequest,
-        _ when exception.GetType().Name.Contains("Exception") && !exception.GetType().Name.Contains("System") => StatusCodes.Status400BadRequest,
-        _ => StatusCodes.Status500InternalServerError
-    };
+        return exception switch
+        {
+            ValidationException => StatusCodes.Status400BadRequest,
+            _ when exception.GetType().Name.Contains("Exception") && !exception.GetType().Name.Contains("System") =>
+                StatusCodes.Status400BadRequest,
+            _ => StatusCodes.Status500InternalServerError
+        };
+    }
 
-    private static string GetTitle(Exception exception) => exception switch
+    private static string GetTitle(Exception exception)
     {
-        FluentValidation.ValidationException => "Validation Error",
-        _ when exception.GetType().Name.Contains("Exception") && !exception.GetType().Name.Contains("System") => "Domain Validation Error",
-        _ => "Server Error"
-    };
+        return exception switch
+        {
+            ValidationException => "Validation Error",
+            _ when exception.GetType().Name.Contains("Exception") && !exception.GetType().Name.Contains("System") =>
+                "Domain Validation Error",
+            _ => "Server Error"
+        };
+    }
 }

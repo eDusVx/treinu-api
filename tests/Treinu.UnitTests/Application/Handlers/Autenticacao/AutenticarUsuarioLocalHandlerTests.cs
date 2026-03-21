@@ -5,7 +5,6 @@ using Treinu.Application.Interfaces;
 using Treinu.Contracts.Queries;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
-using Treinu.Domain.Exceptions;
 using Treinu.Domain.Repositories;
 
 namespace Treinu.UnitTests.Application.Handlers.Autenticacao;
@@ -13,16 +12,16 @@ namespace Treinu.UnitTests.Application.Handlers.Autenticacao;
 public class AutenticarUsuarioLocalHandlerTests
 {
     private readonly Mock<ICredencialRepository> _credencialRepositoryMock;
-    private readonly Mock<ITokenService> _tokenServiceMock;
     private readonly AutenticarUsuarioLocalHandler _handler;
+    private readonly Mock<ITokenService> _tokenServiceMock;
 
     public AutenticarUsuarioLocalHandlerTests()
     {
         _credencialRepositoryMock = new Mock<ICredencialRepository>();
         _tokenServiceMock = new Mock<ITokenService>();
-        
+
         _handler = new AutenticarUsuarioLocalHandler(
-            _credencialRepositoryMock.Object, 
+            _credencialRepositoryMock.Object,
             _tokenServiceMock.Object);
     }
 
@@ -31,7 +30,8 @@ public class AutenticarUsuarioLocalHandlerTests
     {
         var query = new AutenticarUsuarioLocalQuery("teste@teste.com", "senha123");
         var fakeHash = BCrypt.Net.BCrypt.HashPassword("senha123", 4);
-        var credencialProps = new CriarCredencialProps(Guid.NewGuid(), "teste@teste.com", PerfilEnum.ALUNO, true, fakeHash);
+        var credencialProps =
+            new CriarCredencialProps(Guid.NewGuid(), "teste@teste.com", PerfilEnum.ALUNO, true, fakeHash);
         var credencial = Credencial.Criar(credencialProps).Value;
 
         _credencialRepositoryMock.Setup(repo => repo.BuscarCredencialPorEmailAsync(It.IsAny<string>()))
@@ -48,7 +48,7 @@ public class AutenticarUsuarioLocalHandlerTests
         result.IsSuccess.Should().BeTrue();
         result.Value.AccessToken.Should().Be("fake_jwt_token");
         result.Value.RefreshToken.Should().Be("fake_refresh_token");
-        
+
         _credencialRepositoryMock.Verify(repo => repo.AtualizarCredencialAsync(It.IsAny<Credencial>()), Times.Once);
     }
 

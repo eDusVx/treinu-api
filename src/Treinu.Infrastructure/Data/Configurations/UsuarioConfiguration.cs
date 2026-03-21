@@ -29,7 +29,7 @@ public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
         builder.Property(u => u.Cpf)
             .IsRequired()
             .HasMaxLength(14);
-            
+
         builder.HasIndex(u => u.Cpf).IsUnique();
 
         builder.Property(u => u.Genero)

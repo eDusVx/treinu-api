@@ -1,7 +1,7 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Treinu.Domain.Core.Mediator;
 using Treinu.Application.Mediator;
+using Treinu.Domain.Core.Mediator;
 
 namespace Treinu.Application.Extensions;
 
@@ -23,19 +23,15 @@ public static class MediatorServiceCollectionExtensions
                 if (!@interface.IsGenericType) continue;
 
                 var genericTypeDefinition = @interface.GetGenericTypeDefinition();
-                
+
                 if (genericTypeDefinition == typeof(IRequestHandler<,>) ||
                     genericTypeDefinition == typeof(INotificationHandler<>) ||
                     genericTypeDefinition == typeof(IPipelineBehavior<,>))
                 {
                     if (type.IsGenericTypeDefinition)
-                    {
                         services.AddTransient(genericTypeDefinition, type.GetGenericTypeDefinition());
-                    }
                     else
-                    {
                         services.AddTransient(@interface, type);
-                    }
                 }
             }
         }

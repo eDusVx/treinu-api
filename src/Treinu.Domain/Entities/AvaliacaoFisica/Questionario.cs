@@ -12,14 +12,6 @@ public record CriarQuestionarioProps(
 
 public class Questionario : AvaliacaoFisica
 {
-    public double Altura { get; private set; }
-    public double Peso { get; private set; }
-    public double Imc { get; private set; }
-    public ClassificacaoIMC Classificacao { get; private set; }
-    
-    private readonly List<Medida> _medidas = new();
-    public IReadOnlyCollection<Medida> Medidas => _medidas.AsReadOnly();
-
     private static readonly (double LimiteMaximo, ClassificacaoIMC Classificacao)[] ClassificacoesImc =
     {
         (18.5, ClassificacaoIMC.ABAIXO_DO_PESO),
@@ -30,17 +22,27 @@ public class Questionario : AvaliacaoFisica
         (double.PositiveInfinity, ClassificacaoIMC.OBESIDADE_GRAU_III)
     };
 
-    protected Questionario() : base() { } // EF Constructor
+    private readonly List<Medida> _medidas = new();
+
+    protected Questionario()
+    {
+    } // EF Constructor
 
     private Questionario(Guid id) : base(id)
     {
     }
 
+    public double Altura { get; private set; }
+    public double Peso { get; private set; }
+    public double Imc { get; private set; }
+    public ClassificacaoIMC Classificacao { get; private set; }
+    public IReadOnlyCollection<Medida> Medidas => _medidas.AsReadOnly();
+
     public static Questionario Criar(CriarQuestionarioProps props)
     {
         var id = Guid.NewGuid();
         var instance = new Questionario(id);
-        
+
         instance.SetTipo(TipoAvaliacaoEnum.QUESTIONARIO);
         instance.SetData(props.Data);
         instance.SetAltura(props.Altura);
@@ -54,7 +56,7 @@ public class Questionario : AvaliacaoFisica
     public static Questionario Carregar(CriarQuestionarioProps props, Guid id)
     {
         var instance = new Questionario(id);
-        
+
         instance.SetTipo(TipoAvaliacaoEnum.QUESTIONARIO);
         instance.SetData(props.Data);
         instance.SetAltura(props.Altura);
@@ -69,7 +71,7 @@ public class Questionario : AvaliacaoFisica
     {
         if (altura <= 0)
             throw new AvaliacaoFisicaException("Altura deve ser maior que zero");
-            
+
         if (altura > 3)
             throw new AvaliacaoFisicaException("Altura inválida (valor muito alto)");
 

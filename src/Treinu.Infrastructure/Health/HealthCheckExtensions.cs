@@ -13,7 +13,8 @@ public static class HealthCheckExtensions
             .AddCheck("postgres", new PostgresHealthCheck(connectionString), tags: new[] { "db", "postgresql" });
     }
 
-    public static IEndpointConventionBuilder MapCustomHealthChecks(this IEndpointRouteBuilder endpoints, string pattern = "/health")
+    public static IEndpointConventionBuilder MapCustomHealthChecks(this IEndpointRouteBuilder endpoints,
+        string pattern = "/health")
     {
         return endpoints.MapHealthChecks(pattern, new HealthCheckOptions
         {

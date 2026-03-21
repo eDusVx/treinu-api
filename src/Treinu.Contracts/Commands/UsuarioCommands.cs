@@ -20,4 +20,4 @@ public record RegistrarUsuarioCommand(
     List<AvaliacaoFisicaDto>? AvaliacoesFisicas = null,
     List<CertificadoDto>? Certificados = null,
     List<string>? Especializacoes = null
-) : IRequest<Result<object>>; 
+) : IRequest<Result<object>>;

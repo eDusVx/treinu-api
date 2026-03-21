@@ -11,33 +11,35 @@ public record CriarMedidaProps(
 
 public class Medida : Entity
 {
-    public ChaveMedidaEnum Chave { get; private set; }
-    public decimal Valor { get; private set; }
-
-    protected Medida() { } // EF Constructor
+    protected Medida()
+    {
+    } // EF Constructor
 
     private Medida(Guid id) : base(id)
     {
     }
 
+    public ChaveMedidaEnum Chave { get; private set; }
+    public decimal Valor { get; private set; }
+
     public static Medida Criar(CriarMedidaProps props)
     {
         var id = Guid.NewGuid();
         var instance = new Medida(id);
-        
+
         instance.SetChave(props.Chave);
         instance.SetValor(props.Valor);
-        
+
         return instance;
     }
 
     public static Medida Carregar(CriarMedidaProps props, Guid id)
     {
         var instance = new Medida(id);
-        
+
         instance.SetChave(props.Chave);
         instance.SetValor(props.Valor);
-        
+
         return instance;
     }
 

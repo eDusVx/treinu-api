@@ -1,5 +1,5 @@
-using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Core;
+using Treinu.Domain.Core.Mediator;
 using Treinu.Infrastructure.Data;
 
 namespace Treinu.Infrastructure.Extensions;
@@ -20,9 +20,6 @@ public static class MediatorExtension
         domainEntities.ToList()
             .ForEach(entity => entity.Entity.ClearDomainEvents());
 
-        foreach (var domainEvent in domainEvents)
-        {
-            await mediator.Publish(domainEvent);
-        }
+        foreach (var domainEvent in domainEvents) await mediator.Publish(domainEvent);
     }
 }

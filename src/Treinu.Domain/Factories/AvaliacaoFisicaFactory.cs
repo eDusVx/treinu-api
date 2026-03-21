@@ -12,25 +12,19 @@ public class AvaliacaoFisicaFactory
         var avaliacoesFisicas = new List<AvaliacaoFisica>();
 
         foreach (var avaliacao in props)
-        {
             switch (avaliacao.ContextoAvaliacao)
             {
                 case TipoAvaliacaoEnum.DOCUMENTO:
-                    if (avaliacao is DocumentoDto documentoDto)
-                    {
-                        avaliacoesFisicas.Add(CriarDocumento(documentoDto));
-                    }
+                    if (avaliacao is DocumentoDto documentoDto) avaliacoesFisicas.Add(CriarDocumento(documentoDto));
                     break;
                 case TipoAvaliacaoEnum.QUESTIONARIO:
                     if (avaliacao is QuestionarioDto questionarioDto)
-                    {
                         avaliacoesFisicas.Add(CriarQuestionario(questionarioDto));
-                    }
                     break;
                 default:
                     throw new UsuarioException($"Tipo de avaliacao física inválida: {avaliacao.ContextoAvaliacao}");
             }
-        }
+
         return avaliacoesFisicas;
     }
 

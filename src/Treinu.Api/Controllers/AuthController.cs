@@ -1,8 +1,8 @@
-using Treinu.Domain.Core.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Treinu.Contracts.Queries;
 using Treinu.Contracts.Responses;
+using Treinu.Domain.Core.Mediator;
 
 namespace Treinu.Api.Controllers;
 

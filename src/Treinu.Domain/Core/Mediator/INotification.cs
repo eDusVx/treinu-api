@@ -1,3 +1,5 @@
 namespace Treinu.Domain.Core.Mediator;
 
-public interface INotification { }
+public interface INotification
+{
+}

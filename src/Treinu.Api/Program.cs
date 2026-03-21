@@ -1,18 +1,19 @@
+using System.Text;
+using System.Text.Json.Serialization;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Treinu.Application.Extensions;
-using Treinu.Infrastructure.Health;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using FluentValidation;
-using Treinu.Application.Behaviors;
+using Treinu.Api.Middlewares;
+using Treinu.Application.Extensions;
 using Treinu.Application.Handlers.Usuarios;
+using Treinu.Application.Interfaces;
 using Treinu.Domain.Factories;
 using Treinu.Domain.Repositories;
 using Treinu.Infrastructure.Data;
+using Treinu.Infrastructure.Health;
 using Treinu.Infrastructure.Repositories;
-
-using System.Text.Json.Serialization;
+using Treinu.Infrastructure.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,9 +28,7 @@ builder.Services.AddSwaggerGen();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 if (string.IsNullOrEmpty(connectionString))
-{
     throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-}
 
 builder.Services.AddPostgresHealthCheck(connectionString);
 
@@ -39,35 +38,35 @@ builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ICredencialRepository, CredencialRepository>();
 builder.Services.AddScoped<UsuarioFactory>();
 builder.Services.AddScoped<AvaliacaoFisicaFactory>();
-builder.Services.AddScoped<Treinu.Application.Interfaces.ITokenService, Treinu.Infrastructure.Security.TokenService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddValidatorsFromAssembly(typeof(RegistrarUsuarioHandler).Assembly);
 builder.Services.AddCustomMediator(typeof(RegistrarUsuarioHandler).Assembly);
 
-builder.Services.AddExceptionHandler<Treinu.Api.Middlewares.GlobalExceptionHandler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secret = jwtSettings.GetValue<string>("Secret") ?? "DefaultSecretKeyss";
 
 builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings.GetValue<string>("Issuer"),
-        ValidAudience = jwtSettings.GetValue<string>("Audience"),
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
-    };
-});
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings.GetValue<string>("Issuer"),
+            ValidAudience = jwtSettings.GetValue<string>("Audience"),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
+        };
+    });
 
 var app = builder.Build();
 

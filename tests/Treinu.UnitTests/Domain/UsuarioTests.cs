@@ -16,7 +16,7 @@ public class UsuarioTests
 
         var validProps = props with { Cpf = "11144477735" };
         var alunoResult = Aluno.Criar(validProps);
-        
+
         alunoResult.IsSuccess.Should().BeTrue();
         var aluno = alunoResult.Value;
 

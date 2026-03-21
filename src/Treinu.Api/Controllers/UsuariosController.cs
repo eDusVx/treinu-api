@@ -1,9 +1,9 @@
-using Treinu.Domain.Core.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Treinu.Contracts.Commands;
 using Treinu.Contracts.Queries;
 using Treinu.Contracts.Responses;
+using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Enums;
 
 namespace Treinu.Api.Controllers;
@@ -31,7 +31,8 @@ public class UsuariosController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(typeof(PaginationResponse<object>), 200)]
-    public async Task<IActionResult> BuscarUsuarios([FromQuery] PerfilEnum? tipoUsuario, [FromQuery] int page = 1, [FromQuery] int limit = 10)
+    public async Task<IActionResult> BuscarUsuarios([FromQuery] PerfilEnum? tipoUsuario, [FromQuery] int page = 1,
+        [FromQuery] int limit = 10)
     {
         var query = new BuscarUsuariosQuery(tipoUsuario, page, limit);
         var result = await _mediator.Send(query);

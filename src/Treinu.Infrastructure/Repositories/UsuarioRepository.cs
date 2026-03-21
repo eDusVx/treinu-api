@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Treinu.Domain.Entities;
+using Treinu.Domain.Enums;
 using Treinu.Domain.Exceptions;
 using Treinu.Domain.Repositories;
 using Treinu.Infrastructure.Data;
@@ -18,16 +19,10 @@ public class UsuarioRepository : IUsuarioRepository
     public async Task VerificarExistenciaAsync(string email, string cpf)
     {
         var existeEmail = await _context.Usuarios.AnyAsync(u => u.Email == email);
-        if (existeEmail)
-        {
-            throw new RepositoryException($"O E-mail {email} já está em uso.");
-        }
+        if (existeEmail) throw new RepositoryException($"O E-mail {email} já está em uso.");
 
         var existeCpf = await _context.Usuarios.AnyAsync(u => u.Cpf == cpf);
-        if (existeCpf)
-        {
-            throw new RepositoryException($"O Cpf {cpf} já está em uso.");
-        }
+        if (existeCpf) throw new RepositoryException($"O Cpf {cpf} já está em uso.");
     }
 
     public async Task SalvarUsuarioAsync(Usuario usuario)
@@ -36,19 +31,17 @@ public class UsuarioRepository : IUsuarioRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<(int Total, IEnumerable<Usuario> Usuarios)> BuscarUsuariosPaginadoAsync(Treinu.Domain.Enums.PerfilEnum? tipoUsuario, int page, int limit, CancellationToken cancellationToken)
+    public async Task<(int Total, IEnumerable<Usuario> Usuarios)> BuscarUsuariosPaginadoAsync(PerfilEnum? tipoUsuario,
+        int page, int limit, CancellationToken cancellationToken)
     {
         var query = _context.Usuarios
             .Include(u => u.Contato)
             .AsQueryable();
 
         query = query.Include(u => ((Aluno)u).AvaliacaoFisica)
-                     .Include(u => ((Treinador)u).Certificados);
+            .Include(u => ((Treinador)u).Certificados);
 
-        if (tipoUsuario.HasValue)
-        {
-            query = query.Where(u => u.Perfil == tipoUsuario.Value);
-        }
+        if (tipoUsuario.HasValue) query = query.Where(u => u.Perfil == tipoUsuario.Value);
 
         var total = await query.CountAsync(cancellationToken);
 
@@ -63,4 +56,3 @@ public class UsuarioRepository : IUsuarioRepository
         return (total, usuariosList);
     }
 }
-

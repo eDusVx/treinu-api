@@ -1,8 +1,8 @@
 using FluentResults;
-using Treinu.Domain.Core.Mediator;
 using Treinu.Application.Interfaces;
 using Treinu.Contracts.Queries;
 using Treinu.Contracts.Responses;
+using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Errors;
 using Treinu.Domain.Repositories;
 
@@ -30,10 +30,12 @@ public class RenovarTokenHandler : IRequestHandler<RenovarTokenQuery, Result<Tok
                 credencial.RevogarRefreshToken();
                 await _credencialRepository.AtualizarCredencialAsync(credencial);
             }
+
             return Result.Fail<TokenDto>(DomainErrors.Credencial.TokenExpirado);
         }
 
-        var newToken = _tokenService.GerarJwt(credencial.Email, credencial.TipoUsuario.ToString(), credencial.UsuarioId.ToString());
+        var newToken = _tokenService.GerarJwt(credencial.Email, credencial.TipoUsuario.ToString(),
+            credencial.UsuarioId.ToString());
         var newRefreshToken = _tokenService.GerarRefreshToken();
 
         credencial.AtualizarRefreshToken(newRefreshToken, DateTime.UtcNow.AddDays(7));

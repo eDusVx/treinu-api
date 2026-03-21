@@ -30,7 +30,7 @@ public class DocumentoConfiguration : IEntityTypeConfiguration<Documento>
     {
         builder.Property(d => d.Nome)
             .HasMaxLength(255);
-            
+
         builder.Property(d => d.Arquivo)
             .HasMaxLength(1000);
     }
@@ -55,14 +55,14 @@ public class MedidaConfiguration : IEntityTypeConfiguration<Medida>
     public void Configure(EntityTypeBuilder<Medida> builder)
     {
         builder.ToTable("Medidas");
-        
+
         builder.HasKey(m => m.Id);
-        
+
         builder.Property(m => m.Chave)
             .IsRequired()
             .HasConversion<string>()
             .HasMaxLength(50);
-            
+
         // decimal defaults mapped to PG's numeric mapping usually works well.
     }
 }

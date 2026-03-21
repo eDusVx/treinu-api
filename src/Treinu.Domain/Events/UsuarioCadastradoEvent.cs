@@ -5,12 +5,6 @@ namespace Treinu.Domain.Events;
 
 public class UsuarioCadastradoEvent : IDomainEvent
 {
-    public Guid Id { get; }
-    public string Email { get; }
-    public string Senha { get; }
-    public PerfilEnum Perfil { get; }
-    public bool Ativo { get; }
-
     public UsuarioCadastradoEvent(Guid id, string email, string senha, PerfilEnum perfil, bool ativo)
     {
         Id = id;
@@ -19,4 +13,10 @@ public class UsuarioCadastradoEvent : IDomainEvent
         Perfil = perfil;
         Ativo = ativo;
     }
+
+    public Guid Id { get; }
+    public string Email { get; }
+    public string Senha { get; }
+    public PerfilEnum Perfil { get; }
+    public bool Ativo { get; }
 }

@@ -1,3 +1,5 @@
+using Treinu.Domain.Entities;
+using Treinu.Domain.Entities.AvaliacaoFisica;
 using Treinu.Domain.Enums;
 
 namespace Treinu.Domain.Dtos;
@@ -8,11 +10,11 @@ public record AlunoDto(
     string Email,
     DateTime DataNascimento,
     GeneroEnum Genero,
-    IReadOnlyCollection<Entities.Contato> Contato,
+    IReadOnlyCollection<Contato> Contato,
     string Cpf,
     PerfilEnum Perfil,
     bool Ativo,
     bool AceiteTermoAdesao,
     ObjetivoEnum Objetivo,
-    IReadOnlyCollection<Entities.AvaliacaoFisica.AvaliacaoFisica> AvaliacaoFisica
+    IReadOnlyCollection<AvaliacaoFisica> AvaliacaoFisica
 );

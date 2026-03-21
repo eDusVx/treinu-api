@@ -1,6 +1,6 @@
 using FluentResults;
-using Treinu.Domain.Core.Mediator;
 using Treinu.Contracts.Responses;
+using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Enums;
 
 namespace Treinu.Contracts.Queries;

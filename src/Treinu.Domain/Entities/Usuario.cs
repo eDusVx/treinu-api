@@ -22,31 +22,33 @@ public record CriarUsuarioProps(
 
 public abstract class Usuario : AggregateRoot
 {
-    public string NomeCompleto { get; private set; } = string.Empty;
-    public string Email { get; private set; } = string.Empty;
-    public string Senha { get; private set; } = string.Empty;
-    public DateTime DataNascimento { get; private set; }
-    public GeneroEnum Genero { get; private set; }
-    
     private readonly List<Contato> _contato = new();
-    public IReadOnlyCollection<Contato> Contato => _contato.AsReadOnly();
-    
-    public string Cpf { get; private set; } = string.Empty;
-    public PerfilEnum Perfil { get; private set; }
-    public bool Ativo { get; private set; }
-    public bool AceiteTermoAdesao { get; private set; }
 
-    protected Usuario() { }
+    protected Usuario()
+    {
+    }
 
     protected Usuario(Guid id) : base(id)
     {
     }
 
+    public string NomeCompleto { get; private set; } = string.Empty;
+    public string Email { get; private set; } = string.Empty;
+    public string Senha { get; private set; } = string.Empty;
+    public DateTime DataNascimento { get; private set; }
+    public GeneroEnum Genero { get; private set; }
+    public IReadOnlyCollection<Contato> Contato => _contato.AsReadOnly();
+
+    public string Cpf { get; private set; } = string.Empty;
+    public PerfilEnum Perfil { get; private set; }
+    public bool Ativo { get; private set; }
+    public bool AceiteTermoAdesao { get; private set; }
+
     protected Result SetNomeCompleto(string nomeCompleto)
     {
         if (string.IsNullOrWhiteSpace(nomeCompleto))
             return Result.Fail(DomainErrors.Usuario.DadosVazios);
-        
+
         NomeCompleto = nomeCompleto;
         return Result.Ok();
     }
@@ -55,10 +57,10 @@ public abstract class Usuario : AggregateRoot
     {
         if (string.IsNullOrWhiteSpace(email))
             return Result.Fail(DomainErrors.Usuario.EmailInvalido);
-            
+
         if (!new EmailAddressAttribute().IsValid(email))
             return Result.Fail(DomainErrors.Usuario.EmailInvalido);
-            
+
         Email = email;
         return Result.Ok();
     }
@@ -67,7 +69,7 @@ public abstract class Usuario : AggregateRoot
     {
         if (string.IsNullOrWhiteSpace(senha))
             return Result.Fail(DomainErrors.Usuario.SenhaFraca);
-            
+
         if (senha.Length > 20)
             return Result.Fail(DomainErrors.Usuario.SenhaFraca);
 
@@ -83,13 +85,13 @@ public abstract class Usuario : AggregateRoot
     {
         if (dataNascimento == default)
             return Result.Fail(DomainErrors.Usuario.DataNascimentoInvalida);
-            
+
         var hoje = DateTime.Now.Date;
         var minimoData = new DateTime(1930, 1, 1);
-        
+
         if (dataNascimento >= hoje || dataNascimento <= minimoData)
             return Result.Fail(DomainErrors.Usuario.DataNascimentoInvalida);
-            
+
         DataNascimento = dataNascimento;
         return Result.Ok();
     }
@@ -98,7 +100,7 @@ public abstract class Usuario : AggregateRoot
     {
         if (!Enum.IsDefined(typeof(GeneroEnum), genero))
             return Result.Fail(DomainErrors.Usuario.GeneroInvalido);
-            
+
         Genero = genero;
         return Result.Ok();
     }
@@ -107,7 +109,7 @@ public abstract class Usuario : AggregateRoot
     {
         if (contato == null)
             return Result.Fail(DomainErrors.Usuario.DadosVazios);
-            
+
         _contato.Clear();
         _contato.AddRange(contato);
         return Result.Ok();
@@ -117,10 +119,10 @@ public abstract class Usuario : AggregateRoot
     {
         if (string.IsNullOrWhiteSpace(cpf))
             return Result.Fail(DomainErrors.Usuario.CpfInvalido);
-            
+
         if (!IsCpfValido(cpf))
             return Result.Fail(DomainErrors.Usuario.CpfInvalido);
-            
+
         Cpf = cpf;
         return Result.Ok();
     }
@@ -129,7 +131,7 @@ public abstract class Usuario : AggregateRoot
     {
         if (!Enum.IsDefined(typeof(PerfilEnum), perfil))
             return Result.Fail(DomainErrors.Usuario.DadosVazios);
-            
+
         Perfil = perfil;
         return Result.Ok();
     }

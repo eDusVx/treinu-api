@@ -6,14 +6,16 @@ namespace Treinu.Domain.Entities.AvaliacaoFisica;
 
 public abstract class AvaliacaoFisica : AggregateRoot
 {
-    public TipoAvaliacaoEnum Tipo { get; protected set; }
-    public DateTime Data { get; protected set; }
-
-    protected AvaliacaoFisica() { } // EF Constructor
+    protected AvaliacaoFisica()
+    {
+    } // EF Constructor
 
     protected AvaliacaoFisica(Guid id) : base(id)
     {
     }
+
+    public TipoAvaliacaoEnum Tipo { get; protected set; }
+    public DateTime Data { get; protected set; }
 
     protected void SetTipo(TipoAvaliacaoEnum tipo)
     {

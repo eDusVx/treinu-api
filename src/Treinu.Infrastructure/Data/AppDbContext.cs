@@ -1,6 +1,5 @@
-using Treinu.Domain.Core.Mediator;
 using Microsoft.EntityFrameworkCore;
-using Treinu.Domain.Core;
+using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Entities.AvaliacaoFisica;
 using Treinu.Infrastructure.Extensions;
@@ -20,10 +19,10 @@ public class AppDbContext : DbContext
     public DbSet<Aluno> Alunos => Set<Aluno>();
     public DbSet<Treinador> Treinadores => Set<Treinador>();
     public DbSet<Credencial> Credenciais => Set<Credencial>();
-    
+
     public DbSet<Contato> Contatos => Set<Contato>();
     public DbSet<Certificado> Certificados => Set<Certificado>();
-    
+
     public DbSet<AvaliacaoFisica> AvaliacoesFisicas => Set<AvaliacaoFisica>();
     public DbSet<Documento> Documentos => Set<Documento>();
     public DbSet<Questionario> Questionarios => Set<Questionario>();
@@ -32,7 +31,7 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
+
         // Apply all IEntityTypeConfiguration classes found in this assembly
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
@@ -41,7 +40,7 @@ public class AppDbContext : DbContext
     {
         // Dispatch domain events before saving changes (just like the Medium tutorial pattern)
         await _mediator.DispatchDomainEventsAsync(this);
-            
+
         return await base.SaveChangesAsync(cancellationToken);
     }
 }

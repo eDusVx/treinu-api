@@ -12,11 +12,12 @@ public class TokenServiceTests
 
     public TokenServiceTests()
     {
-        var inMemorySettings = new Dictionary<string, string?> {
-            {"JwtSettings:Secret", "MINHACHAVEMUITOGRANDEMESMOSUPERSECRETA12345"},
-            {"JwtSettings:Issuer", "TreinuApiTest"},
-            {"JwtSettings:Audience", "TreinuAppTest"},
-            {"JwtSettings:ExpirationInMinutes", "60"}
+        var inMemorySettings = new Dictionary<string, string?>
+        {
+            { "JwtSettings:Secret", "MINHACHAVEMUITOGRANDEMESMOSUPERSECRETA12345" },
+            { "JwtSettings:Issuer", "TreinuApiTest" },
+            { "JwtSettings:Audience", "TreinuAppTest" },
+            { "JwtSettings:ExpirationInMinutes", "60" }
         };
 
         var configuration = new ConfigurationBuilder()
@@ -33,7 +34,7 @@ public class TokenServiceTests
         var token = _tokenService.GerarJwt("teste@teste.com", "ALUNO", "id-123");
 
         token.Should().NotBeNullOrEmpty();
-        token.Split('.').Length.Should().Be(3); 
+        token.Split('.').Length.Should().Be(3);
     }
 
     [Fact]
@@ -42,9 +43,9 @@ public class TokenServiceTests
         var refreshToken = _tokenService.GerarRefreshToken();
 
         refreshToken.Should().NotBeNullOrEmpty();
-        
+
         var buffer = new Span<byte>(new byte[refreshToken.Length]);
-        var isBase64 = Convert.TryFromBase64String(refreshToken, buffer, out var _);
+        var isBase64 = Convert.TryFromBase64String(refreshToken, buffer, out _);
         isBase64.Should().BeTrue();
     }
 }

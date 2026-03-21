@@ -1,3 +1,4 @@
+using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
 
 namespace Treinu.Domain.Dtos;
@@ -8,11 +9,11 @@ public record TreinadorDto(
     string Email,
     DateTime DataNascimento,
     GeneroEnum Genero,
-    IReadOnlyCollection<Entities.Contato> Contato,
+    IReadOnlyCollection<Contato> Contato,
     string Cpf,
     PerfilEnum Perfil,
     bool Ativo,
     bool AceiteTermoAdesao,
-    IReadOnlyCollection<Entities.Certificado> Certificados,
+    IReadOnlyCollection<Certificado> Certificados,
     IReadOnlyCollection<string> Especializacoes
 );

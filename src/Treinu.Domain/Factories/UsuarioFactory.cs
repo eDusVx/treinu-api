@@ -1,5 +1,4 @@
 using FluentResults;
-using Treinu.Domain.Core;
 using Treinu.Domain.Dtos;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
@@ -34,7 +33,8 @@ public record CriarUsuarioAlunoProps(
     List<ContatoDto> Contatos,
     ObjetivoEnum Objetivo,
     List<AvaliacaoFisicaDto>? AvaliacoesFisicas = null
-) : UsuarioBaseProps(NomeCompleto, Email, Senha, DataNascimento, Genero, Cpf, Ativo, AceiteTermoAdesao, TipoUsuario, Contatos);
+) : UsuarioBaseProps(NomeCompleto, Email, Senha, DataNascimento, Genero, Cpf, Ativo, AceiteTermoAdesao, TipoUsuario,
+    Contatos);
 
 public record CriarUsuarioTreinadorProps(
     string NomeCompleto,
@@ -49,7 +49,8 @@ public record CriarUsuarioTreinadorProps(
     List<ContatoDto> Contatos,
     List<CertificadoDto>? Certificados = null,
     List<string>? Especializacoes = null
-) : UsuarioBaseProps(NomeCompleto, Email, Senha, DataNascimento, Genero, Cpf, Ativo, AceiteTermoAdesao, TipoUsuario, Contatos);
+) : UsuarioBaseProps(NomeCompleto, Email, Senha, DataNascimento, Genero, Cpf, Ativo, AceiteTermoAdesao, TipoUsuario,
+    Contatos);
 
 public class UsuarioFactory
 {
@@ -71,8 +72,9 @@ public class UsuarioFactory
                     if (resultT.IsFailed) return Result.Fail<Usuario>(resultT.Errors);
                     return Result.Ok<Usuario>(resultT.Value);
                 }
+
                 return Result.Fail<Usuario>(DomainErrors.Usuario.DadosVazios);
-                
+
             case PerfilEnum.ALUNO:
                 if (props is CriarUsuarioAlunoProps alunoProps)
                 {
@@ -80,8 +82,9 @@ public class UsuarioFactory
                     if (resultA.IsFailed) return Result.Fail<Usuario>(resultA.Errors);
                     return Result.Ok<Usuario>(resultA.Value);
                 }
+
                 return Result.Fail<Usuario>(DomainErrors.Usuario.DadosVazios);
-                
+
             default:
                 return Result.Fail<Usuario>(DomainErrors.Usuario.DadosVazios);
         }
@@ -110,7 +113,8 @@ public class UsuarioFactory
     private Result<Aluno> CriarAluno(CriarUsuarioAlunoProps props)
     {
         var contatos = CriarContatos(props.Contatos);
-        var avaliacoesFisicas = _avaliacaoFisicaFactory.Fabricar(props.AvaliacoesFisicas ?? new List<AvaliacaoFisicaDto>());
+        var avaliacoesFisicas =
+            _avaliacaoFisicaFactory.Fabricar(props.AvaliacoesFisicas ?? new List<AvaliacaoFisicaDto>());
 
         return Aluno.Criar(new CriarAlunoProps(
             props.NomeCompleto,

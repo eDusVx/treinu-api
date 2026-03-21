@@ -11,20 +11,22 @@ public record CriarDocumentoProps(
 
 public class Documento : AvaliacaoFisica
 {
-    public string Nome { get; private set; } = string.Empty;
-    public string Arquivo { get; private set; } = string.Empty;
-
-    protected Documento() : base() { } // EF Constructor
+    protected Documento()
+    {
+    } // EF Constructor
 
     private Documento(Guid id) : base(id)
     {
     }
 
+    public string Nome { get; private set; } = string.Empty;
+    public string Arquivo { get; private set; } = string.Empty;
+
     public static Documento Criar(CriarDocumentoProps props)
     {
         var id = Guid.NewGuid();
         var instance = new Documento(id);
-        
+
         instance.SetTipo(TipoAvaliacaoEnum.DOCUMENTO);
         instance.SetData(props.Data);
         instance.SetNome(props.Nome);
@@ -36,7 +38,7 @@ public class Documento : AvaliacaoFisica
     public static Documento Carregar(CriarDocumentoProps props, Guid id)
     {
         var instance = new Documento(id);
-        
+
         instance.SetTipo(TipoAvaliacaoEnum.DOCUMENTO);
         instance.SetData(props.Data);
         instance.SetNome(props.Nome);

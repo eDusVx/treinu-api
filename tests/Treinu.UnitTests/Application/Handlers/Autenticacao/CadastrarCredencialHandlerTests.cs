@@ -33,13 +33,13 @@ public class CadastrarCredencialHandlerTests
         await _handler.Handle(notification, CancellationToken.None);
 
         _credencialRepositoryMock.Verify(
-            repo => repo.SalvarCredencialAsync(It.Is<Credencial>(c => 
+            repo => repo.SalvarCredencialAsync(It.Is<Credencial>(c =>
                 c.Email == "teste@event.com" &&
                 c.TipoUsuario == PerfilEnum.ALUNO &&
                 c.Senha == fakeHash &&
                 c.UsuarioId == notification.Id &&
                 c.Ativo == true
-            )), 
+            )),
             Times.Once
         );
     }
