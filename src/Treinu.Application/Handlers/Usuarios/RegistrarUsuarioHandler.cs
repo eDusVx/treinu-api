@@ -6,13 +6,13 @@ using Treinu.Domain.Repositories;
 
 namespace Treinu.Application.Handlers.Usuarios;
 
-public class RegistrarUsuarioCommandHandler : IRequestHandler<RegistrarUsuarioCommand, object>
+public class RegistrarUsuarioHandler : IRequestHandler<RegistrarUsuarioCommand, object>
 {
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly UsuarioFactory _usuarioFactory;
     private readonly IMediator _mediator;
 
-    public RegistrarUsuarioCommandHandler(
+    public RegistrarUsuarioHandler(
         IUsuarioRepository usuarioRepository,
         UsuarioFactory usuarioFactory,
         IMediator mediator)

@@ -23,30 +23,24 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Database Option
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
-
-// Application & Domain DI
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ICredencialRepository, CredencialRepository>();
 builder.Services.AddScoped<UsuarioFactory>();
 builder.Services.AddScoped<AvaliacaoFisicaFactory>();
 builder.Services.AddScoped<Treinu.Application.Interfaces.ITokenService, Treinu.Infrastructure.Security.TokenService>();
 
-// MediatR & FluentValidation
-builder.Services.AddValidatorsFromAssembly(typeof(RegistrarUsuarioCommandHandler).Assembly);
+builder.Services.AddValidatorsFromAssembly(typeof(RegistrarUsuarioHandler).Assembly);
 builder.Services.AddMediatR(cfg => {
-    cfg.RegisterServicesFromAssembly(typeof(RegistrarUsuarioCommandHandler).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(RegistrarUsuarioHandler).Assembly);
     cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
 });
 
-// Exception Handler
 builder.Services.AddExceptionHandler<Treinu.Api.Middlewares.GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
-// Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secret = jwtSettings.GetValue<string>("Secret") ?? "DefaultSecretKeyss";
 

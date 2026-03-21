@@ -6,11 +6,11 @@ using Treinu.Domain.Repositories;
 
 namespace Treinu.Application.Handlers.Autenticacao;
 
-public class CadastrarCredencialEventHandler : INotificationHandler<UsuarioCadastradoEvent>
+public class CadastrarCredencialHandler : INotificationHandler<UsuarioCadastradoEvent>
 {
     private readonly ICredencialRepository _credencialRepository;
 
-    public CadastrarCredencialEventHandler(ICredencialRepository credencialRepository)
+    public CadastrarCredencialHandler(ICredencialRepository credencialRepository)
     {
         _credencialRepository = credencialRepository;
     }

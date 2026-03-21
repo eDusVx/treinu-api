@@ -7,11 +7,11 @@ using Treinu.Domain.Dtos;
 
 namespace Treinu.Application.Handlers.Usuarios;
 
-public class BuscarUsuariosQueryHandler : IRequestHandler<BuscarUsuariosQuery, PaginationResponse<object>>
+public class BuscarUsuariosHandler : IRequestHandler<BuscarUsuariosQuery, PaginationResponse<object>>
 {
     private readonly IUsuarioRepository _usuarioRepository;
     
-    public BuscarUsuariosQueryHandler(IUsuarioRepository usuarioRepository)
+    public BuscarUsuariosHandler(IUsuarioRepository usuarioRepository)
     {
         _usuarioRepository = usuarioRepository;
     }

@@ -20,9 +20,9 @@ public class UsuariosController : ControllerBase
         _mediator = mediator;
     }
 
-    [AllowAnonymous] // allowing anonymous registration
+    [AllowAnonymous]
     [HttpPost]
-    [ProducesResponseType(typeof(object), 201)] // Returns the created user
+    [ProducesResponseType(typeof(object), 201)]
     public async Task<IActionResult> RegistrarUsuario([FromBody] RegistrarUsuarioCommand command)
     {
         var result = await _mediator.Send(command);
