@@ -12,7 +12,7 @@ public class TokenServiceTests
 
     public TokenServiceTests()
     {
-        var inMemorySettings = new Dictionary<string, string> {
+        var inMemorySettings = new Dictionary<string, string?> {
             {"JwtSettings:Secret", "MINHACHAVEMUITOGRANDEMESMOSUPERSECRETA12345"},
             {"JwtSettings:Issuer", "TreinuApiTest"},
             {"JwtSettings:Audience", "TreinuAppTest"},

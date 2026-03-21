@@ -28,7 +28,14 @@ public static class MediatorServiceCollectionExtensions
                     genericTypeDefinition == typeof(INotificationHandler<>) ||
                     genericTypeDefinition == typeof(IPipelineBehavior<,>))
                 {
-                    services.AddTransient(@interface, type);
+                    if (type.IsGenericTypeDefinition)
+                    {
+                        services.AddTransient(genericTypeDefinition, type.GetGenericTypeDefinition());
+                    }
+                    else
+                    {
+                        services.AddTransient(@interface, type);
+                    }
                 }
             }
         }
