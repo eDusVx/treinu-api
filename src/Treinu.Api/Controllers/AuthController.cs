@@ -23,7 +23,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] AutenticarUsuarioLocalQuery query)
     {
         var result = await _mediator.Send(query);
-        return Ok(result);
+        return Ok(result.Value);
     }
 
     [AllowAnonymous]
@@ -32,6 +32,6 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Refresh([FromBody] RenovarTokenQuery query)
     {
         var result = await _mediator.Send(query);
-        return Ok(result);
+        return Ok(result.Value);
     }
 }

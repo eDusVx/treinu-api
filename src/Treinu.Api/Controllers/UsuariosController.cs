@@ -26,7 +26,7 @@ public class UsuariosController : ControllerBase
     public async Task<IActionResult> RegistrarUsuario([FromBody] RegistrarUsuarioCommand command)
     {
         var result = await _mediator.Send(command);
-        return CreatedAtAction(nameof(BuscarUsuarios), new { page = 1 }, result);
+        return CreatedAtAction(nameof(BuscarUsuarios), new { page = 1 }, result.Value);
     }
 
     [HttpGet]
@@ -36,6 +36,6 @@ public class UsuariosController : ControllerBase
     {
         var query = new BuscarUsuariosQuery(tipoUsuario, page, limit);
         var result = await _mediator.Send(query);
-        return Ok(result);
+        return Ok(result.Value);
     }
 }
