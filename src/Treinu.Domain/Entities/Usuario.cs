@@ -8,7 +8,6 @@ using Treinu.Domain.Errors;
 namespace Treinu.Domain.Entities;
 
 public record CriarUsuarioProps(
-    // ...
     string NomeCompleto,
     string Email,
     string Senha,
@@ -173,4 +172,6 @@ public abstract class Usuario : AggregateRoot
 
         return cpf.EndsWith($"{digito1}{digito2}");
     }
+
+    public abstract object ToDto();
 }

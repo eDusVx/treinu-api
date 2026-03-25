@@ -20,7 +20,7 @@ public class UsuarioFactoryTests
     [Fact]
     public void Fabricar_Deve_Retornar_Aluno_Quando_Props_Forem_Aluno()
     {
-        var props = new CriarUsuarioAlunoProps(
+        var props = new FabricarUsuarioProps(
             "Aluno", "aluno@t.com", "Senh@123", new DateTime(1990, 1, 1),
             GeneroEnum.MASCULINO, "11144477735", true, true, PerfilEnum.ALUNO,
             new List<ContatoDto>(), ObjetivoEnum.HIPERTROFIA
@@ -37,10 +37,10 @@ public class UsuarioFactoryTests
     [Fact]
     public void Fabricar_Deve_Retornar_Treinador_Quando_Props_Forem_Treinador()
     {
-        var props = new CriarUsuarioTreinadorProps(
+        var props = new FabricarUsuarioProps(
             "Treinador", "t@t.com", "Senh@123", new DateTime(1990, 1, 1),
             GeneroEnum.MASCULINO, "11144477735", true, true, PerfilEnum.TREINADOR,
-            new List<ContatoDto>(), new List<CertificadoDto>(), new List<string>()
+            new List<ContatoDto>(), Certificados: new List<CertificadoDto>(), Especializacoes: new List<string>()
         );
 
         var usuarioResult = _factory.Fabricar(props);
@@ -51,17 +51,5 @@ public class UsuarioFactoryTests
         usuario.Perfil.Should().Be(PerfilEnum.TREINADOR);
     }
 
-    [Fact]
-    public void Fabricar_Deve_Lancar_Exception_Se_Props_Incompativeis()
-    {
-        var props = new CriarUsuarioAlunoProps(
-            "Aluno", "aluno@t.com", "Senh@123", new DateTime(1990, 1, 1),
-            GeneroEnum.MASCULINO, "11144477735", true, true, PerfilEnum.TREINADOR,
-            new List<ContatoDto>(), ObjetivoEnum.HIPERTROFIA
-        );
 
-        var result = _factory.Fabricar(props);
-
-        result.IsFailed.Should().BeTrue();
-    }
 }

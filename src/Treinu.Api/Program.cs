@@ -9,6 +9,7 @@ using Treinu.Application.Extensions;
 using Treinu.Application.Handlers.Usuarios;
 using Treinu.Application.Interfaces;
 using Treinu.Domain.Factories;
+using Treinu.Domain.Factories.Interfaces;
 using Treinu.Domain.Repositories;
 using Treinu.Infrastructure.Data;
 using Treinu.Infrastructure.Health;
@@ -36,7 +37,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ICredencialRepository, CredencialRepository>();
-builder.Services.AddScoped<UsuarioFactory>();
+builder.Services.AddScoped<IUsuarioFactory, UsuarioFactory>();
 builder.Services.AddScoped<AvaliacaoFisicaFactory>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 

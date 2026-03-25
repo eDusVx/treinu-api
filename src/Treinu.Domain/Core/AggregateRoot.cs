@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Treinu.Domain.Core;
 
 public abstract class AggregateRoot : Entity
@@ -12,6 +14,7 @@ public abstract class AggregateRoot : Entity
     {
     }
 
+    [JsonIgnore]
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     public void AddDomainEvent(IDomainEvent domainEvent)

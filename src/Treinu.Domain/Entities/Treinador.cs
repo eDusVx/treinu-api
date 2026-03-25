@@ -141,7 +141,7 @@ public class Treinador : Usuario
         return Result.Ok();
     }
 
-    public TreinadorDto ToDto()
+    public override object ToDto()
     {
         return new TreinadorDto(
             Id, NomeCompleto, Email, DataNascimento, Genero, Contato, Cpf, Perfil, Ativo,

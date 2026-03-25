@@ -26,12 +26,7 @@ public class BuscarUsuariosHandler : IRequestHandler<BuscarUsuariosQuery, Result
             cancellationToken
         );
 
-        var data = usuariosList.Select(u =>
-        {
-            if (u is Aluno a) return a.ToDto();
-            if (u is Treinador t) return (object)t.ToDto();
-            return null;
-        }).Where(u => u != null).ToList();
+        var data = usuariosList.Select(u => u.ToDto()).ToList();
 
         var totalPages = (int)Math.Ceiling(total / (double)request.Limit);
 

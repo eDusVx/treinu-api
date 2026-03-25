@@ -132,7 +132,7 @@ public class Aluno : Usuario
         return Result.Ok();
     }
 
-    public AlunoDto ToDto()
+    public override object ToDto()
     {
         return new AlunoDto(
             Id, NomeCompleto, Email, DataNascimento, Genero, Contato, Cpf, Perfil, Ativo,
