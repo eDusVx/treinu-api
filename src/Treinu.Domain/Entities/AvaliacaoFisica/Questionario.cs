@@ -1,5 +1,5 @@
+using FluentResults;
 using Treinu.Domain.Enums;
-using Treinu.Domain.Exceptions;
 
 namespace Treinu.Domain.Entities.AvaliacaoFisica;
 
@@ -38,81 +38,98 @@ public class Questionario : AvaliacaoFisica
     public ClassificacaoIMC Classificacao { get; private set; }
     public IReadOnlyCollection<Medida> Medidas => _medidas.AsReadOnly();
 
-    public static Questionario Criar(CriarQuestionarioProps props)
+    public static Result<Questionario> Criar(CriarQuestionarioProps props)
     {
         var id = Guid.NewGuid();
         var instance = new Questionario(id);
 
-        instance.SetTipo(TipoAvaliacaoEnum.QUESTIONARIO);
-        instance.SetData(props.Data);
-        instance.SetAltura(props.Altura);
-        instance.SetPeso(props.Peso);
-        instance.SetMedidas(props.Medida);
-        instance.CalcularIMC();
+        var result = Result.Merge(
+            instance.SetTipo(TipoAvaliacaoEnum.QUESTIONARIO),
+            instance.SetData(props.Data),
+            instance.SetAltura(props.Altura),
+            instance.SetPeso(props.Peso),
+            instance.SetMedidas(props.Medida)
+        );
+        
+        if (result.IsSuccess)
+            result.WithReasons(instance.CalcularIMC().Reasons);
 
-        return instance;
+        if (result.IsFailed) return result;
+
+        return Result.Ok(instance);
     }
 
     public static Questionario Carregar(CriarQuestionarioProps props, Guid id)
     {
         var instance = new Questionario(id);
 
-        instance.SetTipo(TipoAvaliacaoEnum.QUESTIONARIO);
-        instance.SetData(props.Data);
-        instance.SetAltura(props.Altura);
-        instance.SetPeso(props.Peso);
-        instance.SetMedidas(props.Medida);
-        instance.CalcularIMC();
+        var result = Result.Merge(
+            instance.SetTipo(TipoAvaliacaoEnum.QUESTIONARIO),
+            instance.SetData(props.Data),
+            instance.SetAltura(props.Altura),
+            instance.SetPeso(props.Peso),
+            instance.SetMedidas(props.Medida)
+        );
+        
+        if (result.IsSuccess)
+            result.WithReasons(instance.CalcularIMC().Reasons);
+
+        if (result.IsFailed)
+            throw new InvalidOperationException($"Erro ao carregar Questionario do banco: {result.Errors[0].Message}");
 
         return instance;
     }
 
-    private void SetAltura(double altura)
+    private Result SetAltura(double altura)
     {
         if (altura <= 0)
-            throw new AvaliacaoFisicaException("Altura deve ser maior que zero");
+            return Result.Fail("Altura deve ser maior que zero");
 
         if (altura > 3)
-            throw new AvaliacaoFisicaException("Altura inválida (valor muito alto)");
+            return Result.Fail("Altura inválida (valor muito alto)");
 
         Altura = Math.Round(altura, 2);
+        return Result.Ok();
     }
 
-    private void SetPeso(double peso)
+    private Result SetPeso(double peso)
     {
         if (peso <= 0)
-            throw new AvaliacaoFisicaException("Peso deve ser maior que zero");
+            return Result.Fail("Peso deve ser maior que zero");
 
         if (peso > 500)
-            throw new AvaliacaoFisicaException("Peso inválido (valor muito alto)");
+            return Result.Fail("Peso inválido (valor muito alto)");
 
         Peso = Math.Round(peso, 2);
+        return Result.Ok();
     }
 
-    private void SetMedidas(List<Medida> medidas)
+    private Result SetMedidas(List<Medida> medidas)
     {
         if (medidas == null)
-            throw new AvaliacaoFisicaException("Medidas devem ser um array");
+            return Result.Fail("Medidas devem ser um array");
 
         if (!medidas.Any())
-            throw new AvaliacaoFisicaException("Pelo menos uma medida deve ser informada");
+            return Result.Fail("Pelo menos uma medida deve ser informada");
 
         var medidasInvalidas = medidas.Where(m => m == null).ToList();
         if (medidasInvalidas.Any())
-            throw new AvaliacaoFisicaException("Array contém medidas inválidas");
+            return Result.Fail("Array contém medidas inválidas");
 
         _medidas.Clear();
         _medidas.AddRange(medidas);
+        return Result.Ok();
     }
 
-    private void CalcularIMC()
+    private Result CalcularIMC()
     {
         if (Altura <= 0 || Peso <= 0)
-            throw new AvaliacaoFisicaException("Altura e peso devem ser definidos antes de calcular o IMC");
+            return Result.Fail("Altura e peso devem ser definidos antes de calcular o IMC");
 
         var valorImc = Peso / Math.Pow(Altura, 2);
         Imc = Math.Round(valorImc, 2);
         Classificacao = DeterminarClassificacaoIMC(Imc);
+        return Result.Ok();
     }
 
     private ClassificacaoIMC DeterminarClassificacaoIMC(double imc)

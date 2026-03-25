@@ -16,18 +16,27 @@ public class CadastrarCredencialHandler : INotificationHandler<UsuarioCadastrado
 
     public async Task Handle(UsuarioCadastradoEvent notification, CancellationToken cancellationToken)
     {
-        var props = new CriarCredencialProps(
-            notification.Id,
-            notification.Email,
-            notification.Perfil,
-            notification.Ativo,
-            notification.Senha
-        );
+        try
+        {
+            var props = new CriarCredencialProps(
+                notification.Id,
+                notification.Email,
+                notification.Perfil,
+                notification.Ativo,
+                notification.Senha
+            );
 
-        var credencialResult = Credencial.Criar(props);
-        if (credencialResult.IsFailed)
-            throw new InvalidOperationException(credencialResult.Errors.First().Message);
+            var credencialResult = Credencial.Criar(props);
+            if (credencialResult.IsFailed)
+                throw new InvalidOperationException(credencialResult.Errors.First().Message);
 
-        await _credencialRepository.SalvarCredencialAsync(credencialResult.Value);
+            var result = await _credencialRepository.SalvarCredencialAsync(credencialResult.Value);
+            if (result.IsFailed)
+                throw new InvalidOperationException(result.Errors.First().Message);
+        }
+        catch (Exception ex) when (ex is not InvalidOperationException)
+        {
+            throw new InvalidOperationException($"Erro inesperado ao gerar credenciais para usuário {notification.Id}: {ex.Message}", ex);
+        }
     }
 }

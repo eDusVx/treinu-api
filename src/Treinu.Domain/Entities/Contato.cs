@@ -1,7 +1,7 @@
+using FluentResults;
 using System.Text.RegularExpressions;
 using Treinu.Domain.Core;
 using Treinu.Domain.Enums;
-using Treinu.Domain.Exceptions;
 
 namespace Treinu.Domain.Entities;
 
@@ -31,108 +31,130 @@ public class Contato : Entity
     public PlataformaRedeSocialEnum? Plataforma { get; private set; }
     public string? NomeExibicao { get; private set; }
 
-    public static Contato Criar(CriarContatoProps props)
+    public static Result<Contato> Criar(CriarContatoProps props)
     {
         var id = Guid.NewGuid();
         var instance = new Contato(id);
 
-        instance.SetTipo(props.Tipo);
-        instance.SetValor(props.Valor);
-        instance.SetDescricao(props.Descricao);
+        var result = new Result();
+        result.WithReasons(instance.SetTipo(props.Tipo).Reasons);
+        result.WithReasons(instance.SetValor(props.Valor).Reasons);
+        result.WithReasons(instance.SetDescricao(props.Descricao).Reasons);
         instance.SetPrincipal(props.Principal ?? false);
-        instance.SetNomeExibicao(props.NomeExibicao);
+        result.WithReasons(instance.SetNomeExibicao(props.NomeExibicao).Reasons);
 
-        if (props.Tipo == TipoContatoEnum.REDE_SOCIAL) instance.SetPlataforma(props.Plataforma);
+        if (props.Tipo == TipoContatoEnum.REDE_SOCIAL)
+            result.WithReasons(instance.SetPlataforma(props.Plataforma).Reasons);
 
-        return instance;
+        if (result.IsFailed) return result;
+
+        return Result.Ok(instance);
     }
 
     public static Contato Carregar(CriarContatoProps props, Guid id)
     {
         var instance = new Contato(id);
 
-        instance.SetTipo(props.Tipo);
-        instance.SetValor(props.Valor);
-        instance.SetDescricao(props.Descricao);
+        var result = new Result();
+        result.WithReasons(instance.SetTipo(props.Tipo).Reasons);
+        result.WithReasons(instance.SetValor(props.Valor).Reasons);
+        result.WithReasons(instance.SetDescricao(props.Descricao).Reasons);
         instance.SetPrincipal(props.Principal ?? false);
-        instance.SetNomeExibicao(props.NomeExibicao);
+        result.WithReasons(instance.SetNomeExibicao(props.NomeExibicao).Reasons);
 
-        if (props.Tipo == TipoContatoEnum.REDE_SOCIAL) instance.SetPlataforma(props.Plataforma);
+        if (props.Tipo == TipoContatoEnum.REDE_SOCIAL)
+            result.WithReasons(instance.SetPlataforma(props.Plataforma).Reasons);
+
+        if (result.IsFailed)
+            throw new InvalidOperationException($"Erro ao carregar Contato do banco: {result.Errors[0].Message}");
 
         return instance;
     }
 
-    private void SetTipo(TipoContatoEnum tipo)
+    private Result SetTipo(TipoContatoEnum tipo)
     {
         if (!Enum.IsDefined(typeof(TipoContatoEnum), tipo))
-            throw new ContatoException("Tipo de contato inválido");
+            return Result.Fail("Tipo de contato inválido");
 
         Tipo = tipo;
+        return Result.Ok();
     }
 
-    private void SetValor(string valor)
+    private Result SetValor(string valor)
     {
         valor = valor.Trim();
+
+        Result validacao = Result.Ok();
 
         switch (Tipo)
         {
             case TipoContatoEnum.TELEFONE:
-                ValidarTelefone(valor);
+                validacao = ValidarTelefone(valor);
                 break;
             case TipoContatoEnum.REDE_SOCIAL:
-                ValidarRedeSocial(valor);
+                validacao = ValidarRedeSocial(valor);
                 break;
             case TipoContatoEnum.SITE:
-                ValidarSite(valor);
+                validacao = ValidarSite(valor);
                 break;
         }
 
+        if (validacao.IsFailed) return validacao;
+
         Valor = valor;
+        return Result.Ok();
     }
 
-    private void ValidarTelefone(string telefone)
+    private Result ValidarTelefone(string telefone)
     {
         if (string.IsNullOrWhiteSpace(telefone))
-            throw new ContatoException("Telefone não pode ser vazio");
+            return Result.Fail("Telefone não pode ser vazio");
 
-        // Allowed characters: digits, plus, spaces, hyphens, parenthesis
         if (!Regex.IsMatch(telefone, @"^\+?[0-9\s\-\(\)]{10,20}$"))
-            throw new ContatoException("Número de telefone inválido.");
+            return Result.Fail("Número de telefone inválido.");
+
+        return Result.Ok();
     }
 
-    private void ValidarRedeSocial(string url)
+    private Result ValidarRedeSocial(string url)
     {
         if (!Uri.TryCreate(url, UriKind.Absolute, out var uriResult) ||
             (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps))
-            throw new ContatoException("URL da rede social inválida. Deve incluir http:// ou https://");
+            return Result.Fail("URL da rede social inválida. Deve incluir http:// ou https://");
+
+        return Result.Ok();
     }
 
-    private void ValidarSite(string url)
+    private Result ValidarSite(string url)
     {
         if (!Uri.TryCreate(url, UriKind.Absolute, out var uriResult) ||
             (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps))
-            throw new ContatoException("Site inválido. Deve ser uma URL válida com http:// ou https://");
+            return Result.Fail("Site inválido. Deve ser uma URL válida com http:// ou https://");
 
-        if (uriResult.HostNameType != UriHostNameType.Dns) throw new ContatoException("Domínio do site inválido");
+        if (uriResult.HostNameType != UriHostNameType.Dns) return Result.Fail("Domínio do site inválido");
+
+        return Result.Ok();
     }
 
-    private void SetPlataforma(PlataformaRedeSocialEnum? plataforma)
+    private Result SetPlataforma(PlataformaRedeSocialEnum? plataforma)
     {
         if (Tipo == TipoContatoEnum.REDE_SOCIAL && !plataforma.HasValue)
-            throw new ContatoException("Plataforma é obrigatória para contatos do tipo REDE_SOCIAL");
+            return Result.Fail("Plataforma é obrigatória para contatos do tipo REDE_SOCIAL");
 
         if (plataforma.HasValue && !Enum.IsDefined(typeof(PlataformaRedeSocialEnum), plataforma.Value))
-            throw new ContatoException("Plataforma de rede social inválida");
+            return Result.Fail("Plataforma de rede social inválida");
 
         Plataforma = plataforma;
+        return Result.Ok();
     }
 
-    private void SetDescricao(string? descricao)
+    private Result SetDescricao(string? descricao)
     {
         if (descricao?.Length > 200)
-            throw new ContatoException("Descrição deve ter no máximo 200 caracteres");
+            return Result.Fail("Descrição deve ter no máximo 200 caracteres");
 
         Descricao = descricao;
+        return Result.Ok();
     }
 
     private void SetPrincipal(bool principal)
@@ -140,11 +162,12 @@ public class Contato : Entity
         Principal = principal;
     }
 
-    private void SetNomeExibicao(string? nomeExibicao)
+    private Result SetNomeExibicao(string? nomeExibicao)
     {
         if (nomeExibicao?.Length > 50)
-            throw new ContatoException("Nome de exibição deve ter no máximo 50 caracteres");
+            return Result.Fail("Nome de exibição deve ter no máximo 50 caracteres");
 
         NomeExibicao = nomeExibicao;
+        return Result.Ok();
     }
 }

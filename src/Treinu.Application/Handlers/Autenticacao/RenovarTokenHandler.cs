@@ -21,26 +21,38 @@ public class RenovarTokenHandler : IRequestHandler<RenovarTokenQuery, Result<Tok
 
     public async Task<Result<TokenDto>> Handle(RenovarTokenQuery request, CancellationToken cancellationToken)
     {
-        var credencial = await _credencialRepository.BuscarCredencialPorRefreshTokenAsync(request.RefreshToken);
-
-        if (credencial == null || credencial.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        try
         {
-            if (credencial != null)
+            var credencialResult = await _credencialRepository.BuscarCredencialPorRefreshTokenAsync(request.RefreshToken);
+            if (credencialResult.IsFailed) return Result.Fail<TokenDto>(credencialResult.Errors);
+
+            var credencial = credencialResult.Value;
+
+            if (credencial == null || credencial.RefreshTokenExpiryTime <= DateTime.UtcNow)
             {
-                credencial.RevogarRefreshToken();
-                await _credencialRepository.AtualizarCredencialAsync(credencial);
+                if (credencial != null)
+                {
+                    credencial.RevogarRefreshToken();
+                    await _credencialRepository.AtualizarCredencialAsync(credencial);
+                }
+
+                return Result.Fail<TokenDto>(DomainErrors.Credencial.TokenExpirado);
             }
 
-            return Result.Fail<TokenDto>(DomainErrors.Credencial.TokenExpirado);
+            var newToken = _tokenService.GerarJwt(credencial.Email, credencial.TipoUsuario.ToString(),
+                credencial.UsuarioId.ToString());
+            var newRefreshToken = _tokenService.GerarRefreshToken();
+
+            credencial.AtualizarRefreshToken(newRefreshToken, DateTime.UtcNow.AddDays(7));
+            
+            var updateResult = await _credencialRepository.AtualizarCredencialAsync(credencial);
+            if (updateResult.IsFailed) return Result.Fail<TokenDto>(updateResult.Errors);
+
+            return Result.Ok(new TokenDto(newToken, newRefreshToken));
         }
-
-        var newToken = _tokenService.GerarJwt(credencial.Email, credencial.TipoUsuario.ToString(),
-            credencial.UsuarioId.ToString());
-        var newRefreshToken = _tokenService.GerarRefreshToken();
-
-        credencial.AtualizarRefreshToken(newRefreshToken, DateTime.UtcNow.AddDays(7));
-        await _credencialRepository.AtualizarCredencialAsync(credencial);
-
-        return Result.Ok(new TokenDto(newToken, newRefreshToken));
+        catch (Exception ex)
+        {
+            return Result.Fail<TokenDto>($"Erro inesperado ao renovar token: {ex.Message}");
+        }
     }
 }

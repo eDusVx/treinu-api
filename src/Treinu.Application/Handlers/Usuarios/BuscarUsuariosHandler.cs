@@ -19,23 +19,34 @@ public class BuscarUsuariosHandler : IRequestHandler<BuscarUsuariosQuery, Result
     public async Task<Result<PaginationResponse<object>>> Handle(BuscarUsuariosQuery request,
         CancellationToken cancellationToken)
     {
-        var (total, usuariosList) = await _usuarioRepository.BuscarUsuariosPaginadoAsync(
-            request.TipoUsuario,
-            request.Page,
-            request.Limit,
-            cancellationToken
-        );
+        try
+        {
+            var pagedResult = await _usuarioRepository.BuscarUsuariosPaginadoAsync(
+                request.TipoUsuario,
+                request.Page,
+                request.Limit,
+                cancellationToken
+            );
 
-        var data = usuariosList.Select(u => u.ToDto()).ToList();
+            if (pagedResult.IsFailed) return Result.Fail<PaginationResponse<object>>(pagedResult.Errors);
 
-        var totalPages = (int)Math.Ceiling(total / (double)request.Limit);
+            var (total, usuariosList) = pagedResult.Value;
 
-        return Result.Ok(new PaginationResponse<object>(
-            data!,
-            total,
-            request.Page,
-            request.Limit,
-            totalPages
-        ));
+            var data = usuariosList.Select(u => u.ToDto()).ToList();
+
+            var totalPages = (int)Math.Ceiling(total / (double)request.Limit);
+
+            return Result.Ok(new PaginationResponse<object>(
+                data!,
+                total,
+                request.Page,
+                request.Limit,
+                totalPages
+            ));
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<PaginationResponse<object>>($"Erro inesperado ao buscar usuários: {ex.Message}");
+        }
     }
 }

@@ -1,5 +1,5 @@
+using FluentResults;
 using Treinu.Domain.Enums;
-using Treinu.Domain.Exceptions;
 
 namespace Treinu.Domain.Entities.AvaliacaoFisica;
 
@@ -22,50 +22,61 @@ public class Documento : AvaliacaoFisica
     public string Nome { get; private set; } = string.Empty;
     public string Arquivo { get; private set; } = string.Empty;
 
-    public static Documento Criar(CriarDocumentoProps props)
+    public static Result<Documento> Criar(CriarDocumentoProps props)
     {
         var id = Guid.NewGuid();
         var instance = new Documento(id);
 
-        instance.SetTipo(TipoAvaliacaoEnum.DOCUMENTO);
-        instance.SetData(props.Data);
-        instance.SetNome(props.Nome);
-        instance.SetArquivo(props.Arquivo);
+        var result = Result.Merge(
+            instance.SetTipo(TipoAvaliacaoEnum.DOCUMENTO),
+            instance.SetData(props.Data),
+            instance.SetNome(props.Nome),
+            instance.SetArquivo(props.Arquivo)
+        );
 
-        return instance;
+        if (result.IsFailed) return result;
+
+        return Result.Ok(instance);
     }
 
     public static Documento Carregar(CriarDocumentoProps props, Guid id)
     {
         var instance = new Documento(id);
 
-        instance.SetTipo(TipoAvaliacaoEnum.DOCUMENTO);
-        instance.SetData(props.Data);
-        instance.SetNome(props.Nome);
-        instance.SetArquivo(props.Arquivo);
+        var result = Result.Merge(
+            instance.SetTipo(TipoAvaliacaoEnum.DOCUMENTO),
+            instance.SetData(props.Data),
+            instance.SetNome(props.Nome),
+            instance.SetArquivo(props.Arquivo)
+        );
+
+        if (result.IsFailed)
+            throw new InvalidOperationException($"Erro ao carregar Documento do banco: {result.Errors[0].Message}");
 
         return instance;
     }
 
-    private void SetNome(string nome)
+    private Result SetNome(string nome)
     {
         if (string.IsNullOrWhiteSpace(nome))
-            throw new AvaliacaoFisicaException("Nome do documento não pode ser vazio");
+            return Result.Fail("Nome do documento não pode ser vazio");
 
         if (nome.Length > 255)
-            throw new AvaliacaoFisicaException("Nome do documento não pode exceder 255 caracteres");
+            return Result.Fail("Nome do documento não pode exceder 255 caracteres");
 
         Nome = nome.Trim();
+        return Result.Ok();
     }
 
-    private void SetArquivo(string arquivo)
+    private Result SetArquivo(string arquivo)
     {
         if (string.IsNullOrWhiteSpace(arquivo))
-            throw new AvaliacaoFisicaException("Arquivo não pode ser vazio");
+            return Result.Fail("Arquivo não pode ser vazio");
 
         if (arquivo.Length < 10)
-            throw new AvaliacaoFisicaException("Arquivo inválido (tamanho mínimo não atendido)");
+            return Result.Fail("Arquivo inválido (tamanho mínimo não atendido)");
 
         Arquivo = arquivo;
+        return Result.Ok();
     }
 }

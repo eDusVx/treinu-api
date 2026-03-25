@@ -1,3 +1,4 @@
+using FluentResults;
 using Moq;
 using Treinu.Application.Handlers.Autenticacao;
 using Treinu.Domain.Entities;
@@ -29,6 +30,9 @@ public class CadastrarCredencialHandlerTests
             PerfilEnum.ALUNO,
             true
         );
+
+        _credencialRepositoryMock.Setup(repo => repo.SalvarCredencialAsync(It.IsAny<Credencial>()))
+            .ReturnsAsync(FluentResults.Result.Ok());
 
         await _handler.Handle(notification, CancellationToken.None);
 

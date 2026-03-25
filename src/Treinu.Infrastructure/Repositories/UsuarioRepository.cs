@@ -1,7 +1,7 @@
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
-using Treinu.Domain.Exceptions;
 using Treinu.Domain.Repositories;
 using Treinu.Infrastructure.Data;
 
@@ -16,43 +16,68 @@ public class UsuarioRepository : IUsuarioRepository
         _context = context;
     }
 
-    public async Task VerificarExistenciaAsync(string email, string cpf)
+    public async Task<Result> VerificarExistenciaAsync(string email, string cpf)
     {
-        var existeEmail = await _context.Usuarios.AnyAsync(u => u.Email == email);
-        if (existeEmail) throw new RepositoryException($"O E-mail {email} já está em uso.");
+        try
+        {
+            var result = new Result();
+            var existeEmail = await _context.Usuarios.AnyAsync(u => u.Email == email);
+            if (existeEmail) result.WithError($"O E-mail {email} já está em uso.");
 
-        var existeCpf = await _context.Usuarios.AnyAsync(u => u.Cpf == cpf);
-        if (existeCpf) throw new RepositoryException($"O Cpf {cpf} já está em uso.");
+            var existeCpf = await _context.Usuarios.AnyAsync(u => u.Cpf == cpf);
+            if (existeCpf) result.WithError($"O Cpf {cpf} já está em uso.");
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail($"Erro inesperado ao verificar existência de usuário: {ex.Message}");
+        }
     }
 
-    public async Task SalvarUsuarioAsync(Usuario usuario)
+    public async Task<Result> SalvarUsuarioAsync(Usuario usuario)
     {
-        await _context.Usuarios.AddAsync(usuario);
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.Usuarios.AddAsync(usuario);
+            await _context.SaveChangesAsync();
+            return Result.Ok();
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail($"Erro inesperado ao salvar usuário: {ex.Message}");
+        }
     }
 
-    public async Task<(int Total, IEnumerable<Usuario> Usuarios)> BuscarUsuariosPaginadoAsync(PerfilEnum? tipoUsuario,
+    public async Task<Result<(int Total, IEnumerable<Usuario> Usuarios)>> BuscarUsuariosPaginadoAsync(PerfilEnum? tipoUsuario,
         int page, int limit, CancellationToken cancellationToken)
     {
-        var query = _context.Usuarios
-            .Include(u => u.Contato)
-            .AsQueryable();
+        try
+        {
+            var query = _context.Usuarios
+                .Include(u => u.Contato)
+                .AsQueryable();
 
-        query = query.Include(u => ((Aluno)u).AvaliacaoFisica)
-            .Include(u => ((Treinador)u).Certificados);
+            query = query.Include(u => ((Aluno)u).AvaliacaoFisica)
+                .Include(u => ((Treinador)u).Certificados);
 
-        if (tipoUsuario.HasValue) query = query.Where(u => u.Perfil == tipoUsuario.Value);
+            if (tipoUsuario.HasValue) query = query.Where(u => u.Perfil == tipoUsuario.Value);
 
-        var total = await query.CountAsync(cancellationToken);
+            var total = await query.CountAsync(cancellationToken);
 
-        var skip = (page - 1) * limit;
+            var skip = (page - 1) * limit;
 
-        var usuariosList = await query
-            .OrderBy(u => u.NomeCompleto)
-            .Skip(skip)
-            .Take(limit)
-            .ToListAsync(cancellationToken);
+            var usuariosList = await query
+                .OrderBy(u => u.NomeCompleto)
+                .Skip(skip)
+                .Take(limit)
+                .ToListAsync(cancellationToken);
 
-        return (total, usuariosList);
+            return Result.Ok((total, (IEnumerable<Usuario>)usuariosList));
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<(int Total, IEnumerable<Usuario> Usuarios)>($"Erro inesperado ao buscar usuários: {ex.Message}");
+        }
     }
 }

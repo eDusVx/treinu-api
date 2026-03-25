@@ -1,11 +1,12 @@
+using FluentResults;
 using Treinu.Domain.Entities;
 
 namespace Treinu.Domain.Repositories;
 
 public interface ICredencialRepository
 {
-    Task SalvarCredencialAsync(Credencial credencial);
-    Task<Credencial?> BuscarCredencialPorEmailAsync(string email);
-    Task<Credencial?> BuscarCredencialPorRefreshTokenAsync(string refreshToken);
-    Task AtualizarCredencialAsync(Credencial credencial);
+    Task<Result> SalvarCredencialAsync(Credencial credencial);
+    Task<Result<Credencial?>> BuscarCredencialPorEmailAsync(string email);
+    Task<Result<Credencial?>> BuscarCredencialPorRefreshTokenAsync(string refreshToken);
+    Task<Result> AtualizarCredencialAsync(Credencial credencial);
 }

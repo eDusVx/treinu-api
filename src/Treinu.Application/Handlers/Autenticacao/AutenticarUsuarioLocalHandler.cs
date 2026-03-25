@@ -21,20 +21,31 @@ public class AutenticarUsuarioLocalHandler : IRequestHandler<AutenticarUsuarioLo
 
     public async Task<Result<TokenDto>> Handle(AutenticarUsuarioLocalQuery request, CancellationToken cancellationToken)
     {
-        var credencial = await _credencialRepository.BuscarCredencialPorEmailAsync(request.Email);
-        
-        if (credencial == null)
-            return Result.Fail<TokenDto>(DomainErrors.Credencial.NaoEncontrada);
+        try
+        {
+            var credencialResult = await _credencialRepository.BuscarCredencialPorEmailAsync(request.Email);
+            if (credencialResult.IsFailed) return Result.Fail<TokenDto>(credencialResult.Errors);
 
-        var verifyResult = credencial.VerificarSenha(request.Senha);
-        if (verifyResult.IsFailed) return Result.Fail<TokenDto>(verifyResult.Errors);
+            var credencial = credencialResult.Value;
+            if (credencial == null)
+                return Result.Fail<TokenDto>(DomainErrors.Credencial.NaoEncontrada);
 
-        var token = _tokenService.GerarJwt(credencial.Email, credencial.TipoUsuario.ToString(), credencial.UsuarioId.ToString());
-        var refreshToken = _tokenService.GerarRefreshToken();
+            var verifyResult = credencial.VerificarSenha(request.Senha);
+            if (verifyResult.IsFailed) return Result.Fail<TokenDto>(verifyResult.Errors);
 
-        credencial.AtualizarRefreshToken(refreshToken, DateTime.UtcNow.AddDays(7));
-        await _credencialRepository.AtualizarCredencialAsync(credencial);
+            var token = _tokenService.GerarJwt(credencial.Email, credencial.TipoUsuario.ToString(), credencial.UsuarioId.ToString());
+            var refreshToken = _tokenService.GerarRefreshToken();
 
-        return Result.Ok(new TokenDto(token, refreshToken));
+            credencial.AtualizarRefreshToken(refreshToken, DateTime.UtcNow.AddDays(7));
+            
+            var updateResult = await _credencialRepository.AtualizarCredencialAsync(credencial);
+            if (updateResult.IsFailed) return Result.Fail<TokenDto>(updateResult.Errors);
+
+            return Result.Ok(new TokenDto(token, refreshToken));
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<TokenDto>($"Erro inesperado na autenticação: {ex.Message}");
+        }
     }
 }

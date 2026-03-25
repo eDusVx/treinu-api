@@ -1,4 +1,5 @@
 using FluentAssertions;
+using FluentResults;
 using Moq;
 using Treinu.Application.Handlers.Usuarios;
 using Treinu.Contracts.Queries;
@@ -36,7 +37,7 @@ public class BuscarUsuariosHandlerTests
 
         _repoMock.Setup(r =>
                 r.BuscarUsuariosPaginadoAsync(It.IsAny<PerfilEnum?>(), 1, 10, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((1, usuarios));
+            .ReturnsAsync(Result.Ok((1, (IEnumerable<Usuario>)usuarios)));
 
         var result = await _handler.Handle(request, CancellationToken.None);
 

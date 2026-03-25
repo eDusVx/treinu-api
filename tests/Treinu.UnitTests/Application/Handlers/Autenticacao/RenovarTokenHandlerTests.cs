@@ -1,4 +1,5 @@
 using FluentAssertions;
+using FluentResults;
 using Moq;
 using Treinu.Application.Handlers.Autenticacao;
 using Treinu.Application.Interfaces;
@@ -30,7 +31,7 @@ public class RenovarTokenHandlerTests
     {
         var query = new RenovarTokenQuery("token-invalido");
         _credencialRepositoryMock.Setup(repo => repo.BuscarCredencialPorRefreshTokenAsync(It.IsAny<string>()))
-            .ReturnsAsync((Credencial?)null);
+            .ReturnsAsync(Result.Ok<Credencial?>(null));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -48,7 +49,10 @@ public class RenovarTokenHandlerTests
         credencial.AtualizarRefreshToken("token-expirado", DateTime.UtcNow.AddDays(-1));
 
         _credencialRepositoryMock.Setup(repo => repo.BuscarCredencialPorRefreshTokenAsync(It.IsAny<string>()))
-            .ReturnsAsync(credencial);
+            .ReturnsAsync(Result.Ok<Credencial?>(credencial));
+
+        _credencialRepositoryMock.Setup(repo => repo.AtualizarCredencialAsync(It.IsAny<Credencial>()))
+            .ReturnsAsync(Result.Ok());
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -69,7 +73,10 @@ public class RenovarTokenHandlerTests
         credencial.AtualizarRefreshToken("token-valido", DateTime.UtcNow.AddDays(1));
 
         _credencialRepositoryMock.Setup(repo => repo.BuscarCredencialPorRefreshTokenAsync(It.IsAny<string>()))
-            .ReturnsAsync(credencial);
+            .ReturnsAsync(Result.Ok<Credencial?>(credencial));
+
+        _credencialRepositoryMock.Setup(repo => repo.AtualizarCredencialAsync(It.IsAny<Credencial>()))
+            .ReturnsAsync(Result.Ok());
 
         _tokenServiceMock.Setup(service => service.GerarJwt(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
             .Returns("novo_jwt_valido");

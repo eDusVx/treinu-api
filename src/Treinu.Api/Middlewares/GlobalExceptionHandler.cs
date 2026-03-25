@@ -1,4 +1,3 @@
-using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,15 +27,6 @@ public class GlobalExceptionHandler : IExceptionHandler
             Instance = httpContext.Request.Path
         };
 
-        if (exception is ValidationException validationException)
-        {
-            var errors = validationException.Errors
-                .GroupBy(x => x.PropertyName)
-                .ToDictionary(g => g.Key, g => g.Select(x => x.ErrorMessage).ToArray());
-
-            problemDetails.Extensions.Add("errors", errors);
-        }
-
         httpContext.Response.StatusCode = problemDetails.Status.Value;
 
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
@@ -48,7 +38,6 @@ public class GlobalExceptionHandler : IExceptionHandler
     {
         return exception switch
         {
-            ValidationException => StatusCodes.Status400BadRequest,
             _ when exception.GetType().Name.Contains("Exception") && !exception.GetType().Name.Contains("System") =>
                 StatusCodes.Status400BadRequest,
             _ => StatusCodes.Status500InternalServerError
@@ -59,7 +48,6 @@ public class GlobalExceptionHandler : IExceptionHandler
     {
         return exception switch
         {
-            ValidationException => "Validation Error",
             _ when exception.GetType().Name.Contains("Exception") && !exception.GetType().Name.Contains("System") =>
                 "Domain Validation Error",
             _ => "Server Error"

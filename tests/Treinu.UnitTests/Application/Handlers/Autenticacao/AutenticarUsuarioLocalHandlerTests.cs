@@ -1,4 +1,5 @@
 using FluentAssertions;
+using FluentResults;
 using Moq;
 using Treinu.Application.Handlers.Autenticacao;
 using Treinu.Application.Interfaces;
@@ -35,7 +36,10 @@ public class AutenticarUsuarioLocalHandlerTests
         var credencial = Credencial.Criar(credencialProps).Value;
 
         _credencialRepositoryMock.Setup(repo => repo.BuscarCredencialPorEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync(credencial);
+            .ReturnsAsync(Result.Ok<Credencial?>(credencial));
+
+        _credencialRepositoryMock.Setup(repo => repo.AtualizarCredencialAsync(It.IsAny<Credencial>()))
+            .ReturnsAsync(Result.Ok());
 
         _tokenServiceMock.Setup(service => service.GerarJwt(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
             .Returns("fake_jwt_token");
@@ -57,7 +61,7 @@ public class AutenticarUsuarioLocalHandlerTests
     {
         var query = new AutenticarUsuarioLocalQuery("fake@teste.com", "senha123");
         _credencialRepositoryMock.Setup(repo => repo.BuscarCredencialPorEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync((Credencial?)null);
+            .ReturnsAsync(Result.Ok<Credencial?>(null));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 

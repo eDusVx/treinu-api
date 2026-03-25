@@ -20,37 +20,39 @@ public class RegistrarUsuarioHandler(
     {
         try
         {
-            await _usuarioRepository.VerificarExistenciaAsync(request.Email, request.Cpf);
+            var existenciaResult = await _usuarioRepository.VerificarExistenciaAsync(request.Email, request.Cpf);
+            if (existenciaResult.IsFailed) return Result.Fail<object>(existenciaResult.Errors);
+
+            var props = new FabricarUsuarioProps(
+                request.NomeCompleto,
+                request.Email,
+                request.Senha,
+                request.DataNascimento,
+                request.Genero,
+                request.Cpf,
+                request.Ativo,
+                request.AceiteTermoAdesao,
+                request.TipoUsuario,
+                request.Contatos,
+                request.Objetivo,
+                request.AvaliacoesFisicas,
+                request.Certificados,
+                request.Especializacoes
+            );
+
+            var usuarioResult = _usuarioFactory.Fabricar(props);
+            if (usuarioResult.IsFailed) return Result.Fail<object>(usuarioResult.Errors);
+
+            var usuario = usuarioResult.Value;
+
+            var saveResult = await _usuarioRepository.SalvarUsuarioAsync(usuario);
+            if (saveResult.IsFailed) return Result.Fail<object>(saveResult.Errors);
+
+            return Result.Ok(usuario.ToDto());
         }
-        catch (RepositoryException)
+        catch (Exception ex)
         {
-            return Result.Fail<object>(DomainErrors.Usuario.ConflitoEmEmailOuCpf);
+            return Result.Fail<object>($"Erro inesperado ao registrar usuário: {ex.Message}");
         }
-
-        var props = new FabricarUsuarioProps(
-            request.NomeCompleto,
-            request.Email,
-            request.Senha,
-            request.DataNascimento,
-            request.Genero,
-            request.Cpf,
-            request.Ativo,
-            request.AceiteTermoAdesao,
-            request.TipoUsuario,
-            request.Contatos,
-            request.Objetivo,
-            request.AvaliacoesFisicas,
-            request.Certificados,
-            request.Especializacoes
-        );
-
-        var usuarioResult = _usuarioFactory.Fabricar(props);
-        if (usuarioResult.IsFailed) return Result.Fail<object>(usuarioResult.Errors);
-
-        var usuario = usuarioResult.Value;
-
-        await _usuarioRepository.SalvarUsuarioAsync(usuario);
-
-        return Result.Ok(usuario.ToDto());
     }
 }

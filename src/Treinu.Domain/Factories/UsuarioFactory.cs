@@ -47,10 +47,17 @@ public class UsuarioFactory(AvaliacaoFisicaFactory avaliacaoFisicaFactory) : IUs
         }
     }
 
-    private static Result<Treinador> CriarTreinador(FabricarUsuarioProps props)
+    private Result<Treinador> CriarTreinador(FabricarUsuarioProps props)
     {
-        var contatos = CriarContatos(props.Contatos);
-        var certificados = CriarCertificados(props.Certificados ?? new List<CertificadoDto>());
+        var result = new Result();
+        
+        var contatosResult = CriarContatos(props.Contatos);
+        if (contatosResult.IsFailed) result.WithReasons(contatosResult.Reasons);
+
+        var certificadosResult = CriarCertificados(props.Certificados ?? new List<CertificadoDto>());
+        if (certificadosResult.IsFailed) result.WithReasons(certificadosResult.Reasons);
+
+        if (result.IsFailed) return Result.Fail<Treinador>(result.Errors);
 
         return Treinador.Criar(new CriarTreinadorProps(
             props.NomeCompleto,
@@ -58,20 +65,26 @@ public class UsuarioFactory(AvaliacaoFisicaFactory avaliacaoFisicaFactory) : IUs
             props.Senha,
             props.DataNascimento,
             props.Genero,
-            contatos,
+            contatosResult.Value,
             props.Cpf,
             props.Ativo,
             props.AceiteTermoAdesao,
-            certificados,
+            certificadosResult.Value,
             props.Especializacoes ?? []
         ));
     }
 
     private Result<Aluno> CriarAluno(FabricarUsuarioProps props)
     {
-        var contatos = CriarContatos(props.Contatos);
-        var avaliacoesFisicas =
-            _avaliacaoFisicaFactory.Fabricar(props.AvaliacoesFisicas ?? []);
+        var result = new Result();
+        
+        var contatosResult = CriarContatos(props.Contatos);
+        if (contatosResult.IsFailed) result.WithReasons(contatosResult.Reasons);
+
+        var avaliacoesResult = _avaliacaoFisicaFactory.Fabricar(props.AvaliacoesFisicas ?? []);
+        if (avaliacoesResult.IsFailed) result.WithReasons(avaliacoesResult.Reasons);
+
+        if (result.IsFailed) return Result.Fail<Aluno>(result.Errors);
 
         return Aluno.Criar(new CriarAlunoProps(
             props.NomeCompleto,
@@ -79,34 +92,58 @@ public class UsuarioFactory(AvaliacaoFisicaFactory avaliacaoFisicaFactory) : IUs
             props.Senha,
             props.DataNascimento,
             props.Genero,
-            contatos,
+            contatosResult.Value,
             props.Cpf,
             props.Ativo,
             props.AceiteTermoAdesao,
             props.Objetivo.GetValueOrDefault(),
-            avaliacoesFisicas
+            avaliacoesResult.Value
         ));
     }
 
-    private static List<Contato> CriarContatos(IEnumerable<ContatoDto> contatos)
+    private static Result<List<Contato>> CriarContatos(IEnumerable<ContatoDto> contatosDto)
     {
-        return [.. contatos.Select(contato => Contato.Criar(new CriarContatoProps(
-            contato.Tipo,
-            contato.Valor,
-            contato.Descricao,
-            contato.Principal,
-            contato.Plataforma,
-            contato.NomeExibicao
-        )))];
+        var result = new Result<List<Contato>>();
+        var contatos = new List<Contato>();
+
+        foreach (var dto in contatosDto)
+        {
+            var r = Contato.Criar(new CriarContatoProps(
+                dto.Tipo,
+                dto.Valor,
+                dto.Descricao,
+                dto.Principal,
+                dto.Plataforma,
+                dto.NomeExibicao
+            ));
+            
+            if (r.IsFailed) result.WithReasons(r.Reasons);
+            else contatos.Add(r.Value);
+        }
+
+        if (result.IsFailed) return result;
+        return Result.Ok(contatos);
     }
 
-    private static List<Certificado> CriarCertificados(IEnumerable<CertificadoDto> certificados)
+    private static Result<List<Certificado>> CriarCertificados(IEnumerable<CertificadoDto> certificadosDto)
     {
-        return [.. certificados.Select(certificado => Certificado.Criar(new CriarCertificadoProps(
-            certificado.Nome,
-            certificado.ArquivoPdf,
-            certificado.DataUpload,
-            certificado.Validado
-        )))];
+        var result = new Result<List<Certificado>>();
+        var certificados = new List<Certificado>();
+
+        foreach (var dto in certificadosDto)
+        {
+            var r = Certificado.Criar(new CriarCertificadoProps(
+                dto.Nome,
+                dto.ArquivoPdf,
+                dto.DataUpload,
+                dto.Validado
+            ));
+
+            if (r.IsFailed) result.WithReasons(r.Reasons);
+            else certificados.Add(r.Value);
+        }
+
+        if (result.IsFailed) return result;
+        return Result.Ok(certificados);
     }
 }

@@ -1,8 +1,8 @@
 using FluentAssertions;
+using FluentResults;
 using Moq;
 using Treinu.Application.Handlers.Usuarios;
 using Treinu.Contracts.Commands;
-using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Dtos;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
@@ -14,7 +14,6 @@ namespace Treinu.UnitTests.Application.Handlers.Usuarios;
 public class RegistrarUsuarioHandlerTests
 {
     private readonly RegistrarUsuarioHandler _handler;
-    private readonly Mock<IMediator> _mediatorMock;
     private readonly Mock<IUsuarioRepository> _repoMock;
 
     public RegistrarUsuarioHandlerTests()
@@ -22,9 +21,8 @@ public class RegistrarUsuarioHandlerTests
         _repoMock = new Mock<IUsuarioRepository>();
         var avaliacaoFactory = new AvaliacaoFisicaFactory();
         var factory = new UsuarioFactory(avaliacaoFactory);
-        _mediatorMock = new Mock<IMediator>();
 
-        _handler = new RegistrarUsuarioHandler(_repoMock.Object, factory, _mediatorMock.Object);
+        _handler = new RegistrarUsuarioHandler(_repoMock.Object, factory);
     }
 
     [Fact]
@@ -37,7 +35,10 @@ public class RegistrarUsuarioHandlerTests
         );
 
         _repoMock.Setup(r => r.VerificarExistenciaAsync(It.IsAny<string>(), It.IsAny<string>()))
-            .Returns(Task.CompletedTask);
+            .ReturnsAsync(Result.Ok());
+
+        _repoMock.Setup(r => r.SalvarUsuarioAsync(It.IsAny<Usuario>()))
+            .ReturnsAsync(Result.Ok());
 
         var result = await _handler.Handle(request, CancellationToken.None);
 
@@ -56,7 +57,10 @@ public class RegistrarUsuarioHandlerTests
         );
 
         _repoMock.Setup(r => r.VerificarExistenciaAsync(It.IsAny<string>(), It.IsAny<string>()))
-            .Returns(Task.CompletedTask);
+            .ReturnsAsync(Result.Ok());
+
+        _repoMock.Setup(r => r.SalvarUsuarioAsync(It.IsAny<Usuario>()))
+            .ReturnsAsync(Result.Ok());
 
         var result = await _handler.Handle(request, CancellationToken.None);
 

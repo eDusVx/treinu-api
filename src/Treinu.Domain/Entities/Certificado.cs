@@ -1,5 +1,5 @@
+using FluentResults;
 using Treinu.Domain.Core;
-using Treinu.Domain.Exceptions;
 
 namespace Treinu.Domain.Entities;
 
@@ -25,62 +25,76 @@ public class Certificado : Entity
     public DateTime DataUpload { get; private set; }
     public bool Validado { get; private set; }
 
-    public static Certificado Criar(CriarCertificadoProps props)
+    public static Result<Certificado> Criar(CriarCertificadoProps props)
     {
         var id = Guid.NewGuid();
         var instance = new Certificado(id);
 
-        instance.SetNome(props.Nome);
-        instance.SetArquivoPdf(props.ArquivoPdf);
-        instance.SetDataUpload(props.DataUpload);
+        var result = Result.Merge(
+            instance.SetNome(props.Nome),
+            instance.SetArquivoPdf(props.ArquivoPdf),
+            instance.SetDataUpload(props.DataUpload)
+        );
+        
         instance.SetValidado(props.Validado);
 
-        return instance;
+        if (result.IsFailed) return result;
+
+        return Result.Ok(instance);
     }
 
     public static Certificado Carregar(CriarCertificadoProps props, Guid id)
     {
         var instance = new Certificado(id);
 
-        instance.SetNome(props.Nome);
-        instance.SetArquivoPdf(props.ArquivoPdf);
-        instance.SetDataUpload(props.DataUpload);
+        var result = Result.Merge(
+            instance.SetNome(props.Nome),
+            instance.SetArquivoPdf(props.ArquivoPdf),
+            instance.SetDataUpload(props.DataUpload)
+        );
+        
         instance.SetValidado(props.Validado);
+
+        if (result.IsFailed) 
+            throw new InvalidOperationException($"Erro ao carregar Certificado do banco: {result.Errors[0].Message}");
 
         return instance;
     }
 
-    private void SetNome(string nome)
+    private Result SetNome(string nome)
     {
         if (string.IsNullOrWhiteSpace(nome))
-            throw new CertificadoException("Nome não pode ser vazio");
+            return Result.Fail("Nome não pode ser vazio");
 
         if (nome.Length > 100)
-            throw new CertificadoException("Nome não pode ter mais de 100 caracteres");
+            return Result.Fail("Nome não pode ter mais de 100 caracteres");
 
         Nome = nome.Trim();
+        return Result.Ok();
     }
 
-    private void SetArquivoPdf(string arquivoPdf)
+    private Result SetArquivoPdf(string arquivoPdf)
     {
         if (string.IsNullOrWhiteSpace(arquivoPdf))
-            throw new CertificadoException("Arquivo PDF não pode ser vazio");
+            return Result.Fail("Arquivo PDF não pode ser vazio");
 
         if (arquivoPdf.Length < 10)
-            throw new CertificadoException("Arquivo PDF inválido");
+            return Result.Fail("Arquivo PDF inválido");
 
         ArquivoPdf = arquivoPdf;
+        return Result.Ok();
     }
 
-    private void SetDataUpload(DateTime dataUpload)
+    private Result SetDataUpload(DateTime dataUpload)
     {
         if (dataUpload == default)
-            throw new CertificadoException("Data de upload inválida");
+            return Result.Fail("Data de upload inválida");
 
         if (dataUpload > DateTime.Now)
-            throw new CertificadoException("Data de upload não pode ser no futuro");
+            return Result.Fail("Data de upload não pode ser no futuro");
 
         DataUpload = dataUpload;
+        return Result.Ok();
     }
 
     private void SetValidado(bool validado)

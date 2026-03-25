@@ -1,3 +1,4 @@
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Repositories;
@@ -14,27 +15,59 @@ public class CredencialRepository : ICredencialRepository
         _context = context;
     }
 
-    public async Task SalvarCredencialAsync(Credencial credencial)
+    public async Task<Result> SalvarCredencialAsync(Credencial credencial)
     {
-        await _context.Credenciais.AddAsync(credencial);
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.Credenciais.AddAsync(credencial);
+            await _context.SaveChangesAsync();
+            return Result.Ok();
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail($"Erro inesperado ao salvar credencial: {ex.Message}");
+        }
     }
 
-    public async Task<Credencial?> BuscarCredencialPorEmailAsync(string email)
+    public async Task<Result<Credencial?>> BuscarCredencialPorEmailAsync(string email)
     {
-        return await _context.Credenciais
-            .FirstOrDefaultAsync(c => c.Email == email);
+        try
+        {
+            var credencial = await _context.Credenciais
+                .FirstOrDefaultAsync(c => c.Email == email);
+            return Result.Ok(credencial);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<Credencial?>($"Erro inesperado ao buscar credencial por e-mail: {ex.Message}");
+        }
     }
 
-    public async Task<Credencial?> BuscarCredencialPorRefreshTokenAsync(string refreshToken)
+    public async Task<Result<Credencial?>> BuscarCredencialPorRefreshTokenAsync(string refreshToken)
     {
-        return await _context.Credenciais
-            .FirstOrDefaultAsync(c => c.RefreshToken == refreshToken);
+        try
+        {
+            var credencial = await _context.Credenciais
+                .FirstOrDefaultAsync(c => c.RefreshToken == refreshToken);
+            return Result.Ok(credencial);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<Credencial?>($"Erro inesperado ao buscar credencial por refresh token: {ex.Message}");
+        }
     }
 
-    public async Task AtualizarCredencialAsync(Credencial credencial)
+    public async Task<Result> AtualizarCredencialAsync(Credencial credencial)
     {
-        _context.Credenciais.Update(credencial);
-        await _context.SaveChangesAsync();
+        try
+        {
+            _context.Credenciais.Update(credencial);
+            await _context.SaveChangesAsync();
+            return Result.Ok();
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail($"Erro inesperado ao atualizar credencial: {ex.Message}");
+        }
     }
 }
