@@ -9,6 +9,7 @@ public interface IUsuarioRepository
     Task<Result> VerificarExistenciaAsync(string email, string cpf);
     Task<Result> SalvarUsuarioAsync(Usuario usuario);
     Task<Result> AtualizarUsuarioAsync(Usuario usuario);
+    Task<Usuario?> BuscarPorIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<Result<Treinador>> BuscarTreinadorPorIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<Result<Aluno>> BuscarAlunoPorIdAsync(Guid id, CancellationToken cancellationToken = default);
 

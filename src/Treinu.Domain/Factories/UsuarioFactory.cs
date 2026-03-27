@@ -18,7 +18,8 @@ public record FabricarUsuarioProps(
     bool AceiteTermoAdesao,
     PerfilEnum TipoUsuario,
     ObjetivoEnum? Objetivo = null,
-    Guid? TreinadorId = null
+    Guid? TreinadorId = null,
+    List<Certificado>? Certificados = null
 );
 
 public class UsuarioFactory : IUsuarioFactory
@@ -37,7 +38,8 @@ public class UsuarioFactory : IUsuarioFactory
                     new List<Contato>(),
                     props.Cpf,
                     props.Ativo,
-                    props.AceiteTermoAdesao
+                    props.AceiteTermoAdesao,
+                    props.Certificados
                 ));
                 if (resultT.IsFailed) return Result.Fail<Usuario>(resultT.Errors);
                 return Result.Ok<Usuario>(resultT.Value);

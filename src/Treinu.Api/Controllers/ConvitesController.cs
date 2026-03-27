@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Treinu.Api.Controllers.Base;
 using Treinu.Contracts.Commands;
 using Treinu.Domain.Core.Mediator;
+using Treinu.Domain.Enums;
 using Treinu.Infrastructure.Security;
 
 namespace Treinu.Api.Controllers;
@@ -11,7 +12,7 @@ namespace Treinu.Api.Controllers;
 [Route("api/convites")]
 public class ConvitesController(IMediator mediator) : ApiController
 {
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Roles = RoleConstants.Admin)]
     [HttpPost("treinador")]
     [ProducesResponseType(200)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]
@@ -23,7 +24,7 @@ public class ConvitesController(IMediator mediator) : ApiController
         return Ok();
     }
 
-    [Authorize(Roles = "TREINADOR,ADMIN")]
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
     [HttpPost("aluno")]
     [ProducesResponseType(200)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]

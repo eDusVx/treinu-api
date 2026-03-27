@@ -12,7 +12,7 @@ using Treinu.Infrastructure.Data;
 namespace Treinu.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260327222637_InitialCreate")]
+    [Migration("20260327224313_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -270,14 +270,17 @@ namespace Treinu.Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<string>("Perfil")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                    b.Property<int>("Perfil")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Senha")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("character varying(25)");
 
                     b.HasKey("Id");
 
@@ -289,7 +292,7 @@ namespace Treinu.Infrastructure.Migrations
 
                     b.ToTable("Usuarios", (string)null);
 
-                    b.HasDiscriminator<string>("Perfil");
+                    b.HasDiscriminator<int>("Perfil");
 
                     b.UseTphMappingStrategy();
                 });
@@ -336,7 +339,7 @@ namespace Treinu.Infrastructure.Migrations
                 {
                     b.HasBaseType("Treinu.Domain.Entities.Usuario");
 
-                    b.HasDiscriminator().HasValue("ADMIN");
+                    b.HasDiscriminator().HasValue(2);
                 });
 
             modelBuilder.Entity("Treinu.Domain.Entities.Aluno", b =>
@@ -353,7 +356,7 @@ namespace Treinu.Infrastructure.Migrations
 
                     b.HasIndex("TreinadorId");
 
-                    b.HasDiscriminator().HasValue("ALUNO");
+                    b.HasDiscriminator().HasValue(0);
                 });
 
             modelBuilder.Entity("Treinu.Domain.Entities.Treinador", b =>
@@ -364,7 +367,7 @@ namespace Treinu.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("jsonb");
 
-                    b.HasDiscriminator().HasValue("TREINADOR");
+                    b.HasDiscriminator().HasValue(1);
                 });
 
             modelBuilder.Entity("Treinu.Domain.Entities.AvaliacaoFisica.AvaliacaoFisica", b =>

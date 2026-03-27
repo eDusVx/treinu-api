@@ -30,6 +30,9 @@ public static class DomainErrors
         public static readonly DomainError ConflitoEmEmailOuCpf = new("Usuario.ConflitoDuplicado",
             "O e-mail ou o CPF inserido já estão em uso.", ErrorType.Conflict);
 
+        public static readonly DomainError UsuarioNaoEncontrado = new("Usuario.NaoEncontrado",
+            "Usuário não encontrado.", ErrorType.NotFound);
+
         public static readonly DomainError TreinadorNaoEncontrado = new("Treinador.NaoEncontrado",
             "Treinador não encontrado.", ErrorType.NotFound);
 

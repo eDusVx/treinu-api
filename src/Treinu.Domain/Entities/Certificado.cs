@@ -6,8 +6,7 @@ namespace Treinu.Domain.Entities;
 public record CriarCertificadoProps(
     string Nome,
     string ArquivoPdf,
-    DateTime DataUpload,
-    bool Validado
+    bool Validado = false
 );
 
 public class Certificado : Entity
@@ -33,9 +32,9 @@ public class Certificado : Entity
         var result = Result.Merge(
             instance.SetNome(props.Nome),
             instance.SetArquivoPdf(props.ArquivoPdf),
-            instance.SetDataUpload(props.DataUpload)
+            instance.SetDataUpload()
         );
-        
+
         instance.SetValidado(props.Validado);
 
         if (result.IsFailed) return result;
@@ -50,12 +49,12 @@ public class Certificado : Entity
         var result = Result.Merge(
             instance.SetNome(props.Nome),
             instance.SetArquivoPdf(props.ArquivoPdf),
-            instance.SetDataUpload(props.DataUpload)
+            instance.SetDataUpload()
         );
-        
+
         instance.SetValidado(props.Validado);
 
-        if (result.IsFailed) 
+        if (result.IsFailed)
             throw new InvalidOperationException($"Erro ao carregar Certificado do banco: {result.Errors[0].Message}");
 
         return instance;
@@ -85,15 +84,9 @@ public class Certificado : Entity
         return Result.Ok();
     }
 
-    private Result SetDataUpload(DateTime dataUpload)
+    private Result SetDataUpload()
     {
-        if (dataUpload == default)
-            return Result.Fail("Data de upload inválida");
-
-        if (dataUpload > DateTime.Now)
-            return Result.Fail("Data de upload não pode ser no futuro");
-
-        DataUpload = dataUpload;
+        DataUpload = DateTime.UtcNow;
         return Result.Ok();
     }
 

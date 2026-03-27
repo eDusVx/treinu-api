@@ -42,6 +42,7 @@ public abstract class Usuario : AggregateRoot
     public PerfilEnum Perfil { get; private set; }
     public bool Ativo { get; private set; }
     public bool AceiteTermoAdesao { get; private set; }
+    public UsuarioStatusEnum Status { get; private set; }
 
     public virtual Credencial? Credencial { get; private set; }
 
@@ -165,6 +166,22 @@ public abstract class Usuario : AggregateRoot
     protected Result SetAceiteTermoAdesao(bool aceiteTermoAdesao)
     {
         AceiteTermoAdesao = aceiteTermoAdesao;
+        return Result.Ok();
+    }
+
+    protected Result SetStatus(UsuarioStatusEnum status)
+    {
+        if (!Enum.IsDefined(typeof(UsuarioStatusEnum), status))
+            return Result.Fail(DomainErrors.Usuario.DadosVazios);
+
+        Status = status;
+        return Result.Ok();
+    }
+
+    public Result Aprovar()
+    {
+        Status = UsuarioStatusEnum.ATIVO;
+        Ativo = true;
         return Result.Ok();
     }
 

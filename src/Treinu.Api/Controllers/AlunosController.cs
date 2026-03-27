@@ -3,15 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using Treinu.Api.Controllers.Base;
 using Treinu.Contracts.Commands;
 using Treinu.Domain.Core.Mediator;
+using Treinu.Domain.Enums;
 
 namespace Treinu.Api.Controllers;
 
 [ApiController]
-[Route("api/alunos")]
+[Route("api/students")]
 public class AlunosController(IMediator mediator) : ApiController
 {
     [AllowAnonymous]
-    [HttpPost]
+    [HttpPost("register")]
     [ProducesResponseType(typeof(object), 201)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]
     public async Task<IActionResult> RegistrarAluno([FromBody] RegistrarAlunoCommand command)
@@ -21,7 +22,7 @@ public class AlunosController(IMediator mediator) : ApiController
         return CreatedAtAction(nameof(RegistrarAluno), result.Value);
     }
 
-    [Authorize(Roles = "ALUNO,ADMIN")]
+    [Authorize(Roles = $"{RoleConstants.Aluno},{RoleConstants.Admin}")]
     [HttpPost("{id:guid}/contatos")]
     [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]
@@ -34,7 +35,7 @@ public class AlunosController(IMediator mediator) : ApiController
         return Ok(result.Value);
     }
 
-    [Authorize(Roles = "ALUNO,ADMIN")]
+    [Authorize(Roles = $"{RoleConstants.Aluno},{RoleConstants.Admin}")]
     [HttpDelete("{id:guid}/contatos/{contatoId:guid}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ProblemDetails), 404)]
@@ -46,7 +47,7 @@ public class AlunosController(IMediator mediator) : ApiController
         return NoContent();
     }
 
-    [Authorize(Roles = "TREINADOR,ADMIN")]
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
     [HttpPost("{id:guid}/avaliacoes")]
     [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]
@@ -59,7 +60,7 @@ public class AlunosController(IMediator mediator) : ApiController
         return Ok(result.Value);
     }
 
-    [Authorize(Roles = "TREINADOR,ADMIN")]
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
     [HttpDelete("{id:guid}/avaliacoes/{avaliacaoId:guid}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ProblemDetails), 404)]

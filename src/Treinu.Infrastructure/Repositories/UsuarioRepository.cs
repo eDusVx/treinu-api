@@ -64,6 +64,12 @@ public class UsuarioRepository : IUsuarioRepository
         }
     }
 
+    public async Task<Usuario?> BuscarPorIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _context.Usuarios
+            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+    }
+
     public async Task<Result<Treinador>> BuscarTreinadorPorIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try

@@ -4,6 +4,7 @@ using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Enums;
 using Treinu.Domain.Factories;
 using Treinu.Domain.Factories.Interfaces;
+using Treinu.Domain.Entities;
 using Treinu.Domain.Errors;
 using Treinu.Domain.Repositories;
 
@@ -11,23 +12,12 @@ namespace Treinu.Application.Handlers.Treinadores;
 
 public class RegistrarTreinadorHandler(
     IUsuarioRepository usuarioRepository,
-    IConviteRepository conviteRepository,
     IUsuarioFactory usuarioFactory) : IRequestHandler<RegistrarTreinadorCommand, Result<object>>
 {
     public async Task<Result<object>> Handle(RegistrarTreinadorCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var conviteResult = await conviteRepository.BuscarPorTokenAsync(request.TokenConvite);
-            if (conviteResult.IsFailed) return Result.Fail<object>(conviteResult.Errors);
-
-            var convite = conviteResult.Value;
-            if (convite.Perfil != PerfilEnum.TREINADOR)
-                return Result.Fail<object>(DomainErrors.Convite.PerfilInvalido);
-
-            var aceitarResult = convite.Aceitar();
-            if (aceitarResult.IsFailed) return Result.Fail<object>(aceitarResult.Errors);
-
             var existenciaResult = await usuarioRepository.VerificarExistenciaAsync(request.Email, request.Cpf);
             if (existenciaResult.IsFailed) return Result.Fail<object>(existenciaResult.Errors);
 
@@ -38,9 +28,11 @@ public class RegistrarTreinadorHandler(
                 request.DataNascimento,
                 request.Genero,
                 request.Cpf,
-                Ativo: true,
+                Ativo: false,
                 request.AceiteTermoAdesao,
-                PerfilEnum.TREINADOR
+                PerfilEnum.TREINADOR,
+                Certificados: [.. request.Certificados.Select(c =>
+                    Certificado.Criar(new CriarCertificadoProps(c.Nome, c.ArquivoPdf)).Value)]
             );
 
             var usuarioResult = usuarioFactory.Fabricar(props);
@@ -48,8 +40,6 @@ public class RegistrarTreinadorHandler(
 
             var saveResult = await usuarioRepository.SalvarUsuarioAsync(usuarioResult.Value);
             if (saveResult.IsFailed) return Result.Fail<object>(saveResult.Errors);
-
-            await conviteRepository.AtualizarConviteAsync(convite);
 
             return Result.Ok(usuarioResult.Value.ToDto());
         }

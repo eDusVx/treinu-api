@@ -36,9 +36,10 @@ public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
             .HasConversion<string>()
             .HasMaxLength(20);
 
-        builder.Property(u => u.Perfil)
+        builder.Property(u => u.Status)
             .HasConversion<string>()
-            .HasMaxLength(20);
+            .HasMaxLength(25)
+            .IsRequired();
 
         // TPH (Table-Per-Hierarchy) Setup
         builder.HasDiscriminator(u => u.Perfil)

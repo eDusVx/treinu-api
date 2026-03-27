@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -22,9 +22,10 @@ namespace Treinu.Infrastructure.Migrations
                     DataNascimento = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Genero = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     Cpf = table.Column<string>(type: "character varying(14)", maxLength: 14, nullable: false),
-                    Perfil = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    Perfil = table.Column<int>(type: "integer", nullable: false),
                     Ativo = table.Column<bool>(type: "boolean", nullable: false),
                     AceiteTermoAdesao = table.Column<bool>(type: "boolean", nullable: false),
+                    Status = table.Column<string>(type: "character varying(25)", maxLength: 25, nullable: false),
                     Objetivo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     TreinadorId = table.Column<Guid>(type: "uuid", nullable: true),
                     Especializacoes = table.Column<string>(type: "jsonb", nullable: true)
@@ -247,8 +248,8 @@ namespace Treinu.Infrastructure.Migrations
 
             migrationBuilder.Sql(@"
 INSERT INTO public.""Usuarios""
-(""Id"", ""NomeCompleto"", ""Email"", ""Senha"", ""DataNascimento"", ""Genero"", ""Cpf"", ""Perfil"", ""Ativo"", ""AceiteTermoAdesao"", ""Objetivo"", ""Especializacoes"", ""TreinadorId"")
-VALUES('f4a942d3-7060-4d7a-8845-21e6c8db160f'::uuid, 'Admin Inicial', 'admin@treinu.com', '$2a$10$PhzWO/4Tjy9A5GZEB4j6aunbMT.6yEhVBEMlVlwBkTFsg866Ou1Iu', '1979-12-31 21:00:00.000', 'MASCULINO', '05585299174', 'ADMIN', true, true, NULL, NULL, NULL);
+(""Id"", ""NomeCompleto"", ""Email"", ""Senha"", ""DataNascimento"", ""Genero"", ""Cpf"", ""Perfil"", ""Ativo"", ""AceiteTermoAdesao"", ""Status"", ""Objetivo"", ""Especializacoes"", ""TreinadorId"")
+VALUES('f4a942d3-7060-4d7a-8845-21e6c8db160f'::uuid, 'Admin Inicial', 'admin@treinu.com', '$2a$10$PhzWO/4Tjy9A5GZEB4j6aunbMT.6yEhVBEMlVlwBkTFsg866Ou1Iu', '1979-12-31 21:00:00.000', 'MASCULINO', '11144477735', 2, true, true, 'ATIVO', NULL, NULL, NULL);
 
 INSERT INTO public.""Credenciais""
 (""Id"", ""UsuarioId"", ""Email"", ""Senha"", ""TipoUsuario"", ""Ativo"", ""RefreshToken"", ""RefreshTokenExpiryTime"")

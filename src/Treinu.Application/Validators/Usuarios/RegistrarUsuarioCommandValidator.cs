@@ -15,7 +15,11 @@ public class RegistrarTreinadorCommandValidator : AbstractValidator<RegistrarTre
         RuleFor(x => x.DataNascimento).LessThan(DateTime.UtcNow).WithMessage("Data de nascimento inválida.");
         RuleFor(x => x.AceiteTermoAdesao).Equal(true)
             .WithMessage("Você deve aceitar os termos de adesão para se registrar.");
-        RuleFor(x => x.TokenConvite).NotEmpty().WithMessage("O token de convite é obrigatório.");
+        RuleFor(x => x.Certificados).NotEmpty().WithMessage("O envio do certificado é obrigatório.");
+        RuleForEach(x => x.Certificados).ChildRules(c => {
+            c.RuleFor(x => x.Nome).NotEmpty();
+            c.RuleFor(x => x.ArquivoPdf).NotEmpty();
+        });
     }
 }
 

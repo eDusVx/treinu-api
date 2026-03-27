@@ -17,7 +17,7 @@ public class Convite : Entity
         TreinadorId = treinadorId;
         Status = ConviteStatusEnum.PENDENTE;
         CriadoEm = DateTime.UtcNow;
-        ExpiraEm = DateTime.UtcNow.AddDays(7);
+        ExpiraEm = DateTime.UtcNow.AddHours(48);
     }
 
     public string Email { get; private set; } = string.Empty;

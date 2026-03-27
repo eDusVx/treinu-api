@@ -61,12 +61,14 @@ public class Aluno : Usuario
         if (rs8.IsFailed) return Result.Fail<Aluno>(rs8.Errors);
         var rs9 = instance.SetSenha(props.Senha);
         if (rs9.IsFailed) return Result.Fail<Aluno>(rs9.Errors);
-        var rs10 = instance.SetContato(props.Contato ?? new List<Contato>());
+        var rs10 = instance.SetStatus(UsuarioStatusEnum.ATIVO);
         if (rs10.IsFailed) return Result.Fail<Aluno>(rs10.Errors);
-        var rs11 = instance.SetObjetivo(props.Objetivo);
+        var rs11 = instance.SetContato(props.Contato ?? new List<Contato>());
         if (rs11.IsFailed) return Result.Fail<Aluno>(rs11.Errors);
-        var rs12 = instance.SetAvaliacaoFisica(props.AvaliacaoFisica ?? new List<AvaliacaoFisica.AvaliacaoFisica>());
+        var rs12 = instance.SetObjetivo(props.Objetivo);
         if (rs12.IsFailed) return Result.Fail<Aluno>(rs12.Errors);
+        var rs13 = instance.SetAvaliacaoFisica(props.AvaliacaoFisica ?? new List<AvaliacaoFisica.AvaliacaoFisica>());
+        if (rs13.IsFailed) return Result.Fail<Aluno>(rs13.Errors);
 
         instance.TreinadorId = props.TreinadorId;
 
@@ -105,11 +107,13 @@ public class Aluno : Usuario
         if (rs8.IsFailed) return Result.Fail<Aluno>(rs8.Errors);
         var rs9 = instance.SetPerfil(PerfilEnum.ALUNO);
         if (rs9.IsFailed) return Result.Fail<Aluno>(rs9.Errors);
-        instance.CarregarSenha(props.Senha);
-        var rs10 = instance.SetObjetivo(props.Objetivo);
+        var rs10 = instance.SetStatus(UsuarioStatusEnum.ATIVO);
         if (rs10.IsFailed) return Result.Fail<Aluno>(rs10.Errors);
-        var rs11 = instance.SetAvaliacaoFisica(props.AvaliacaoFisica ?? new List<AvaliacaoFisica.AvaliacaoFisica>());
+        instance.CarregarSenha(props.Senha);
+        var rs11 = instance.SetObjetivo(props.Objetivo);
         if (rs11.IsFailed) return Result.Fail<Aluno>(rs11.Errors);
+        var rs12 = instance.SetAvaliacaoFisica(props.AvaliacaoFisica ?? new List<AvaliacaoFisica.AvaliacaoFisica>());
+        if (rs12.IsFailed) return Result.Fail<Aluno>(rs12.Errors);
 
         instance.TreinadorId = props.TreinadorId;
 

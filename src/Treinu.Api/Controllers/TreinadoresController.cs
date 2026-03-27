@@ -3,11 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Treinu.Api.Controllers.Base;
 using Treinu.Contracts.Commands;
 using Treinu.Domain.Core.Mediator;
+using Treinu.Domain.Enums;
 
 namespace Treinu.Api.Controllers;
 
 [ApiController]
-[Route("api/treinadores")]
+[Route("api/trainers")]
 public class TreinadoresController(IMediator mediator) : ApiController
 {
     [AllowAnonymous]
@@ -21,7 +22,7 @@ public class TreinadoresController(IMediator mediator) : ApiController
         return CreatedAtAction(nameof(RegistrarTreinador), result.Value);
     }
 
-    [Authorize(Roles = "TREINADOR,ADMIN")]
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
     [HttpPost("{id:guid}/contatos")]
     [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]
@@ -34,7 +35,7 @@ public class TreinadoresController(IMediator mediator) : ApiController
         return Ok(result.Value);
     }
 
-    [Authorize(Roles = "TREINADOR,ADMIN")]
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
     [HttpDelete("{id:guid}/contatos/{contatoId:guid}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ProblemDetails), 404)]
@@ -46,7 +47,7 @@ public class TreinadoresController(IMediator mediator) : ApiController
         return NoContent();
     }
 
-    [Authorize(Roles = "TREINADOR,ADMIN")]
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
     [HttpPost("{id:guid}/especializacoes")]
     [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]
@@ -59,7 +60,7 @@ public class TreinadoresController(IMediator mediator) : ApiController
         return Ok(result.Value);
     }
 
-    [Authorize(Roles = "TREINADOR,ADMIN")]
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
     [HttpDelete("{id:guid}/especializacoes")]
     [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ProblemDetails), 404)]
@@ -71,7 +72,7 @@ public class TreinadoresController(IMediator mediator) : ApiController
         return NoContent();
     }
 
-    [Authorize(Roles = "TREINADOR,ADMIN")]
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
     [HttpPost("{id:guid}/certificados")]
     [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]
@@ -84,7 +85,7 @@ public class TreinadoresController(IMediator mediator) : ApiController
         return Ok(result.Value);
     }
 
-    [Authorize(Roles = "TREINADOR,ADMIN")]
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
     [HttpDelete("{id:guid}/certificados/{certificadoId:guid}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ProblemDetails), 404)]

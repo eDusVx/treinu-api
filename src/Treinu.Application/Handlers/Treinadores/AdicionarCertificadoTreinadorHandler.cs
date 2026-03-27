@@ -19,7 +19,6 @@ public class AdicionarCertificadoTreinadorHandler(
             var certificadoResult = Certificado.Criar(new CriarCertificadoProps(
                 request.Nome,
                 request.ArquivoPdf,
-                request.DataUpload,
                 request.Validado
             ));
             if (certificadoResult.IsFailed) return Result.Fail<object>(certificadoResult.Errors);

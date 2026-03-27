@@ -12,8 +12,10 @@ public record RegistrarTreinadorCommand(
     GeneroEnum Genero,
     string Cpf,
     bool AceiteTermoAdesao,
-    Guid TokenConvite
+    List<CertificadoDto> Certificados
 ) : IRequest<Result<object>>;
+
+public record CertificadoDto(string Nome, string ArquivoPdf);
 
 public record RegistrarAlunoCommand(
     string NomeCompleto,

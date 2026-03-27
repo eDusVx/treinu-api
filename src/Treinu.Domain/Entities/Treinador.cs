@@ -63,12 +63,14 @@ public class Treinador : Usuario
         if (rs8.IsFailed) return Result.Fail<Treinador>(rs8.Errors);
         var rs9 = instance.SetSenha(props.Senha);
         if (rs9.IsFailed) return Result.Fail<Treinador>(rs9.Errors);
-        var rs10 = instance.SetContato(props.Contato ?? new List<Contato>());
+        var rs10 = instance.SetStatus(UsuarioStatusEnum.PENDENTE_VALIDACAO);
         if (rs10.IsFailed) return Result.Fail<Treinador>(rs10.Errors);
-        var rs11 = instance.SetCertificados(props.Certificados ?? new List<Certificado>());
+        var rs11 = instance.SetContato(props.Contato ?? new List<Contato>());
         if (rs11.IsFailed) return Result.Fail<Treinador>(rs11.Errors);
-        var rs12 = instance.SetEspecializacoes(props.Especializacoes ?? new List<string>());
+        var rs12 = instance.SetCertificados(props.Certificados ?? new List<Certificado>());
         if (rs12.IsFailed) return Result.Fail<Treinador>(rs12.Errors);
+        var rs13 = instance.SetEspecializacoes(props.Especializacoes ?? new List<string>());
+        if (rs13.IsFailed) return Result.Fail<Treinador>(rs13.Errors);
 
         instance.Apply(
             new UsuarioCadastradoEvent(
@@ -105,11 +107,13 @@ public class Treinador : Usuario
         if (rs8.IsFailed) return Result.Fail<Treinador>(rs8.Errors);
         var rs9 = instance.SetPerfil(PerfilEnum.TREINADOR);
         if (rs9.IsFailed) return Result.Fail<Treinador>(rs9.Errors);
-        instance.CarregarSenha(props.Senha);
-        var rs10 = instance.SetCertificados(props.Certificados ?? new List<Certificado>());
+        var rs10 = instance.SetStatus(UsuarioStatusEnum.PENDENTE_VALIDACAO);
         if (rs10.IsFailed) return Result.Fail<Treinador>(rs10.Errors);
-        var rs11 = instance.SetEspecializacoes(props.Especializacoes ?? new List<string>());
+        instance.CarregarSenha(props.Senha);
+        var rs11 = instance.SetCertificados(props.Certificados ?? new List<Certificado>());
         if (rs11.IsFailed) return Result.Fail<Treinador>(rs11.Errors);
+        var rs12 = instance.SetEspecializacoes(props.Especializacoes ?? new List<string>());
+        if (rs12.IsFailed) return Result.Fail<Treinador>(rs12.Errors);
 
         return Result.Ok(instance);
     }

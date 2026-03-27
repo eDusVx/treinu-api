@@ -19,7 +19,8 @@ public class RegistrarTreinadorCommandValidatorTests
     {
         var command = new RegistrarTreinadorCommand(
             "Fulano Silva", "valido@email.com", "Senha@123", new DateTime(1990, 1, 1),
-            GeneroEnum.MASCULINO, "123", true, Guid.NewGuid()
+            GeneroEnum.MASCULINO, "123", true,
+            []
         );
 
         var result = _validator.Validate(command);
@@ -29,17 +30,18 @@ public class RegistrarTreinadorCommandValidatorTests
     }
 
     [Fact]
-    public void Validador_Deve_Ter_Erro_Quando_Token_Vazio()
+    public void Validador_Deve_Ter_Erro_Quando_Certificados_Vazio()
     {
         var command = new RegistrarTreinadorCommand(
             "Fulano Silva", "valido@email.com", "Senha@123", new DateTime(1990, 1, 1),
-            GeneroEnum.MASCULINO, "11144477735", true, Guid.Empty
+            GeneroEnum.MASCULINO, "11144477735", true,
+            []
         );
 
         var result = _validator.Validate(command);
 
         result.IsValid.Should().BeFalse();
-        result.Errors.Should().Contain(e => e.PropertyName == "TokenConvite");
+        result.Errors.Should().Contain(e => e.PropertyName == "Certificados");
     }
 
     [Fact]
@@ -47,7 +49,8 @@ public class RegistrarTreinadorCommandValidatorTests
     {
         var command = new RegistrarTreinadorCommand(
             "Fulano Silva", "valido@email.com", "Senha@123", new DateTime(1990, 1, 1),
-            GeneroEnum.MASCULINO, "11144477735", true, Guid.NewGuid()
+            GeneroEnum.MASCULINO, "11144477735", true,
+            [new("CREF", "path/to/pdf")]
         );
 
         var result = _validator.Validate(command);

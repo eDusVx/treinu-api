@@ -12,7 +12,7 @@ namespace Treinu.Api.Controllers;
 [Route("api/[controller]")]
 public class UsuariosController(IMediator mediator) : ApiController
 {
-    [Authorize(Roles = "ADMIN,TREINADOR")]
+    [Authorize(Roles = $"{RoleConstants.Admin},{RoleConstants.Treinador}")]
     [HttpGet]
     [ProducesResponseType(typeof(PaginationResponse<object>), 200)]
     public async Task<IActionResult> BuscarUsuarios([FromQuery] PerfilEnum? tipoUsuario, [FromQuery] int page = 1,

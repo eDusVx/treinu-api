@@ -34,3 +34,10 @@ public enum ConviteStatusEnum
     ACEITO,
     EXPIRADO
 }
+
+public enum UsuarioStatusEnum
+{
+    PENDENTE_VALIDACAO,
+    ATIVO,
+    BLOQUEADO
+}

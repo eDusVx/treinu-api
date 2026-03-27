@@ -42,3 +42,5 @@ public record RemoverCertificadoTreinadorCommand(
     Guid TreinadorId,
     Guid CertificadoId
 ) : IRequest<Result<object>>;
+
+public record AprovarTreinadorCommand(Guid TreinadorId) : IRequest<Result<Result>>;

@@ -30,10 +30,12 @@ public class Administrador : Usuario
         if (rs7.IsFailed) return Result.Fail<Administrador>(rs7.Errors);
         var rs8 = instance.SetPerfil(PerfilEnum.ADMIN);
         if (rs8.IsFailed) return Result.Fail<Administrador>(rs8.Errors);
-        var rs9 = instance.SetSenha(props.Senha);
+        var rs9 = instance.SetStatus(UsuarioStatusEnum.ATIVO);
         if (rs9.IsFailed) return Result.Fail<Administrador>(rs9.Errors);
-        var rs10 = instance.SetContato(props.Contato ?? new List<Contato>());
+        var rs10 = instance.SetSenha(props.Senha);
         if (rs10.IsFailed) return Result.Fail<Administrador>(rs10.Errors);
+        var rs11 = instance.SetContato(props.Contato ?? new List<Contato>());
+        if (rs11.IsFailed) return Result.Fail<Administrador>(rs11.Errors);
 
         return Result.Ok(instance);
     }
