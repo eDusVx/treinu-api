@@ -37,6 +37,9 @@ public class Treinador : Usuario
     public IReadOnlyCollection<Certificado> Certificados => _certificados.AsReadOnly();
     public IReadOnlyCollection<string> Especializacoes => _especializacoes.AsReadOnly();
 
+    public virtual ICollection<Convite> Convites { get; private set; } = new List<Convite>();
+    public virtual ICollection<Aluno> Alunos { get; private set; } = new List<Aluno>();
+
     public static Result<Treinador> Criar(CriarTreinadorProps props)
     {
         var id = Guid.NewGuid();
@@ -138,6 +141,22 @@ public class Treinador : Usuario
     {
         if (string.IsNullOrWhiteSpace(especializacao)) return Result.Fail(DomainErrors.Usuario.DadosVazios);
         _especializacoes.Add(especializacao);
+        return Result.Ok();
+    }
+
+    public Result RemoverEspecializacao(string especializacao)
+    {
+        if (string.IsNullOrWhiteSpace(especializacao)) return Result.Fail(DomainErrors.Usuario.DadosVazios);
+        if (!_especializacoes.Remove(especializacao))
+            return Result.Fail(DomainErrors.Usuario.EspecializacaoNaoEncontrada);
+        return Result.Ok();
+    }
+
+    public Result RemoverCertificado(Guid certificadoId)
+    {
+        var certificado = _certificados.FirstOrDefault(c => c.Id == certificadoId);
+        if (certificado == null) return Result.Fail(DomainErrors.Usuario.CertificadoNaoEncontrado);
+        _certificados.Remove(certificado);
         return Result.Ok();
     }
 

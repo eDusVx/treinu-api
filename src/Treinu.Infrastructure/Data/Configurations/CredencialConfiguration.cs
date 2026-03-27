@@ -44,5 +44,10 @@ public class CredencialConfiguration : IEntityTypeConfiguration<Credencial>
 
         builder.Property(c => c.Ativo)
             .IsRequired();
+
+        builder.HasOne(c => c.Usuario)
+            .WithOne(u => u.Credencial)
+            .HasForeignKey<Credencial>(c => c.UsuarioId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

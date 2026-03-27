@@ -6,8 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Treinu.Api.Middlewares;
 using Treinu.Application.Extensions;
-using Treinu.Application.Handlers.Usuarios;
+using Treinu.Application.Handlers.Treinadores;
 using Treinu.Application.Interfaces;
+using Treinu.Domain.Core;
 using Treinu.Domain.Factories;
 using Treinu.Domain.Factories.Interfaces;
 using Treinu.Domain.Repositories;
@@ -40,9 +41,11 @@ builder.Services.AddScoped<ICredencialRepository, CredencialRepository>();
 builder.Services.AddScoped<IUsuarioFactory, UsuarioFactory>();
 builder.Services.AddScoped<AvaliacaoFisicaFactory>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IConviteRepository, ConviteRepository>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
-builder.Services.AddValidatorsFromAssembly(typeof(RegistrarUsuarioHandler).Assembly);
-builder.Services.AddCustomMediator(typeof(RegistrarUsuarioHandler).Assembly);
+builder.Services.AddValidatorsFromAssembly(typeof(RegistrarTreinadorHandler).Assembly);
+builder.Services.AddCustomMediator(typeof(RegistrarTreinadorHandler).Assembly);
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();

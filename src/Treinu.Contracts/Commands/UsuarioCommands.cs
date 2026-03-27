@@ -1,23 +1,28 @@
 using FluentResults;
 using Treinu.Domain.Core.Mediator;
-using Treinu.Domain.Dtos;
 using Treinu.Domain.Enums;
 
 namespace Treinu.Contracts.Commands;
 
-public record RegistrarUsuarioCommand(
+public record RegistrarTreinadorCommand(
     string NomeCompleto,
     string Email,
     string Senha,
     DateTime DataNascimento,
     GeneroEnum Genero,
     string Cpf,
-    bool Ativo,
     bool AceiteTermoAdesao,
-    PerfilEnum TipoUsuario,
-    List<ContatoDto> Contatos,
-    ObjetivoEnum? Objetivo = null,
-    List<AvaliacaoFisicaDto>? AvaliacoesFisicas = null,
-    List<CertificadoDto>? Certificados = null,
-    List<string>? Especializacoes = null
+    Guid TokenConvite
+) : IRequest<Result<object>>;
+
+public record RegistrarAlunoCommand(
+    string NomeCompleto,
+    string Email,
+    string Senha,
+    DateTime DataNascimento,
+    GeneroEnum Genero,
+    string Cpf,
+    bool AceiteTermoAdesao,
+    ObjetivoEnum Objetivo,
+    Guid TokenConvite
 ) : IRequest<Result<object>>;

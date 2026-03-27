@@ -43,11 +43,17 @@ public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
         // TPH (Table-Per-Hierarchy) Setup
         builder.HasDiscriminator(u => u.Perfil)
             .HasValue<Aluno>(PerfilEnum.ALUNO)
-            .HasValue<Treinador>(PerfilEnum.TREINADOR);
+            .HasValue<Treinador>(PerfilEnum.TREINADOR)
+            .HasValue<Administrador>(PerfilEnum.ADMIN);
 
         // Relationships
         builder.HasMany(u => u.Contato)
             .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(u => u.Credencial)
+            .WithOne(c => c.Usuario)
+            .HasForeignKey<Credencial>(c => c.UsuarioId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
@@ -63,6 +69,11 @@ public class AlunoConfiguration : IEntityTypeConfiguration<Aluno>
         builder.HasMany(a => a.AvaliacaoFisica)
             .WithOne()
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(a => a.Treinador)
+            .WithMany(t => t.Alunos)
+            .HasForeignKey(a => a.TreinadorId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
 

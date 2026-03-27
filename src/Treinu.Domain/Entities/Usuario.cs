@@ -43,6 +43,8 @@ public abstract class Usuario : AggregateRoot
     public bool Ativo { get; private set; }
     public bool AceiteTermoAdesao { get; private set; }
 
+    public virtual Credencial? Credencial { get; private set; }
+
     protected Result SetNomeCompleto(string nomeCompleto)
     {
         if (string.IsNullOrWhiteSpace(nomeCompleto))
@@ -85,13 +87,13 @@ public abstract class Usuario : AggregateRoot
         if (dataNascimento == default)
             return Result.Fail(DomainErrors.Usuario.DataNascimentoInvalida);
 
-        var hoje = DateTime.Now.Date;
-        var minimoData = new DateTime(1930, 1, 1);
+        var hoje = DateTime.UtcNow.Date;
+        var minimoData = new DateTime(1930, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         if (dataNascimento >= hoje || dataNascimento <= minimoData)
             return Result.Fail(DomainErrors.Usuario.DataNascimentoInvalida);
 
-        DataNascimento = dataNascimento;
+        DataNascimento = DateTime.SpecifyKind(dataNascimento, DateTimeKind.Utc);
         return Result.Ok();
     }
 
@@ -111,6 +113,25 @@ public abstract class Usuario : AggregateRoot
 
         _contato.Clear();
         _contato.AddRange(contato);
+        return Result.Ok();
+    }
+
+    public Result AdicionarContato(Contato contato)
+    {
+        if (contato == null)
+            return Result.Fail(DomainErrors.Usuario.DadosVazios);
+
+        _contato.Add(contato);
+        return Result.Ok();
+    }
+
+    public Result RemoverContato(Guid contatoId)
+    {
+        var contato = _contato.FirstOrDefault(c => c.Id == contatoId);
+        if (contato == null)
+            return Result.Fail(DomainErrors.Usuario.ContatoNaoEncontrado);
+
+        _contato.Remove(contato);
         return Result.Ok();
     }
 

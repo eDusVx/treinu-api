@@ -17,6 +17,7 @@ public record CriarAlunoProps(
     bool Ativo,
     bool AceiteTermoAdesao,
     ObjetivoEnum Objetivo,
+    Guid? TreinadorId = null,
     List<AvaliacaoFisica.AvaliacaoFisica>? AvaliacaoFisica = null
 );
 
@@ -33,6 +34,8 @@ public class Aluno : Usuario
     }
 
     public ObjetivoEnum Objetivo { get; private set; }
+    public Guid? TreinadorId { get; private set; }
+    public virtual Treinador? Treinador { get; private set; }
     public IReadOnlyCollection<AvaliacaoFisica.AvaliacaoFisica> AvaliacaoFisica => _avaliacaoFisica.AsReadOnly();
 
     public static Result<Aluno> Criar(CriarAlunoProps props)
@@ -64,6 +67,8 @@ public class Aluno : Usuario
         if (rs11.IsFailed) return Result.Fail<Aluno>(rs11.Errors);
         var rs12 = instance.SetAvaliacaoFisica(props.AvaliacaoFisica ?? new List<AvaliacaoFisica.AvaliacaoFisica>());
         if (rs12.IsFailed) return Result.Fail<Aluno>(rs12.Errors);
+
+        instance.TreinadorId = props.TreinadorId;
 
         instance.Apply(
             new UsuarioCadastradoEvent(
@@ -106,6 +111,8 @@ public class Aluno : Usuario
         var rs11 = instance.SetAvaliacaoFisica(props.AvaliacaoFisica ?? new List<AvaliacaoFisica.AvaliacaoFisica>());
         if (rs11.IsFailed) return Result.Fail<Aluno>(rs11.Errors);
 
+        instance.TreinadorId = props.TreinadorId;
+
         return Result.Ok(instance);
     }
 
@@ -129,6 +136,21 @@ public class Aluno : Usuario
 
         _avaliacaoFisica.Clear();
         _avaliacaoFisica.AddRange(avaliacaoFisica);
+        return Result.Ok();
+    }
+
+    public Result AdicionarAvaliacaoFisica(AvaliacaoFisica.AvaliacaoFisica avaliacao)
+    {
+        if (avaliacao == null) return Result.Fail(DomainErrors.Usuario.DadosVazios);
+        _avaliacaoFisica.Add(avaliacao);
+        return Result.Ok();
+    }
+
+    public Result RemoverAvaliacaoFisica(Guid avaliacaoId)
+    {
+        var avaliacao = _avaliacaoFisica.FirstOrDefault(a => a.Id == avaliacaoId);
+        if (avaliacao == null) return Result.Fail(DomainErrors.Usuario.AvaliacaoFisicaNaoEncontrada);
+        _avaliacaoFisica.Remove(avaliacao);
         return Result.Ok();
     }
 

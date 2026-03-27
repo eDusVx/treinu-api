@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Treinu.Contracts.Commands;
+using Treinu.Api.Controllers.Base;
 using Treinu.Contracts.Queries;
 using Treinu.Contracts.Responses;
 using Treinu.Domain.Core.Mediator;
@@ -10,32 +10,17 @@ namespace Treinu.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
-public class UsuariosController : ControllerBase
+public class UsuariosController(IMediator mediator) : ApiController
 {
-    private readonly IMediator _mediator;
-
-    public UsuariosController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
-    [AllowAnonymous]
-    [HttpPost]
-    [ProducesResponseType(typeof(object), 201)]
-    public async Task<IActionResult> RegistrarUsuario([FromBody] RegistrarUsuarioCommand command)
-    {
-        var result = await _mediator.Send(command);
-        return CreatedAtAction(nameof(BuscarUsuarios), new { page = 1 }, result.Value);
-    }
-
+    [Authorize(Roles = "ADMIN,TREINADOR")]
     [HttpGet]
     [ProducesResponseType(typeof(PaginationResponse<object>), 200)]
     public async Task<IActionResult> BuscarUsuarios([FromQuery] PerfilEnum? tipoUsuario, [FromQuery] int page = 1,
         [FromQuery] int limit = 10)
     {
         var query = new BuscarUsuariosQuery(tipoUsuario, page, limit);
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
+        if (result.IsFailed) return HandleFailure(result);
         return Ok(result.Value);
     }
 }

@@ -2,6 +2,7 @@ using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
+using Treinu.Domain.Errors;
 using Treinu.Domain.Repositories;
 using Treinu.Infrastructure.Data;
 
@@ -46,6 +47,62 @@ public class UsuarioRepository : IUsuarioRepository
         catch (Exception ex)
         {
             return Result.Fail($"Erro inesperado ao salvar usuário: {ex.Message}");
+        }
+    }
+
+    public async Task<Result> AtualizarUsuarioAsync(Usuario usuario)
+    {
+        try
+        {
+            _context.Usuarios.Update(usuario);
+            await _context.SaveChangesAsync();
+            return Result.Ok();
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail($"Erro inesperado ao atualizar usuário: {ex.Message}");
+        }
+    }
+
+    public async Task<Result<Treinador>> BuscarTreinadorPorIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var treinador = await _context.Usuarios
+                .OfType<Treinador>()
+                .Include(t => t.Contato)
+                .Include(t => t.Certificados)
+                .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+
+            if (treinador == null)
+                return Result.Fail<Treinador>(DomainErrors.Usuario.TreinadorNaoEncontrado);
+
+            return Result.Ok(treinador);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<Treinador>($"Erro inesperado ao buscar treinador: {ex.Message}");
+        }
+    }
+
+    public async Task<Result<Aluno>> BuscarAlunoPorIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var aluno = await _context.Usuarios
+                .OfType<Aluno>()
+                .Include(a => a.Contato)
+                .Include(a => a.AvaliacaoFisica)
+                .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+
+            if (aluno == null)
+                return Result.Fail<Aluno>(DomainErrors.Usuario.AlunoNaoEncontrado);
+
+            return Result.Ok(aluno);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<Aluno>($"Erro inesperado ao buscar aluno: {ex.Message}");
         }
     }
 

@@ -1,0 +1,73 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Treinu.Api.Controllers.Base;
+using Treinu.Contracts.Commands;
+using Treinu.Domain.Core.Mediator;
+
+namespace Treinu.Api.Controllers;
+
+[ApiController]
+[Route("api/alunos")]
+public class AlunosController(IMediator mediator) : ApiController
+{
+    [AllowAnonymous]
+    [HttpPost]
+    [ProducesResponseType(typeof(object), 201)]
+    [ProducesResponseType(typeof(ProblemDetails), 400)]
+    public async Task<IActionResult> RegistrarAluno([FromBody] RegistrarAlunoCommand command)
+    {
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return HandleFailure(result);
+        return CreatedAtAction(nameof(RegistrarAluno), result.Value);
+    }
+
+    [Authorize(Roles = "ALUNO,ADMIN")]
+    [HttpPost("{id:guid}/contatos")]
+    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(ProblemDetails), 400)]
+    [ProducesResponseType(typeof(ProblemDetails), 404)]
+    public async Task<IActionResult> AdicionarContato(Guid id, [FromBody] AdicionarContatoAlunoCommand command)
+    {
+        var cmd = command with { AlunoId = id };
+        var result = await mediator.Send(cmd);
+        if (result.IsFailed) return HandleFailure(result);
+        return Ok(result.Value);
+    }
+
+    [Authorize(Roles = "ALUNO,ADMIN")]
+    [HttpDelete("{id:guid}/contatos/{contatoId:guid}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ProblemDetails), 404)]
+    public async Task<IActionResult> RemoverContato(Guid id, Guid contatoId)
+    {
+        var command = new RemoverContatoAlunoCommand(id, contatoId);
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return HandleFailure(result);
+        return NoContent();
+    }
+
+    [Authorize(Roles = "TREINADOR,ADMIN")]
+    [HttpPost("{id:guid}/avaliacoes")]
+    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(ProblemDetails), 400)]
+    [ProducesResponseType(typeof(ProblemDetails), 404)]
+    public async Task<IActionResult> AdicionarAvaliacaoFisica(Guid id, [FromBody] AdicionarAvaliacaoFisicaAlunoCommand command)
+    {
+        var cmd = command with { AlunoId = id };
+        var result = await mediator.Send(cmd);
+        if (result.IsFailed) return HandleFailure(result);
+        return Ok(result.Value);
+    }
+
+    [Authorize(Roles = "TREINADOR,ADMIN")]
+    [HttpDelete("{id:guid}/avaliacoes/{avaliacaoId:guid}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ProblemDetails), 404)]
+    public async Task<IActionResult> RemoverAvaliacaoFisica(Guid id, Guid avaliacaoId)
+    {
+        var command = new RemoverAvaliacaoFisicaAlunoCommand(id, avaliacaoId);
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return HandleFailure(result);
+        return NoContent();
+    }
+}

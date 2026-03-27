@@ -29,6 +29,24 @@ public static class DomainErrors
 
         public static readonly DomainError ConflitoEmEmailOuCpf = new("Usuario.ConflitoDuplicado",
             "O e-mail ou o CPF inserido já estão em uso.", ErrorType.Conflict);
+
+        public static readonly DomainError TreinadorNaoEncontrado = new("Treinador.NaoEncontrado",
+            "Treinador não encontrado.", ErrorType.NotFound);
+
+        public static readonly DomainError AlunoNaoEncontrado = new("Aluno.NaoEncontrado",
+            "Aluno não encontrado.", ErrorType.NotFound);
+
+        public static readonly DomainError ContatoNaoEncontrado = new("Contato.NaoEncontrado",
+            "Contato não encontrado para este usuário.", ErrorType.NotFound);
+
+        public static readonly DomainError CertificadoNaoEncontrado = new("Certificado.NaoEncontrado",
+            "Certificado não encontrado para este treinador.", ErrorType.NotFound);
+
+        public static readonly DomainError EspecializacaoNaoEncontrada = new("Especializacao.NaoEncontrada",
+            "Especialização não encontrada para este treinador.", ErrorType.NotFound);
+
+        public static readonly DomainError AvaliacaoFisicaNaoEncontrada = new("AvaliacaoFisica.NaoEncontrada",
+            "Avaliação física não encontrada para este aluno.", ErrorType.NotFound);
     }
 
     public static class Credencial
@@ -41,6 +59,21 @@ public static class DomainErrors
 
         public static readonly DomainError TokenExpirado = new("Credencial.TokenExpirado",
             "O Refresh Token providenciado expirou ou foi invalidado.", ErrorType.Validation);
+    }
+
+    public static class Convite
+    {
+        public static readonly DomainError ConviteNaoEncontrado = new("Convite.NaoEncontrado",
+            "Convite não encontrado.", ErrorType.NotFound);
+
+        public static readonly DomainError ConviteJaUtilizado = new("Convite.JaUtilizado",
+            "Este convite já foi utilizado ou não é mais válido.", ErrorType.Validation);
+
+        public static readonly DomainError ConviteExpirado = new("Convite.Expirado",
+            "Este convite expirou.", ErrorType.Validation);
+
+        public static readonly DomainError PerfilInvalido = new("Convite.PerfilInvalido",
+            "O perfil do convite não condiz com o cadastro solicitado.", ErrorType.Validation);
     }
 
     public static class Geral

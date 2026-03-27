@@ -1,26 +1,25 @@
 using FluentAssertions;
 using Treinu.Application.Validators.Usuarios;
 using Treinu.Contracts.Commands;
-using Treinu.Domain.Dtos;
 using Treinu.Domain.Enums;
 
 namespace Treinu.UnitTests.Application.Validators.Usuarios;
 
-public class RegistrarUsuarioCommandValidatorTests
+public class RegistrarTreinadorCommandValidatorTests
 {
-    private readonly RegistrarUsuarioCommandValidator _validator;
+    private readonly RegistrarTreinadorCommandValidator _validator;
 
-    public RegistrarUsuarioCommandValidatorTests()
+    public RegistrarTreinadorCommandValidatorTests()
     {
-        _validator = new RegistrarUsuarioCommandValidator();
+        _validator = new RegistrarTreinadorCommandValidator();
     }
 
     [Fact]
     public void Validador_Deve_Ter_Erro_Quando_Cpf_Invalido()
     {
-        var command = new RegistrarUsuarioCommand(
+        var command = new RegistrarTreinadorCommand(
             "Fulano Silva", "valido@email.com", "Senha@123", new DateTime(1990, 1, 1),
-            GeneroEnum.MASCULINO, "123", true, true, PerfilEnum.ALUNO, new List<ContatoDto>()
+            GeneroEnum.MASCULINO, "123", true, Guid.NewGuid()
         );
 
         var result = _validator.Validate(command);
@@ -30,11 +29,25 @@ public class RegistrarUsuarioCommandValidatorTests
     }
 
     [Fact]
+    public void Validador_Deve_Ter_Erro_Quando_Token_Vazio()
+    {
+        var command = new RegistrarTreinadorCommand(
+            "Fulano Silva", "valido@email.com", "Senha@123", new DateTime(1990, 1, 1),
+            GeneroEnum.MASCULINO, "11144477735", true, Guid.Empty
+        );
+
+        var result = _validator.Validate(command);
+
+        result.IsValid.Should().BeFalse();
+        result.Errors.Should().Contain(e => e.PropertyName == "TokenConvite");
+    }
+
+    [Fact]
     public void Validador_Deve_Passar_Quando_Dados_Validos()
     {
-        var command = new RegistrarUsuarioCommand(
+        var command = new RegistrarTreinadorCommand(
             "Fulano Silva", "valido@email.com", "Senha@123", new DateTime(1990, 1, 1),
-            GeneroEnum.MASCULINO, "11144477735", true, true, PerfilEnum.ALUNO, new List<ContatoDto>()
+            GeneroEnum.MASCULINO, "11144477735", true, Guid.NewGuid()
         );
 
         var result = _validator.Validate(command);

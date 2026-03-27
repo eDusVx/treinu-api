@@ -31,6 +31,8 @@ public class Credencial : Entity
     public PerfilEnum TipoUsuario { get; private set; }
     public bool Ativo { get; private set; }
 
+    public virtual Usuario Usuario { get; private set; } = null!;
+
     public static Result<Credencial> Criar(CriarCredencialProps props)
     {
         var id = Guid.NewGuid();
@@ -70,7 +72,7 @@ public class Credencial : Entity
     public void AtualizarRefreshToken(string refreshToken, DateTime expiryTime)
     {
         RefreshToken = refreshToken;
-        RefreshTokenExpiryTime = expiryTime;
+        RefreshTokenExpiryTime = DateTime.SpecifyKind(expiryTime, DateTimeKind.Utc);
     }
 
     public void RevogarRefreshToken()

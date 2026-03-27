@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -25,13 +25,19 @@ namespace Treinu.Infrastructure.Migrations
                     Perfil = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     Ativo = table.Column<bool>(type: "boolean", nullable: false),
                     AceiteTermoAdesao = table.Column<bool>(type: "boolean", nullable: false),
-                    Provider = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Objetivo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    TreinadorId = table.Column<Guid>(type: "uuid", nullable: true),
                     Especializacoes = table.Column<string>(type: "jsonb", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Usuarios", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Usuarios_Usuarios_TreinadorId",
+                        column: x => x.TreinadorId,
+                        principalTable: "Usuarios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -107,6 +113,54 @@ namespace Treinu.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Convites",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Token = table.Column<Guid>(type: "uuid", nullable: false),
+                    Perfil = table.Column<string>(type: "text", nullable: false),
+                    TreinadorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    ExpiraEm = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CriadoEm = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Convites", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Convites_Usuarios_TreinadorId",
+                        column: x => x.TreinadorId,
+                        principalTable: "Usuarios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Credenciais",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UsuarioId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Senha = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    RefreshToken = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    RefreshTokenExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    TipoUsuario = table.Column<string>(type: "varchar(30)", nullable: false),
+                    Ativo = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Credenciais", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Credenciais_Usuarios_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuarios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Medidas",
                 columns: table => new
                 {
@@ -142,6 +196,34 @@ namespace Treinu.Infrastructure.Migrations
                 column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Convites_Email",
+                table: "Convites",
+                column: "Email");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Convites_Token",
+                table: "Convites",
+                column: "Token",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Convites_TreinadorId",
+                table: "Convites",
+                column: "TreinadorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Credenciais_Email",
+                table: "Credenciais",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Credenciais_UsuarioId",
+                table: "Credenciais",
+                column: "UsuarioId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Medidas_QuestionarioId",
                 table: "Medidas",
                 column: "QuestionarioId");
@@ -157,6 +239,21 @@ namespace Treinu.Infrastructure.Migrations
                 table: "Usuarios",
                 column: "Email",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Usuarios_TreinadorId",
+                table: "Usuarios",
+                column: "TreinadorId");
+
+            migrationBuilder.Sql(@"
+INSERT INTO public.""Usuarios""
+(""Id"", ""NomeCompleto"", ""Email"", ""Senha"", ""DataNascimento"", ""Genero"", ""Cpf"", ""Perfil"", ""Ativo"", ""AceiteTermoAdesao"", ""Objetivo"", ""Especializacoes"", ""TreinadorId"")
+VALUES('f4a942d3-7060-4d7a-8845-21e6c8db160f'::uuid, 'Admin Inicial', 'admin@treinu.com', '$2a$10$PhzWO/4Tjy9A5GZEB4j6aunbMT.6yEhVBEMlVlwBkTFsg866Ou1Iu', '1979-12-31 21:00:00.000', 'MASCULINO', '05585299174', 'ADMIN', true, true, NULL, NULL, NULL);
+
+INSERT INTO public.""Credenciais""
+(""Id"", ""UsuarioId"", ""Email"", ""Senha"", ""TipoUsuario"", ""Ativo"", ""RefreshToken"", ""RefreshTokenExpiryTime"")
+VALUES('1ccb50e0-9a86-4d54-8e2e-6573447bf77a'::uuid, 'f4a942d3-7060-4d7a-8845-21e6c8db160f'::uuid, 'admin@treinu.com', '$2a$10$PhzWO/4Tjy9A5GZEB4j6aunbMT.6yEhVBEMlVlwBkTFsg866Ou1Iu', 'ADMIN', true, 'mZa5aoU/Up1a9BDAkvM9GBwXLYa1o5yWrPHqUDS8OVx83cyY8XPjKa5HUbjQ2D3gGIdgpeUiWHeBVD7ynHlIQw==', '2026-04-02 01:32:39.271');
+");
         }
 
         /// <inheritdoc />
@@ -167,6 +264,12 @@ namespace Treinu.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Contatos");
+
+            migrationBuilder.DropTable(
+                name: "Convites");
+
+            migrationBuilder.DropTable(
+                name: "Credenciais");
 
             migrationBuilder.DropTable(
                 name: "Medidas");

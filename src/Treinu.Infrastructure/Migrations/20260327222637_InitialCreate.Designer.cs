@@ -12,7 +12,7 @@ using Treinu.Infrastructure.Data;
 namespace Treinu.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260319182441_InitialCreate")]
+    [Migration("20260327222637_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -149,6 +149,92 @@ namespace Treinu.Infrastructure.Migrations
                     b.ToTable("Contatos", (string)null);
                 });
 
+            modelBuilder.Entity("Treinu.Domain.Entities.Convite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CriadoEm")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("ExpiraEm")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Perfil")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("Token")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("TreinadorId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.HasIndex("TreinadorId");
+
+                    b.ToTable("Convites", (string)null);
+                });
+
+            modelBuilder.Entity("Treinu.Domain.Entities.Credencial", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("RefreshToken")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime?>("RefreshTokenExpiryTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Senha")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("TipoUsuario")
+                        .IsRequired()
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("UsuarioId")
+                        .IsUnique();
+
+                    b.ToTable("Credenciais", (string)null);
+                });
+
             modelBuilder.Entity("Treinu.Domain.Entities.Usuario", b =>
                 {
                     b.Property<Guid>("Id")
@@ -188,11 +274,6 @@ namespace Treinu.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
-
-                    b.Property<string>("Provider")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Senha")
                         .IsRequired()
@@ -251,6 +332,13 @@ namespace Treinu.Infrastructure.Migrations
                     b.HasDiscriminator().HasValue("QUESTIONARIO");
                 });
 
+            modelBuilder.Entity("Treinu.Domain.Entities.Administrador", b =>
+                {
+                    b.HasBaseType("Treinu.Domain.Entities.Usuario");
+
+                    b.HasDiscriminator().HasValue("ADMIN");
+                });
+
             modelBuilder.Entity("Treinu.Domain.Entities.Aluno", b =>
                 {
                     b.HasBaseType("Treinu.Domain.Entities.Usuario");
@@ -259,6 +347,11 @@ namespace Treinu.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<Guid?>("TreinadorId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("TreinadorId");
 
                     b.HasDiscriminator().HasValue("ALUNO");
                 });
@@ -306,9 +399,42 @@ namespace Treinu.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Treinu.Domain.Entities.Convite", b =>
+                {
+                    b.HasOne("Treinu.Domain.Entities.Treinador", "Treinador")
+                        .WithMany("Convites")
+                        .HasForeignKey("TreinadorId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Treinador");
+                });
+
+            modelBuilder.Entity("Treinu.Domain.Entities.Credencial", b =>
+                {
+                    b.HasOne("Treinu.Domain.Entities.Usuario", "Usuario")
+                        .WithOne("Credencial")
+                        .HasForeignKey("Treinu.Domain.Entities.Credencial", "UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("Treinu.Domain.Entities.Aluno", b =>
+                {
+                    b.HasOne("Treinu.Domain.Entities.Treinador", "Treinador")
+                        .WithMany("Alunos")
+                        .HasForeignKey("TreinadorId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Treinador");
+                });
+
             modelBuilder.Entity("Treinu.Domain.Entities.Usuario", b =>
                 {
                     b.Navigation("Contato");
+
+                    b.Navigation("Credencial");
                 });
 
             modelBuilder.Entity("Treinu.Domain.Entities.AvaliacaoFisica.Questionario", b =>
@@ -323,7 +449,11 @@ namespace Treinu.Infrastructure.Migrations
 
             modelBuilder.Entity("Treinu.Domain.Entities.Treinador", b =>
                 {
+                    b.Navigation("Alunos");
+
                     b.Navigation("Certificados");
+
+                    b.Navigation("Convites");
                 });
 #pragma warning restore 612, 618
         }

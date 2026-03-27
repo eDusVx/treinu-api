@@ -9,7 +9,8 @@ public enum GeneroEnum
 public enum PerfilEnum
 {
     ALUNO,
-    TREINADOR
+    TREINADOR,
+    ADMIN
 }
 
 public enum TipoContatoEnum
@@ -25,4 +26,11 @@ public enum PlataformaRedeSocialEnum
     FACEBOOK,
     TWITTER,
     EMAIL
+}
+
+public enum ConviteStatusEnum
+{
+    PENDENTE,
+    ACEITO,
+    EXPIRADO
 }
