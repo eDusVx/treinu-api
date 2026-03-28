@@ -2,7 +2,6 @@ using FluentResults;
 using Treinu.Domain.Dtos;
 using Treinu.Domain.Entities.AvaliacaoFisica;
 using Treinu.Domain.Enums;
-using Treinu.Domain.Errors;
 
 namespace Treinu.Domain.Factories;
 
@@ -14,7 +13,6 @@ public class AvaliacaoFisicaFactory
         var result = new Result<List<AvaliacaoFisica>>();
 
         foreach (var avaliacao in props)
-        {
             switch (avaliacao.ContextoAvaliacao)
             {
                 case TipoAvaliacaoEnum.DOCUMENTO:
@@ -24,6 +22,7 @@ public class AvaliacaoFisicaFactory
                         if (docResult.IsFailed) result.WithReasons(docResult.Reasons);
                         else avaliacoesFisicas.Add(docResult.Value);
                     }
+
                     break;
                 case TipoAvaliacaoEnum.QUESTIONARIO:
                     if (avaliacao is QuestionarioDto questionarioDto)
@@ -32,12 +31,12 @@ public class AvaliacaoFisicaFactory
                         if (questResult.IsFailed) result.WithReasons(questResult.Reasons);
                         else avaliacoesFisicas.Add(questResult.Value);
                     }
+
                     break;
                 default:
                     result.WithError($"Tipo de avaliacao física inválida: {avaliacao.ContextoAvaliacao}");
                     break;
             }
-        }
 
         if (result.IsFailed) return result;
         return Result.Ok(avaliacoesFisicas);

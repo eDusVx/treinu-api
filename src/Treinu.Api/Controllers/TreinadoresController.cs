@@ -52,7 +52,8 @@ public class TreinadoresController(IMediator mediator) : ApiController
     [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]
     [ProducesResponseType(typeof(ProblemDetails), 404)]
-    public async Task<IActionResult> AdicionarEspecializacao(Guid id, [FromBody] AdicionarEspecializacaoTreinadorCommand command)
+    public async Task<IActionResult> AdicionarEspecializacao(Guid id,
+        [FromBody] AdicionarEspecializacaoTreinadorCommand command)
     {
         var cmd = command with { TreinadorId = id };
         var result = await mediator.Send(cmd);
@@ -64,7 +65,8 @@ public class TreinadoresController(IMediator mediator) : ApiController
     [HttpDelete("{id:guid}/especializacoes")]
     [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ProblemDetails), 404)]
-    public async Task<IActionResult> RemoverEspecializacao(Guid id, [FromBody] RemoverEspecializacaoTreinadorCommand command)
+    public async Task<IActionResult> RemoverEspecializacao(Guid id,
+        [FromBody] RemoverEspecializacaoTreinadorCommand command)
     {
         var cmd = command with { TreinadorId = id };
         var result = await mediator.Send(cmd);
@@ -77,7 +79,8 @@ public class TreinadoresController(IMediator mediator) : ApiController
     [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]
     [ProducesResponseType(typeof(ProblemDetails), 404)]
-    public async Task<IActionResult> AdicionarCertificado(Guid id, [FromBody] AdicionarCertificadoTreinadorCommand command)
+    public async Task<IActionResult> AdicionarCertificado(Guid id,
+        [FromBody] AdicionarCertificadoTreinadorCommand command)
     {
         var cmd = command with { TreinadorId = id };
         var result = await mediator.Send(cmd);

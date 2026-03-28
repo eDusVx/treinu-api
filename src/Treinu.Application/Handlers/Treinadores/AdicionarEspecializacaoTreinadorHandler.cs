@@ -8,11 +8,13 @@ namespace Treinu.Application.Handlers.Treinadores;
 public class AdicionarEspecializacaoTreinadorHandler(
     IUsuarioRepository usuarioRepository) : IRequestHandler<AdicionarEspecializacaoTreinadorCommand, Result<object>>
 {
-    public async Task<Result<object>> Handle(AdicionarEspecializacaoTreinadorCommand request, CancellationToken cancellationToken)
+    public async Task<Result<object>> Handle(AdicionarEspecializacaoTreinadorCommand request,
+        CancellationToken cancellationToken)
     {
         try
         {
-            var treinadorResult = await usuarioRepository.BuscarTreinadorPorIdAsync(request.TreinadorId, cancellationToken);
+            var treinadorResult =
+                await usuarioRepository.BuscarTreinadorPorIdAsync(request.TreinadorId, cancellationToken);
             if (treinadorResult.IsFailed) return Result.Fail<object>(treinadorResult.Errors);
 
             var addResult = treinadorResult.Value.AdicionarEspecializacao(request.Especializacao);

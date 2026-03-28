@@ -4,7 +4,6 @@ using Treinu.Api.Controllers.Base;
 using Treinu.Contracts.Commands;
 using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Enums;
-using Treinu.Infrastructure.Security;
 
 namespace Treinu.Api.Controllers;
 

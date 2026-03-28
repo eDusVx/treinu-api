@@ -1,7 +1,6 @@
 using FluentResults;
 using Treinu.Contracts.Commands;
 using Treinu.Domain.Core.Mediator;
-using Treinu.Domain.Entities;
 using Treinu.Domain.Factories;
 using Treinu.Domain.Repositories;
 
@@ -9,9 +8,11 @@ namespace Treinu.Application.Handlers.Alunos;
 
 public class AdicionarAvaliacaoFisicaAlunoHandler(
     IUsuarioRepository usuarioRepository,
-    AvaliacaoFisicaFactory avaliacaoFisicaFactory) : IRequestHandler<AdicionarAvaliacaoFisicaAlunoCommand, Result<object>>
+    AvaliacaoFisicaFactory avaliacaoFisicaFactory)
+    : IRequestHandler<AdicionarAvaliacaoFisicaAlunoCommand, Result<object>>
 {
-    public async Task<Result<object>> Handle(AdicionarAvaliacaoFisicaAlunoCommand request, CancellationToken cancellationToken)
+    public async Task<Result<object>> Handle(AdicionarAvaliacaoFisicaAlunoCommand request,
+        CancellationToken cancellationToken)
     {
         try
         {

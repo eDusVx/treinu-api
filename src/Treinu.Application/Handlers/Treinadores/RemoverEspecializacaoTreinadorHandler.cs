@@ -8,11 +8,13 @@ namespace Treinu.Application.Handlers.Treinadores;
 public class RemoverEspecializacaoTreinadorHandler(
     IUsuarioRepository usuarioRepository) : IRequestHandler<RemoverEspecializacaoTreinadorCommand, Result<object>>
 {
-    public async Task<Result<object>> Handle(RemoverEspecializacaoTreinadorCommand request, CancellationToken cancellationToken)
+    public async Task<Result<object>> Handle(RemoverEspecializacaoTreinadorCommand request,
+        CancellationToken cancellationToken)
     {
         try
         {
-            var treinadorResult = await usuarioRepository.BuscarTreinadorPorIdAsync(request.TreinadorId, cancellationToken);
+            var treinadorResult =
+                await usuarioRepository.BuscarTreinadorPorIdAsync(request.TreinadorId, cancellationToken);
             if (treinadorResult.IsFailed) return Result.Fail<object>(treinadorResult.Errors);
 
             var removeResult = treinadorResult.Value.RemoverEspecializacao(request.Especializacao);

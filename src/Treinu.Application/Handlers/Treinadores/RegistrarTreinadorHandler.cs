@@ -1,11 +1,10 @@
 using FluentResults;
 using Treinu.Contracts.Commands;
 using Treinu.Domain.Core.Mediator;
+using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
 using Treinu.Domain.Factories;
 using Treinu.Domain.Factories.Interfaces;
-using Treinu.Domain.Entities;
-using Treinu.Domain.Errors;
 using Treinu.Domain.Repositories;
 
 namespace Treinu.Application.Handlers.Treinadores;
@@ -28,11 +27,14 @@ public class RegistrarTreinadorHandler(
                 request.DataNascimento,
                 request.Genero,
                 request.Cpf,
-                Ativo: false,
+                false,
                 request.AceiteTermoAdesao,
                 PerfilEnum.TREINADOR,
-                Certificados: [.. request.Certificados.Select(c =>
-                    Certificado.Criar(new CriarCertificadoProps(c.Nome, c.ArquivoPdf)).Value)]
+                Certificados:
+                [
+                    .. request.Certificados.Select(c =>
+                        Certificado.Criar(new CriarCertificadoProps(c.Nome, c.ArquivoPdf)).Value)
+                ]
             );
 
             var usuarioResult = usuarioFactory.Fabricar(props);

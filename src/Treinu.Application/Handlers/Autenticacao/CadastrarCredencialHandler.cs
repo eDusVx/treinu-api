@@ -36,7 +36,8 @@ public class CadastrarCredencialHandler : INotificationHandler<UsuarioCadastrado
         }
         catch (Exception ex) when (ex is not InvalidOperationException)
         {
-            throw new InvalidOperationException($"Erro inesperado ao gerar credenciais para usuário {notification.Id}: {ex.Message}", ex);
+            throw new InvalidOperationException(
+                $"Erro inesperado ao gerar credenciais para usuário {notification.Id}: {ex.Message}", ex);
         }
     }
 }

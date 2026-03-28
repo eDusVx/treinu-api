@@ -2,7 +2,6 @@ using FluentResults;
 using Treinu.Contracts.Commands;
 using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Entities;
-using Treinu.Domain.Factories;
 using Treinu.Domain.Repositories;
 
 namespace Treinu.Application.Handlers.Treinadores;
@@ -10,11 +9,13 @@ namespace Treinu.Application.Handlers.Treinadores;
 public class AdicionarContatoTreinadorHandler(
     IUsuarioRepository usuarioRepository) : IRequestHandler<AdicionarContatoTreinadorCommand, Result<object>>
 {
-    public async Task<Result<object>> Handle(AdicionarContatoTreinadorCommand request, CancellationToken cancellationToken)
+    public async Task<Result<object>> Handle(AdicionarContatoTreinadorCommand request,
+        CancellationToken cancellationToken)
     {
         try
         {
-            var treinadorResult = await usuarioRepository.BuscarTreinadorPorIdAsync(request.TreinadorId, cancellationToken);
+            var treinadorResult =
+                await usuarioRepository.BuscarTreinadorPorIdAsync(request.TreinadorId, cancellationToken);
             if (treinadorResult.IsFailed) return Result.Fail<object>(treinadorResult.Errors);
 
             var contatoResult = Contato.Criar(new CriarContatoProps(

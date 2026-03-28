@@ -23,7 +23,8 @@ public class RenovarTokenHandler : IRequestHandler<RenovarTokenQuery, Result<Tok
     {
         try
         {
-            var credencialResult = await _credencialRepository.BuscarCredencialPorRefreshTokenAsync(request.RefreshToken);
+            var credencialResult =
+                await _credencialRepository.BuscarCredencialPorRefreshTokenAsync(request.RefreshToken);
             if (credencialResult.IsFailed) return Result.Fail<TokenDto>(credencialResult.Errors);
 
             var credencial = credencialResult.Value;
@@ -44,7 +45,7 @@ public class RenovarTokenHandler : IRequestHandler<RenovarTokenQuery, Result<Tok
             var newRefreshToken = _tokenService.GerarRefreshToken();
 
             credencial.AtualizarRefreshToken(newRefreshToken, DateTime.UtcNow.AddDays(7));
-            
+
             var updateResult = await _credencialRepository.AtualizarCredencialAsync(credencial);
             if (updateResult.IsFailed) return Result.Fail<TokenDto>(updateResult.Errors);
 

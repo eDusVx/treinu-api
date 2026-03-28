@@ -20,9 +20,9 @@ public class AdminController(IMediator mediator) : ApiController
     {
         var command = new AprovarTreinadorCommand(id);
         var result = await mediator.Send(command);
-        
+
         if (result.IsFailed) return HandleFailure(result);
-        
+
         return NoContent();
     }
 }

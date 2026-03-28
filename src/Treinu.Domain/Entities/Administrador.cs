@@ -5,9 +5,13 @@ namespace Treinu.Domain.Entities;
 
 public class Administrador : Usuario
 {
-    protected Administrador() { }
+    protected Administrador()
+    {
+    }
 
-    private Administrador(Guid id) : base(id) { }
+    private Administrador(Guid id) : base(id)
+    {
+    }
 
     public static Result<Administrador> Criar(CriarUsuarioProps props)
     {

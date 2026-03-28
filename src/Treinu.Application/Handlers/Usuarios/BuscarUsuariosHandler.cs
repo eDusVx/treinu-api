@@ -2,7 +2,6 @@ using FluentResults;
 using Treinu.Contracts.Queries;
 using Treinu.Contracts.Responses;
 using Treinu.Domain.Core.Mediator;
-using Treinu.Domain.Entities;
 using Treinu.Domain.Repositories;
 
 namespace Treinu.Application.Handlers.Usuarios;

@@ -32,7 +32,7 @@ public class CadastrarCredencialHandlerTests
         );
 
         _credencialRepositoryMock.Setup(repo => repo.SalvarCredencialAsync(It.IsAny<Credencial>()))
-            .ReturnsAsync(FluentResults.Result.Ok());
+            .ReturnsAsync(Result.Ok());
 
         await _handler.Handle(notification, CancellationToken.None);
 

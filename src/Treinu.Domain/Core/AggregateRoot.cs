@@ -14,8 +14,7 @@ public abstract class AggregateRoot : Entity
     {
     }
 
-    [JsonIgnore]
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+    [JsonIgnore] public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     public void AddDomainEvent(IDomainEvent domainEvent)
     {

@@ -1,6 +1,5 @@
 using FluentResults;
 using Treinu.Domain.Core.Mediator;
-using Treinu.Domain.Dtos;
 using Treinu.Domain.Enums;
 
 namespace Treinu.Contracts.Commands;

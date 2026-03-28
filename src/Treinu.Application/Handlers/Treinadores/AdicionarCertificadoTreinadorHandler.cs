@@ -9,11 +9,13 @@ namespace Treinu.Application.Handlers.Treinadores;
 public class AdicionarCertificadoTreinadorHandler(
     IUsuarioRepository usuarioRepository) : IRequestHandler<AdicionarCertificadoTreinadorCommand, Result<object>>
 {
-    public async Task<Result<object>> Handle(AdicionarCertificadoTreinadorCommand request, CancellationToken cancellationToken)
+    public async Task<Result<object>> Handle(AdicionarCertificadoTreinadorCommand request,
+        CancellationToken cancellationToken)
     {
         try
         {
-            var treinadorResult = await usuarioRepository.BuscarTreinadorPorIdAsync(request.TreinadorId, cancellationToken);
+            var treinadorResult =
+                await usuarioRepository.BuscarTreinadorPorIdAsync(request.TreinadorId, cancellationToken);
             if (treinadorResult.IsFailed) return Result.Fail<object>(treinadorResult.Errors);
 
             var certificadoResult = Certificado.Criar(new CriarCertificadoProps(

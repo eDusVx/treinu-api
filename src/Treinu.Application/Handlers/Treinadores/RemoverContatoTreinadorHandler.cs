@@ -8,11 +8,13 @@ namespace Treinu.Application.Handlers.Treinadores;
 public class RemoverContatoTreinadorHandler(
     IUsuarioRepository usuarioRepository) : IRequestHandler<RemoverContatoTreinadorCommand, Result<object>>
 {
-    public async Task<Result<object>> Handle(RemoverContatoTreinadorCommand request, CancellationToken cancellationToken)
+    public async Task<Result<object>> Handle(RemoverContatoTreinadorCommand request,
+        CancellationToken cancellationToken)
     {
         try
         {
-            var treinadorResult = await usuarioRepository.BuscarTreinadorPorIdAsync(request.TreinadorId, cancellationToken);
+            var treinadorResult =
+                await usuarioRepository.BuscarTreinadorPorIdAsync(request.TreinadorId, cancellationToken);
             if (treinadorResult.IsFailed) return Result.Fail<object>(treinadorResult.Errors);
 
             var removeResult = treinadorResult.Value.RemoverContato(request.ContatoId);

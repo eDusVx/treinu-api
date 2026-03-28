@@ -50,7 +50,7 @@ public class Questionario : AvaliacaoFisica
             instance.SetPeso(props.Peso),
             instance.SetMedidas(props.Medida)
         );
-        
+
         if (result.IsSuccess)
             result.WithReasons(instance.CalcularIMC().Reasons);
 
@@ -70,7 +70,7 @@ public class Questionario : AvaliacaoFisica
             instance.SetPeso(props.Peso),
             instance.SetMedidas(props.Medida)
         );
-        
+
         if (result.IsSuccess)
             result.WithReasons(instance.CalcularIMC().Reasons);
 

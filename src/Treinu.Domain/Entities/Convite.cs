@@ -7,7 +7,9 @@ namespace Treinu.Domain.Entities;
 
 public class Convite : Entity
 {
-    protected Convite() { }
+    protected Convite()
+    {
+    }
 
     private Convite(Guid id, string email, PerfilEnum perfil, Guid? treinadorId = null) : base(id)
     {
@@ -26,7 +28,7 @@ public class Convite : Entity
     public Guid? TreinadorId { get; private set; }
     public virtual Treinador? Treinador { get; private set; }
     public ConviteStatusEnum Status { get; private set; }
-    public DateTime ExpiraEm { get; private set; }
+    public DateTime ExpiraEm { get; }
     public DateTime CriadoEm { get; private set; }
 
     public static Result<Convite> Criar(string email, PerfilEnum perfil, Guid? treinadorId = null)

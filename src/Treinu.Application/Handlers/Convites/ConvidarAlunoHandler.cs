@@ -21,7 +21,8 @@ public class ConvidarAlunoHandler(
         var conviteResult = Convite.Criar(request.Email, PerfilEnum.ALUNO, request.TreinadorId);
         if (conviteResult.IsFailed) return Result.Fail(conviteResult.Errors);
 
-        await emailService.EnviarConviteAsync(conviteResult.Value.Email, conviteResult.Value.Token, conviteResult.Value.Perfil);
+        await emailService.EnviarConviteAsync(conviteResult.Value.Email, conviteResult.Value.Token,
+            conviteResult.Value.Perfil);
 
         var saveResult = await conviteRepository.SalvarConviteAsync(conviteResult.Value);
         if (saveResult.IsFailed) return Result.Fail(saveResult.Errors);

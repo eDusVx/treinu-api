@@ -1,8 +1,8 @@
 using FluentResults;
-using Treinu.Domain.Core.Mediator;
 using Treinu.Application.Interfaces;
 using Treinu.Contracts.Queries;
 using Treinu.Contracts.Responses;
+using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Errors;
 using Treinu.Domain.Repositories;
 
@@ -33,11 +33,12 @@ public class AutenticarUsuarioLocalHandler : IRequestHandler<AutenticarUsuarioLo
             var verifyResult = credencial.VerificarSenha(request.Senha);
             if (verifyResult.IsFailed) return Result.Fail<TokenDto>(verifyResult.Errors);
 
-            var token = _tokenService.GerarJwt(credencial.Email, credencial.TipoUsuario.ToString(), credencial.UsuarioId.ToString());
+            var token = _tokenService.GerarJwt(credencial.Email, credencial.TipoUsuario.ToString(),
+                credencial.UsuarioId.ToString());
             var refreshToken = _tokenService.GerarRefreshToken();
 
             credencial.AtualizarRefreshToken(refreshToken, DateTime.UtcNow.AddDays(7));
-            
+
             var updateResult = await _credencialRepository.AtualizarCredencialAsync(credencial);
             if (updateResult.IsFailed) return Result.Fail<TokenDto>(updateResult.Errors);
 

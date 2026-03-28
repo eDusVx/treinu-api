@@ -1,5 +1,4 @@
 using FluentResults;
-using Treinu.Domain.Dtos;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
 using Treinu.Domain.Errors;

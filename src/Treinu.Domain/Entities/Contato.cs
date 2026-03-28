@@ -1,5 +1,5 @@
-using FluentResults;
 using System.Text.RegularExpressions;
+using FluentResults;
 using Treinu.Domain.Core;
 using Treinu.Domain.Enums;
 
@@ -84,7 +84,7 @@ public class Contato : Entity
     {
         valor = valor.Trim();
 
-        Result validacao = Result.Ok();
+        var validacao = Result.Ok();
 
         switch (Tipo)
         {

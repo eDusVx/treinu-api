@@ -52,7 +52,8 @@ public class AlunosController(IMediator mediator) : ApiController
     [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]
     [ProducesResponseType(typeof(ProblemDetails), 404)]
-    public async Task<IActionResult> AdicionarAvaliacaoFisica(Guid id, [FromBody] AdicionarAvaliacaoFisicaAlunoCommand command)
+    public async Task<IActionResult> AdicionarAvaliacaoFisica(Guid id,
+        [FromBody] AdicionarAvaliacaoFisicaAlunoCommand command)
     {
         var cmd = command with { AlunoId = id };
         var result = await mediator.Send(cmd);

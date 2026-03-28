@@ -1,21 +1,22 @@
-using Treinu.Domain.Core;
-using Treinu.Domain.Enums;
+using Microsoft.Extensions.Configuration;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using Microsoft.Extensions.Configuration;
+using Treinu.Domain.Core;
+using Treinu.Domain.Enums;
 
 namespace Treinu.Infrastructure.Security;
 
 public class EmailService : IEmailService
 {
     private readonly string _apiKey;
+    private readonly string _appUrl;
     private readonly string _fromEmail;
     private readonly string _fromName;
-    private readonly string _appUrl;
 
     public EmailService(IConfiguration configuration)
     {
-        _apiKey = configuration.GetValue<string>("SendGrid:ApiKey") ?? throw new ArgumentNullException("SendGrid:ApiKey");
+        _apiKey = configuration.GetValue<string>("SendGrid:ApiKey") ??
+                  throw new ArgumentNullException("SendGrid:ApiKey");
         _fromEmail = configuration.GetValue<string>("SendGrid:FromEmail") ?? "contato@treinu.app";
         _fromName = configuration.GetValue<string>("SendGrid:FromName") ?? "Treinu App";
         _appUrl = configuration.GetValue<string>("AppUrl") ?? "https://treinu.app";
@@ -39,17 +40,17 @@ public class EmailService : IEmailService
         var client = new SendGridClient(_apiKey);
         var from = new EmailAddress(_fromEmail, _fromName);
         var to = new EmailAddress(toEmail);
-        
+
         var msg = MailHelper.CreateSingleEmail(
-            from, 
-            to, 
-            subject, 
+            from,
+            to,
+            subject,
             null,
-            body 
+            body
         );
-        
+
         var response = await client.SendEmailAsync(msg);
-        
+
         if (!response.IsSuccessStatusCode)
         {
             var errorMessage = await response.Body.ReadAsStringAsync();

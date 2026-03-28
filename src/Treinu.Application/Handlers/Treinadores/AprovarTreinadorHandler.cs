@@ -1,10 +1,10 @@
 using FluentResults;
 using Treinu.Contracts.Commands;
+using Treinu.Domain.Core;
 using Treinu.Domain.Core.Mediator;
+using Treinu.Domain.Enums;
 using Treinu.Domain.Errors;
 using Treinu.Domain.Repositories;
-using Treinu.Domain.Core;
-using Treinu.Domain.Enums;
 
 namespace Treinu.Application.Handlers.Treinadores;
 
@@ -19,7 +19,7 @@ public class AprovarTreinadorHandler(
             var usuario = await usuarioRepository.BuscarPorIdAsync(request.TreinadorId, cancellationToken);
             if (usuario == null)
                 return Result.Fail<Result>(DomainErrors.Usuario.UsuarioNaoEncontrado);
-            
+
             if (usuario.Perfil != PerfilEnum.TREINADOR)
                 return Result.Fail<Result>("Usuário não é um treinador.");
 

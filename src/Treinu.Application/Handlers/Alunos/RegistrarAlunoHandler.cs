@@ -2,9 +2,9 @@ using FluentResults;
 using Treinu.Contracts.Commands;
 using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Enums;
+using Treinu.Domain.Errors;
 using Treinu.Domain.Factories;
 using Treinu.Domain.Factories.Interfaces;
-using Treinu.Domain.Errors;
 using Treinu.Domain.Repositories;
 
 namespace Treinu.Application.Handlers.Alunos;
@@ -38,7 +38,7 @@ public class RegistrarAlunoHandler(
                 request.DataNascimento,
                 request.Genero,
                 request.Cpf,
-                Ativo: true,
+                true,
                 request.AceiteTermoAdesao,
                 PerfilEnum.ALUNO,
                 request.Objetivo,

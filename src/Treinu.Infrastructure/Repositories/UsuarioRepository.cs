@@ -70,7 +70,8 @@ public class UsuarioRepository : IUsuarioRepository
             .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
     }
 
-    public async Task<Result<Treinador>> BuscarTreinadorPorIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Result<Treinador>> BuscarTreinadorPorIdAsync(Guid id,
+        CancellationToken cancellationToken = default)
     {
         try
         {
@@ -112,7 +113,8 @@ public class UsuarioRepository : IUsuarioRepository
         }
     }
 
-    public async Task<Result<(int Total, IEnumerable<Usuario> Usuarios)>> BuscarUsuariosPaginadoAsync(PerfilEnum? tipoUsuario,
+    public async Task<Result<(int Total, IEnumerable<Usuario> Usuarios)>> BuscarUsuariosPaginadoAsync(
+        PerfilEnum? tipoUsuario,
         int page, int limit, CancellationToken cancellationToken)
     {
         try
@@ -140,7 +142,8 @@ public class UsuarioRepository : IUsuarioRepository
         }
         catch (Exception ex)
         {
-            return Result.Fail<(int Total, IEnumerable<Usuario> Usuarios)>($"Erro inesperado ao buscar usuários: {ex.Message}");
+            return Result.Fail<(int Total, IEnumerable<Usuario> Usuarios)>(
+                $"Erro inesperado ao buscar usuários: {ex.Message}");
         }
     }
 }

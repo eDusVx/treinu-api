@@ -50,7 +50,7 @@ public class RegistrarTreinadorCommandValidatorTests
         var command = new RegistrarTreinadorCommand(
             "Fulano Silva", "valido@email.com", "Senha@123", new DateTime(1990, 1, 1),
             GeneroEnum.MASCULINO, "11144477735", true,
-            [new("CREF", "path/to/pdf")]
+            [new CertificadoDto("CREF", "path/to/pdf")]
         );
 
         var result = _validator.Validate(command);

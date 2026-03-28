@@ -16,7 +16,8 @@ public class RegistrarTreinadorCommandValidator : AbstractValidator<RegistrarTre
         RuleFor(x => x.AceiteTermoAdesao).Equal(true)
             .WithMessage("Você deve aceitar os termos de adesão para se registrar.");
         RuleFor(x => x.Certificados).NotEmpty().WithMessage("O envio do certificado é obrigatório.");
-        RuleForEach(x => x.Certificados).ChildRules(c => {
+        RuleForEach(x => x.Certificados).ChildRules(c =>
+        {
             c.RuleFor(x => x.Nome).NotEmpty();
             c.RuleFor(x => x.ArquivoPdf).NotEmpty();
         });

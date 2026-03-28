@@ -24,7 +24,8 @@ public class ConvidarTreinadorHandler(
         var saveResult = await conviteRepository.SalvarConviteAsync(conviteResult.Value);
         if (saveResult.IsFailed) return Result.Fail(saveResult.Errors);
 
-        await emailService.EnviarConviteAsync(conviteResult.Value.Email, conviteResult.Value.Token, conviteResult.Value.Perfil);
+        await emailService.EnviarConviteAsync(conviteResult.Value.Email, conviteResult.Value.Token,
+            conviteResult.Value.Perfil);
 
         return Result.Ok();
     }

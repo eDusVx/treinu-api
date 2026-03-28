@@ -8,7 +8,8 @@ namespace Treinu.Application.Handlers.Alunos;
 public class RemoverAvaliacaoFisicaAlunoHandler(
     IUsuarioRepository usuarioRepository) : IRequestHandler<RemoverAvaliacaoFisicaAlunoCommand, Result<object>>
 {
-    public async Task<Result<object>> Handle(RemoverAvaliacaoFisicaAlunoCommand request, CancellationToken cancellationToken)
+    public async Task<Result<object>> Handle(RemoverAvaliacaoFisicaAlunoCommand request,
+        CancellationToken cancellationToken)
     {
         try
         {
