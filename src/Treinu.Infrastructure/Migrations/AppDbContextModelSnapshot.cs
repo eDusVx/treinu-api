@@ -198,6 +198,12 @@ namespace Treinu.Infrastructure.Migrations
                     b.Property<bool>("Ativo")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("CodigoLogin")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CodigoLoginExpiryTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -208,6 +214,12 @@ namespace Treinu.Infrastructure.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<DateTime?>("RefreshTokenExpiryTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ResetPasswordToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ResetPasswordTokenExpiryTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Senha")

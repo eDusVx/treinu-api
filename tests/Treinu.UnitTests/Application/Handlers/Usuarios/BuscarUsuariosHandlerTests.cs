@@ -2,7 +2,7 @@ using FluentAssertions;
 using FluentResults;
 using Moq;
 using Treinu.Application.Handlers.Usuarios;
-using Treinu.Contracts.Queries;
+using Treinu.Contracts.Queries.Usuarios;
 using Treinu.Contracts.Responses;
 using Treinu.Domain.Dtos;
 using Treinu.Domain.Entities;

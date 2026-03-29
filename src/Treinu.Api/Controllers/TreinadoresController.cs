@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Treinu.Api.Controllers.Base;
-using Treinu.Contracts.Commands;
+using Treinu.Contracts.Commands.Treinadores;
+using Treinu.Contracts.Commands.Usuarios;
 using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Enums;
 

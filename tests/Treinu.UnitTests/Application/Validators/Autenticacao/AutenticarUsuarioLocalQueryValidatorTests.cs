@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Treinu.Application.Validators.Autenticacao;
-using Treinu.Contracts.Queries;
+using Treinu.Contracts.Queries.Autenticacao;
 
 namespace Treinu.UnitTests.Application.Validators.Autenticacao;
 

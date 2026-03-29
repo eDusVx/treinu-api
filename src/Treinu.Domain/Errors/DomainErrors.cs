@@ -62,6 +62,12 @@ public static class DomainErrors
 
         public static readonly DomainError TokenExpirado = new("Credencial.TokenExpirado",
             "O Refresh Token providenciado expirou ou foi invalidado.", ErrorType.Validation);
+
+        public static readonly DomainError TokenRecuperacaoInvalido = new("Credencial.TokenRecuperacaoInvalido",
+            "O token de recuperação é inválido ou expirou.", ErrorType.Validation);
+
+        public static readonly DomainError CodigoLoginInvalido = new("Credencial.CodigoLoginInvalido",
+            "O código de login fornecido é inválido ou já expirou.", ErrorType.Validation);
     }
 
     public static class Convite

@@ -3,7 +3,7 @@ using FluentResults;
 using Moq;
 using Treinu.Application.Handlers.Autenticacao;
 using Treinu.Application.Interfaces;
-using Treinu.Contracts.Queries;
+using Treinu.Contracts.Queries.Autenticacao;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
 using Treinu.Domain.Repositories;

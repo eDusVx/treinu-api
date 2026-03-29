@@ -1,6 +1,6 @@
 using FluentResults;
 using Treinu.Application.Interfaces;
-using Treinu.Contracts.Queries;
+using Treinu.Contracts.Queries.Autenticacao;
 using Treinu.Contracts.Responses;
 using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Errors;

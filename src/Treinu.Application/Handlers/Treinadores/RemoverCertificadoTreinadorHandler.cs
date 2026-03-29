@@ -1,5 +1,5 @@
 using FluentResults;
-using Treinu.Contracts.Commands;
+using Treinu.Contracts.Commands.Treinadores;
 using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Repositories;
 

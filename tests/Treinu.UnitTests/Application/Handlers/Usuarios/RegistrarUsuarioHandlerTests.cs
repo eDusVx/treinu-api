@@ -3,13 +3,14 @@ using FluentResults;
 using Moq;
 using Treinu.Application.Handlers.Alunos;
 using Treinu.Application.Handlers.Treinadores;
-using Treinu.Contracts.Commands;
+using Treinu.Contracts.Commands.Usuarios;
+using Treinu.Contracts.Dtos;
+using CertificadoDto = Treinu.Contracts.Dtos.CertificadoDto;
 using Treinu.Domain.Dtos;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
 using Treinu.Domain.Factories;
 using Treinu.Domain.Repositories;
-using CertificadoDto = Treinu.Contracts.Commands.CertificadoDto;
 
 namespace Treinu.UnitTests.Application.Handlers.Usuarios;
 

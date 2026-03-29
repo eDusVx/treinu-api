@@ -1,5 +1,5 @@
 using FluentValidation;
-using Treinu.Contracts.Queries;
+using Treinu.Contracts.Queries.Autenticacao;
 
 namespace Treinu.Application.Validators.Autenticacao;
 

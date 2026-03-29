@@ -83,6 +83,11 @@ public abstract class Usuario : AggregateRoot
         return Result.Ok();
     }
 
+    public Result AlterarSenha(string novaSenha)
+    {
+        return SetSenha(novaSenha);
+    }
+
     protected Result SetDataNascimento(DateTime dataNascimento)
     {
         if (dataNascimento == default)

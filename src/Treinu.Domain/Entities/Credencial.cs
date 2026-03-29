@@ -28,6 +28,10 @@ public class Credencial : Entity
     public string? Senha { get; private set; }
     public string? RefreshToken { get; private set; }
     public DateTime? RefreshTokenExpiryTime { get; private set; }
+    public string? ResetPasswordToken { get; private set; }
+    public DateTime? ResetPasswordTokenExpiryTime { get; private set; }
+    public string? CodigoLogin { get; private set; }
+    public DateTime? CodigoLoginExpiryTime { get; private set; }
     public PerfilEnum TipoUsuario { get; private set; }
     public bool Ativo { get; private set; }
 
@@ -73,6 +77,51 @@ public class Credencial : Entity
     {
         RefreshToken = refreshToken;
         RefreshTokenExpiryTime = DateTime.SpecifyKind(expiryTime, DateTimeKind.Utc);
+    }
+
+    public void GerarTokenRecuperacaoSenha(string token, DateTime expiryTime)
+    {
+        ResetPasswordToken = token;
+        ResetPasswordTokenExpiryTime = DateTime.SpecifyKind(expiryTime, DateTimeKind.Utc);
+    }
+
+    public Result RedefinirSenha(string token, string novaSenhaHashed)
+    {
+        if (string.IsNullOrWhiteSpace(ResetPasswordToken) || 
+            ResetPasswordToken != token || 
+            ResetPasswordTokenExpiryTime < DateTime.UtcNow)
+        {
+            return Result.Fail(DomainErrors.Credencial.TokenRecuperacaoInvalido);
+        }
+
+        var senhaResult = SetSenhaLocal(novaSenhaHashed);
+        if (senhaResult.IsFailed) return senhaResult;
+
+        ResetPasswordToken = null;
+        ResetPasswordTokenExpiryTime = null;
+
+        return Result.Ok();
+    }
+
+    public void GerarCodigoLogin(string codigo, DateTime expiryTime)
+    {
+        CodigoLogin = codigo;
+        CodigoLoginExpiryTime = DateTime.SpecifyKind(expiryTime, DateTimeKind.Utc);
+    }
+
+    public Result VerificarCodigoLogin(string codigo)
+    {
+        if (string.IsNullOrWhiteSpace(CodigoLogin) || 
+            CodigoLogin != codigo || 
+            CodigoLoginExpiryTime < DateTime.UtcNow)
+        {
+            return Result.Fail(DomainErrors.Credencial.CodigoLoginInvalido);
+        }
+
+        CodigoLogin = null;
+        CodigoLoginExpiryTime = null;
+
+        return Result.Ok();
     }
 
     public void RevogarRefreshToken()

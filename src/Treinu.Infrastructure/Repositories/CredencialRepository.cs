@@ -57,6 +57,20 @@ public class CredencialRepository : ICredencialRepository
         }
     }
 
+    public async Task<Result<Credencial?>> BuscarCredencialPorTokenRecuperacaoAsync(string token)
+    {
+        try
+        {
+            var credencial = await _context.Credenciais
+                .FirstOrDefaultAsync(c => c.ResetPasswordToken == token);
+            return Result.Ok(credencial);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<Credencial?>($"Erro inesperado ao buscar credencial por token de recuperação: {ex.Message}");
+        }
+    }
+
     public async Task<Result> AtualizarCredencialAsync(Credencial credencial)
     {
         try

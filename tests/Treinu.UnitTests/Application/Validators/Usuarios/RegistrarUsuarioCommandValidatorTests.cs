@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Treinu.Application.Validators.Usuarios;
-using Treinu.Contracts.Commands;
+using Treinu.Contracts.Commands.Usuarios;
+using Treinu.Contracts.Dtos;
 using Treinu.Domain.Enums;
 
 namespace Treinu.UnitTests.Application.Validators.Usuarios;
