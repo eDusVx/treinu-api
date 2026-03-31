@@ -9,7 +9,7 @@ using Treinu.Domain.Enums;
 namespace Treinu.Api.Controllers;
 
 [ApiController]
-[Route("api/trainers")]
+[Route("api/treinadores")]
 public class TreinadoresController(IMediator mediator) : ApiController
 {
     [AllowAnonymous]
