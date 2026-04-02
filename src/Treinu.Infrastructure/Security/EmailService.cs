@@ -15,11 +15,15 @@ public class EmailService : IEmailService
 
     public EmailService(IConfiguration configuration)
     {
-        _apiKey = configuration.GetValue<string>("SendGrid:ApiKey") ??
-                  throw new ArgumentNullException("SendGrid:ApiKey");
-        _fromEmail = configuration.GetValue<string>("SendGrid:FromEmail") ?? "contato@treinu.app";
-        _fromName = configuration.GetValue<string>("SendGrid:FromName") ?? "Treinu App";
-        _appUrl = configuration.GetValue<string>("AppUrl") ?? "https://treinu.app";
+        _apiKey = Environment.GetEnvironmentVariable("SendGrid__ApiKey")
+                  ?? configuration.GetValue<string>("SendGrid:ApiKey")
+                  ?? throw new ArgumentNullException("SendGrid:ApiKey");
+        _fromEmail = Environment.GetEnvironmentVariable("SendGrid__FromEmail")
+                     ?? configuration.GetValue<string>("SendGrid:FromEmail") ?? "contato@treinu.app";
+        _fromName = Environment.GetEnvironmentVariable("SendGrid__FromName")
+                    ?? configuration.GetValue<string>("SendGrid:FromName") ?? "Treinu App";
+        _appUrl = Environment.GetEnvironmentVariable("AppUrl")
+                  ?? configuration.GetValue<string>("AppUrl") ?? "https://treinu.app";
     }
 
     public async Task EnviarConviteAsync(string email, Guid token, PerfilEnum perfil)

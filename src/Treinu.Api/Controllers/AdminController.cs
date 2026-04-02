@@ -12,7 +12,7 @@ namespace Treinu.Api.Controllers;
 [Authorize(Roles = RoleConstants.Admin)]
 public class AdminController(IMediator mediator) : ApiController
 {
-    [HttpPatch("trainers/{id:guid}/approve")]
+    [HttpPatch("treinador/{id:guid}/approve")]
     [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]
     [ProducesResponseType(typeof(ProblemDetails), 404)]
