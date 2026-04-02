@@ -9,11 +9,11 @@ public record TreinadorDto(
     string Email,
     DateTime DataNascimento,
     GeneroEnum Genero,
-    IReadOnlyCollection<Contato> Contato,
+    IReadOnlyCollection<ContatoDto> Contato,
     string Cpf,
     PerfilEnum Perfil,
     bool Ativo,
     bool AceiteTermoAdesao,
-    IReadOnlyCollection<Certificado> Certificados,
+    string Cref,
     IReadOnlyCollection<string> Especializacoes
 );

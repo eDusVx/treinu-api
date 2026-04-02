@@ -4,8 +4,6 @@ using Moq;
 using Treinu.Application.Handlers.Alunos;
 using Treinu.Application.Handlers.Treinadores;
 using Treinu.Contracts.Commands.Usuarios;
-using Treinu.Contracts.Dtos;
-using CertificadoDto = Treinu.Contracts.Dtos.CertificadoDto;
 using Treinu.Domain.Dtos;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
@@ -33,7 +31,7 @@ public class RegistrarTreinadorHandlerTests
         var request = new RegistrarTreinadorCommand(
             "Treinador Costa", "treina@t.com", "Senh@123", new DateTime(1990, 1, 1),
             GeneroEnum.FEMININO, "11144477735", true,
-            new List<CertificadoDto> { new("CREF", "path/to/pdf") }
+            "12345/SP"
         );
 
         _repoMock.Setup(r => r.VerificarExistenciaAsync(It.IsAny<string>(), It.IsAny<string>()))

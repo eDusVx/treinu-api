@@ -85,8 +85,8 @@ public class TreinadorConfiguration : IEntityTypeConfiguration<Treinador>
         builder.Property(t => t.Especializacoes)
             .HasColumnType("jsonb"); // Using Postgres JSONB for simple array
 
-        builder.HasMany(t => t.Certificados)
-            .WithOne()
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.Property(t => t.Cref)
+            .IsRequired()
+            .HasMaxLength(20);
     }
 }

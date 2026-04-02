@@ -32,20 +32,3 @@ public class ContatoConfiguration : IEntityTypeConfiguration<Contato>
             .HasMaxLength(50);
     }
 }
-
-public class CertificadoConfiguration : IEntityTypeConfiguration<Certificado>
-{
-    public void Configure(EntityTypeBuilder<Certificado> builder)
-    {
-        builder.ToTable("Certificados");
-
-        builder.HasKey(c => c.Id);
-
-        builder.Property(c => c.Nome)
-            .IsRequired()
-            .HasMaxLength(100);
-
-        builder.Property(c => c.ArquivoPdf)
-            .IsRequired();
-    }
-}

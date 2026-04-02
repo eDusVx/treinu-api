@@ -18,7 +18,7 @@ public record FabricarUsuarioProps(
     PerfilEnum TipoUsuario,
     ObjetivoEnum? Objetivo = null,
     Guid? TreinadorId = null,
-    List<Certificado>? Certificados = null
+    string? Cref = null
 );
 
 public class UsuarioFactory : IUsuarioFactory
@@ -38,7 +38,7 @@ public class UsuarioFactory : IUsuarioFactory
                     props.Cpf,
                     props.Ativo,
                     props.AceiteTermoAdesao,
-                    props.Certificados
+                    props.Cref ?? string.Empty
                 ));
                 if (resultT.IsFailed) return Result.Fail<Usuario>(resultT.Errors);
                 return Result.Ok<Usuario>(resultT.Value);

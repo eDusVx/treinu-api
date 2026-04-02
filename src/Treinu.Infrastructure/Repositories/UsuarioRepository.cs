@@ -78,7 +78,6 @@ public class UsuarioRepository : IUsuarioRepository
             var treinador = await _context.Usuarios
                 .OfType<Treinador>()
                 .Include(t => t.Contato)
-                .Include(t => t.Certificados)
                 .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
 
             if (treinador == null)
@@ -123,8 +122,7 @@ public class UsuarioRepository : IUsuarioRepository
                 .Include(u => u.Contato)
                 .AsQueryable();
 
-            query = query.Include(u => ((Aluno)u).AvaliacaoFisica)
-                .Include(u => ((Treinador)u).Certificados);
+            query = query.Include(u => ((Aluno)u).AvaliacaoFisica);
 
             if (tipoUsuario.HasValue) query = query.Where(u => u.Perfil == tipoUsuario.Value);
 

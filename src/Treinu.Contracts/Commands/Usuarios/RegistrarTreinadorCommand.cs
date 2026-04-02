@@ -1,5 +1,4 @@
 using FluentResults;
-using Treinu.Contracts.Dtos;
 using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Enums;
 using Treinu.Contracts.Commands.Usuarios;
@@ -14,5 +13,5 @@ public record RegistrarTreinadorCommand(
     GeneroEnum Genero,
     string Cpf,
     bool AceiteTermoAdesao,
-    List<CertificadoDto> Certificados
+    string Cref
 ) : IRequest<Result<object>>;

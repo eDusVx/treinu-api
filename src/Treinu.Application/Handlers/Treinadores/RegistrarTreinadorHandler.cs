@@ -30,11 +30,7 @@ public class RegistrarTreinadorHandler(
                 false,
                 request.AceiteTermoAdesao,
                 PerfilEnum.TREINADOR,
-                Certificados:
-                [
-                    .. request.Certificados.Select(c =>
-                        Certificado.Criar(new CriarCertificadoProps(c.Nome, c.ArquivoPdf)).Value)
-                ]
+                Cref: request.Cref
             );
 
             var usuarioResult = usuarioFactory.Fabricar(props);

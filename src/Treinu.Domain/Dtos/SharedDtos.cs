@@ -10,10 +10,3 @@ public record ContatoDto(
     PlataformaRedeSocialEnum? Plataforma,
     string? NomeExibicao
 );
-
-public record CertificadoDto(
-    string Nome,
-    string ArquivoPdf,
-    DateTime DataUpload,
-    bool Validado
-);

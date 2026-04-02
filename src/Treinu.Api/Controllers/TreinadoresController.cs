@@ -75,29 +75,4 @@ public class TreinadoresController(IMediator mediator) : ApiController
         return NoContent();
     }
 
-    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
-    [HttpPost("{id:guid}/certificados")]
-    [ProducesResponseType(typeof(object), 200)]
-    [ProducesResponseType(typeof(ProblemDetails), 400)]
-    [ProducesResponseType(typeof(ProblemDetails), 404)]
-    public async Task<IActionResult> AdicionarCertificado(Guid id,
-        [FromBody] AdicionarCertificadoTreinadorCommand command)
-    {
-        var cmd = command with { TreinadorId = id };
-        var result = await mediator.Send(cmd);
-        if (result.IsFailed) return HandleFailure(result);
-        return Ok(result.Value);
-    }
-
-    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
-    [HttpDelete("{id:guid}/certificados/{certificadoId:guid}")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(typeof(ProblemDetails), 404)]
-    public async Task<IActionResult> RemoverCertificado(Guid id, Guid certificadoId)
-    {
-        var command = new RemoverCertificadoTreinadorCommand(id, certificadoId);
-        var result = await mediator.Send(command);
-        if (result.IsFailed) return HandleFailure(result);
-        return NoContent();
-    }
 }

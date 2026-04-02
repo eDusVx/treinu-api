@@ -22,7 +22,6 @@ public class AppDbContext : DbContext
     public DbSet<Convite> Convites => Set<Convite>();
 
     public DbSet<Contato> Contatos => Set<Contato>();
-    public DbSet<Certificado> Certificados => Set<Certificado>();
 
     public DbSet<AvaliacaoFisica> AvaliacoesFisicas => Set<AvaliacaoFisica>();
     public DbSet<Documento> Documentos => Set<Documento>();

@@ -42,8 +42,8 @@ public static class DomainErrors
         public static readonly DomainError ContatoNaoEncontrado = new("Contato.NaoEncontrado",
             "Contato não encontrado para este usuário.", ErrorType.NotFound);
 
-        public static readonly DomainError CertificadoNaoEncontrado = new("Certificado.NaoEncontrado",
-            "Certificado não encontrado para este treinador.", ErrorType.NotFound);
+        public static readonly DomainError CrefObrigatorio = new("Certificado.CrefObrigatorio",
+            "O CREF é obrigatório para treinadores.", ErrorType.Validation);
 
         public static readonly DomainError EspecializacaoNaoEncontrada = new("Especializacao.NaoEncontrada",
             "Especialização não encontrada para este treinador.", ErrorType.NotFound);

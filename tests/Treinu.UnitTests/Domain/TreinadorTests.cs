@@ -12,7 +12,7 @@ public class TreinadorTests
         var props = new CriarTreinadorProps(
             "Treinador Mestre", "treinador@teste.com", "Senha@123", new DateTime(1980, 1, 1),
             GeneroEnum.FEMININO, new List<Contato>(), "11144477735", true, true,
-            new List<Certificado>(), new List<string> { "Musculação", "Crossfit" }
+            "12345/SP", new List<string> { "Musculação", "Crossfit" }
         );
 
         var treinadorResult = Treinador.Criar(props);
@@ -30,7 +30,7 @@ public class TreinadorTests
         var props = new CriarTreinadorProps(
             "Treinador Mestre", "treinador@teste.com", "Senha@123", new DateTime(1980, 1, 1),
             GeneroEnum.FEMININO, new List<Contato>(), "11144477735", true, true,
-            new List<Certificado>(), new List<string>()
+            "12345/SP", new List<string>()
         );
         var treinador = Treinador.Criar(props).Value;
 
@@ -46,7 +46,7 @@ public class TreinadorTests
         var props = new CriarTreinadorProps(
             "Treinador Mestre", "treinador@teste.com", "Senha@123", new DateTime(1980, 1, 1),
             GeneroEnum.FEMININO, new List<Contato>(), "11144477735", true, true,
-            new List<Certificado>(), new List<string>()
+            "12345/SP", new List<string>()
         );
         var treinador = Treinador.Criar(props).Value;
 

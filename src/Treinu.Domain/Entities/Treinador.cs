@@ -1,4 +1,5 @@
 using FluentResults;
+using System.Linq;
 using Treinu.Domain.Dtos;
 using Treinu.Domain.Enums;
 using Treinu.Domain.Errors;
@@ -16,14 +17,12 @@ public record CriarTreinadorProps(
     string Cpf,
     bool Ativo,
     bool AceiteTermoAdesao,
-    List<Certificado>? Certificados = null,
+    string Cref,
     List<string>? Especializacoes = null
 );
 
 public class Treinador : Usuario
 {
-    private readonly List<Certificado> _certificados = new();
-
     private readonly List<string> _especializacoes = new();
 
     protected Treinador()
@@ -34,7 +33,7 @@ public class Treinador : Usuario
     {
     }
 
-    public IReadOnlyCollection<Certificado> Certificados => _certificados.AsReadOnly();
+    public string Cref { get; private set; } = string.Empty;
     public IReadOnlyCollection<string> Especializacoes => _especializacoes.AsReadOnly();
 
     public virtual ICollection<Convite> Convites { get; private set; } = new List<Convite>();
@@ -67,7 +66,7 @@ public class Treinador : Usuario
         if (rs10.IsFailed) return Result.Fail<Treinador>(rs10.Errors);
         var rs11 = instance.SetContato(props.Contato ?? new List<Contato>());
         if (rs11.IsFailed) return Result.Fail<Treinador>(rs11.Errors);
-        var rs12 = instance.SetCertificados(props.Certificados ?? new List<Certificado>());
+        var rs12 = instance.SetCref(props.Cref);
         if (rs12.IsFailed) return Result.Fail<Treinador>(rs12.Errors);
         var rs13 = instance.SetEspecializacoes(props.Especializacoes ?? new List<string>());
         if (rs13.IsFailed) return Result.Fail<Treinador>(rs13.Errors);
@@ -110,7 +109,7 @@ public class Treinador : Usuario
         var rs10 = instance.SetStatus(UsuarioStatusEnum.PENDENTE_VALIDACAO);
         if (rs10.IsFailed) return Result.Fail<Treinador>(rs10.Errors);
         instance.CarregarSenha(props.Senha);
-        var rs11 = instance.SetCertificados(props.Certificados ?? new List<Certificado>());
+        var rs11 = instance.SetCref(props.Cref);
         if (rs11.IsFailed) return Result.Fail<Treinador>(rs11.Errors);
         var rs12 = instance.SetEspecializacoes(props.Especializacoes ?? new List<string>());
         if (rs12.IsFailed) return Result.Fail<Treinador>(rs12.Errors);
@@ -118,11 +117,10 @@ public class Treinador : Usuario
         return Result.Ok(instance);
     }
 
-    private Result SetCertificados(List<Certificado> certificados)
+    private Result SetCref(string cref)
     {
-        if (certificados == null) return Result.Fail(DomainErrors.Usuario.DadosVazios);
-        _certificados.Clear();
-        _certificados.AddRange(certificados);
+        if (string.IsNullOrWhiteSpace(cref)) return Result.Fail(DomainErrors.Usuario.CrefObrigatorio);
+        Cref = cref.Trim().ToUpper();
         return Result.Ok();
     }
 
@@ -131,13 +129,6 @@ public class Treinador : Usuario
         if (especializacoes == null) return Result.Fail(DomainErrors.Usuario.DadosVazios);
         _especializacoes.Clear();
         _especializacoes.AddRange(especializacoes);
-        return Result.Ok();
-    }
-
-    public Result AdicionarCertificado(Certificado certificado)
-    {
-        if (certificado == null) return Result.Fail(DomainErrors.Usuario.DadosVazios);
-        _certificados.Add(certificado);
         return Result.Ok();
     }
 
@@ -156,19 +147,21 @@ public class Treinador : Usuario
         return Result.Ok();
     }
 
-    public Result RemoverCertificado(Guid certificadoId)
-    {
-        var certificado = _certificados.FirstOrDefault(c => c.Id == certificadoId);
-        if (certificado == null) return Result.Fail(DomainErrors.Usuario.CertificadoNaoEncontrado);
-        _certificados.Remove(certificado);
-        return Result.Ok();
-    }
-
     public override object ToDto()
     {
         return new TreinadorDto(
-            Id, NomeCompleto, Email, DataNascimento, Genero, Contato, Cpf, Perfil, Ativo,
-            AceiteTermoAdesao, Certificados, Especializacoes
+            Id,
+            NomeCompleto,
+            Email,
+            DataNascimento,
+            Genero,
+            Contato.Select(c => new ContatoDto(c.Tipo, c.Valor, c.Descricao, c.Principal, c.Plataforma, c.NomeExibicao)).ToList(),
+            Cpf,
+            Perfil,
+            Ativo,
+            AceiteTermoAdesao,
+            Cref,
+            Especializacoes
         );
     }
 }
