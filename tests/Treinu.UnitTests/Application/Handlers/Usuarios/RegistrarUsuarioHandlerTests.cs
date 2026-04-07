@@ -9,6 +9,7 @@ using Treinu.Domain.Entities;
 using Treinu.Domain.Enums;
 using Treinu.Domain.Factories;
 using Treinu.Domain.Repositories;
+using Treinu.Domain.Core;
 
 namespace Treinu.UnitTests.Application.Handlers.Usuarios;
 
@@ -16,13 +17,15 @@ public class RegistrarTreinadorHandlerTests
 {
     private readonly RegistrarTreinadorHandler _handler;
     private readonly Mock<IUsuarioRepository> _repoMock;
+    private readonly Mock<IEmailService> _emailSvcMock;
 
     public RegistrarTreinadorHandlerTests()
     {
         _repoMock = new Mock<IUsuarioRepository>();
+        _emailSvcMock = new Mock<IEmailService>();
         var factory = new UsuarioFactory();
 
-        _handler = new RegistrarTreinadorHandler(_repoMock.Object, factory);
+        _handler = new RegistrarTreinadorHandler(_repoMock.Object, factory, _emailSvcMock.Object);
     }
 
     [Fact]
@@ -53,14 +56,16 @@ public class RegistrarAlunoHandlerTests
     private readonly Mock<IConviteRepository> _conviteRepoMock;
     private readonly RegistrarAlunoHandler _handler;
     private readonly Mock<IUsuarioRepository> _repoMock;
+    private readonly Mock<IEmailService> _emailSvcMock;
 
     public RegistrarAlunoHandlerTests()
     {
         _repoMock = new Mock<IUsuarioRepository>();
         _conviteRepoMock = new Mock<IConviteRepository>();
+        _emailSvcMock = new Mock<IEmailService>();
         var factory = new UsuarioFactory();
 
-        _handler = new RegistrarAlunoHandler(_repoMock.Object, _conviteRepoMock.Object, factory);
+        _handler = new RegistrarAlunoHandler(_repoMock.Object, _conviteRepoMock.Object, factory, _emailSvcMock.Object);
     }
 
     [Fact]

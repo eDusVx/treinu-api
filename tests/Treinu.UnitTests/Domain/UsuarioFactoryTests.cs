@@ -36,7 +36,8 @@ public class UsuarioFactoryTests
     {
         var props = new FabricarUsuarioProps(
             "Treinador", "t@t.com", "Senh@123", new DateTime(1990, 1, 1),
-            GeneroEnum.MASCULINO, "11144477735", true, true, PerfilEnum.TREINADOR
+            GeneroEnum.MASCULINO, "11144477735", true, true, PerfilEnum.TREINADOR,
+            Cref: "123456/SP"
         );
 
         var usuarioResult = _factory.Fabricar(props);
