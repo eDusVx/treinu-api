@@ -6,12 +6,14 @@ using Treinu.Domain.Enums;
 using Treinu.Domain.Factories;
 using Treinu.Domain.Factories.Interfaces;
 using Treinu.Domain.Repositories;
+using Treinu.Domain.Core;
 
 namespace Treinu.Application.Handlers.Treinadores;
 
 public class RegistrarTreinadorHandler(
     IUsuarioRepository usuarioRepository,
-    IUsuarioFactory usuarioFactory) : IRequestHandler<RegistrarTreinadorCommand, Result<object>>
+    IUsuarioFactory usuarioFactory,
+    IEmailService emailService) : IRequestHandler<RegistrarTreinadorCommand, Result<object>>
 {
     public async Task<Result<object>> Handle(RegistrarTreinadorCommand request, CancellationToken cancellationToken)
     {
@@ -38,6 +40,8 @@ public class RegistrarTreinadorHandler(
 
             var saveResult = await usuarioRepository.SalvarUsuarioAsync(usuarioResult.Value);
             if (saveResult.IsFailed) return Result.Fail<object>(saveResult.Errors);
+
+            await emailService.EnviarTreinadorEmAnaliseAsync(usuarioResult.Value.Email, usuarioResult.Value.NomeCompleto);
 
             return Result.Ok(usuarioResult.Value.ToDto());
         }

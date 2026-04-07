@@ -6,13 +6,15 @@ using Treinu.Domain.Errors;
 using Treinu.Domain.Factories;
 using Treinu.Domain.Factories.Interfaces;
 using Treinu.Domain.Repositories;
+using Treinu.Domain.Core;
 
 namespace Treinu.Application.Handlers.Alunos;
 
 public class RegistrarAlunoHandler(
     IUsuarioRepository usuarioRepository,
     IConviteRepository conviteRepository,
-    IUsuarioFactory usuarioFactory) : IRequestHandler<RegistrarAlunoCommand, Result<object>>
+    IUsuarioFactory usuarioFactory,
+    IEmailService emailService) : IRequestHandler<RegistrarAlunoCommand, Result<object>>
 {
     public async Task<Result<object>> Handle(RegistrarAlunoCommand request, CancellationToken cancellationToken)
     {
@@ -52,6 +54,8 @@ public class RegistrarAlunoHandler(
             if (saveResult.IsFailed) return Result.Fail<object>(saveResult.Errors);
 
             await conviteRepository.AtualizarConviteAsync(convite);
+
+            await emailService.EnviarBoasVindasAsync(usuarioResult.Value.Email, usuarioResult.Value.NomeCompleto, "");
 
             return Result.Ok(usuarioResult.Value.ToDto());
         }

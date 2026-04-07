@@ -56,14 +56,14 @@ public class EmailService : IEmailService
         await SendEmailAsync(email, template.AssuntoPadrao, html);
     }
 
-    public async Task EnviarRecuperacaoSenhaAsync(string email, string nome, string link)
+    public async Task EnviarRecuperacaoSenhaAsync(string email, string nome, string codigo)
     {
         var template = await _templateRepository.ObterPorNomeAsync("RecuperacaoSenha");
         if (template is null) throw new InvalidOperationException("Template de e-mail 'RecuperacaoSenha' não encontrado no banco de dados.");
 
         var html = template.ConteudoHtml
             .Replace("{{Nome}}", nome)
-            .Replace("{{LinkRecuperacao}}", link);
+            .Replace("{{CodigoRecuperacao}}", codigo);
 
         await SendEmailAsync(email, template.AssuntoPadrao, html);
     }
@@ -88,6 +88,17 @@ public class EmailService : IEmailService
         var html = template.ConteudoHtml
             .Replace("{{Nome}}", nome)
             .Replace("{{LinkLogin}}", string.IsNullOrEmpty(linkLogin) ? _appUrl : linkLogin);
+
+        await SendEmailAsync(email, template.AssuntoPadrao, html);
+    }
+
+    public async Task EnviarTreinadorEmAnaliseAsync(string email, string nome)
+    {
+        var template = await _templateRepository.ObterPorNomeAsync("TreinadorEmAnalise");
+        if (template is null) throw new InvalidOperationException("Template de e-mail 'TreinadorEmAnalise' não encontrado no banco de dados.");
+
+        var html = template.ConteudoHtml
+            .Replace("{{Nome}}", nome);
 
         await SendEmailAsync(email, template.AssuntoPadrao, html);
     }
