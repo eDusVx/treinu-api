@@ -20,6 +20,7 @@ public class AppDbContext : DbContext
     public DbSet<Treinador> Treinadores => Set<Treinador>();
     public DbSet<Credencial> Credenciais => Set<Credencial>();
     public DbSet<Convite> Convites => Set<Convite>();
+    public DbSet<TemplateEmail> TemplatesEmail => Set<TemplateEmail>();
 
     public DbSet<Contato> Contatos => Set<Contato>();
 

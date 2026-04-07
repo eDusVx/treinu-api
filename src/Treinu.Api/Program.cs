@@ -69,6 +69,7 @@ builder.Services.AddScoped<AvaliacaoFisicaFactory>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IConviteRepository, ConviteRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<ITemplateEmailRepository, TemplateEmailRepository>();
 
 builder.Services.AddValidatorsFromAssembly(typeof(RegistrarTreinadorHandler).Assembly);
 builder.Services.AddCustomMediator(typeof(RegistrarTreinadorHandler).Assembly);

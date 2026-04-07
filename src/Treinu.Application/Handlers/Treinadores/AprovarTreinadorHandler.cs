@@ -29,10 +29,10 @@ public class AprovarTreinadorHandler(
             var saveResult = await usuarioRepository.AtualizarUsuarioAsync(usuario);
             if (saveResult.IsFailed) return Result.Fail<Result>(saveResult.Errors);
 
-            await emailService.SendEmailAsync(
+            await emailService.EnviarTreinadorAprovadoAsync(
                 usuario.Email,
-                "Bem-vindo ao Treinu!",
-                $"Olá {usuario.NomeCompleto}, seu cadastro foi aprovado! Você já pode acessar a plataforma."
+                usuario.NomeCompleto,
+                "" // Default URL inside EmailService
             );
 
             return Result.Ok(Result.Ok());
