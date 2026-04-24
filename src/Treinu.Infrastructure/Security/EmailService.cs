@@ -35,7 +35,7 @@ public class EmailService : IEmailService
         var template = await _templateRepository.ObterPorNomeAsync("ConviteTreinador");
         if (template is null) throw new InvalidOperationException("Template de e-mail 'ConviteTreinador' não encontrado no banco de dados.");
 
-        var link = $"{_appUrl}/registro?token={token}";
+        var link = $"{_appUrl}/cadastro/aluno/{token}";
 
         var html = template.ConteudoHtml
             .Replace("{{Perfil}}", perfil.ToString().ToLower())

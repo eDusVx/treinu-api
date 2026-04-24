@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Treinu.Api.Controllers.Base;
 using Treinu.Contracts.Commands.Alunos;
 using Treinu.Contracts.Commands.Usuarios;
+using Treinu.Contracts.Queries.Alunos;
 using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Enums;
+using System.Security.Claims;
 
 namespace Treinu.Api.Controllers;
 
@@ -72,5 +74,50 @@ public class AlunosController(IMediator mediator) : ApiController
         var result = await mediator.Send(command);
         if (result.IsFailed) return HandleFailure(result);
         return NoContent();
+    }
+
+    [Authorize(Roles = RoleConstants.Aluno)]
+    [HttpPost("me/avaliacoes")]
+    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(ProblemDetails), 400)]
+    public async Task<IActionResult> AdicionarMinhaAvaliacaoFisica([FromBody] AdicionarAvaliacaoFisicaProprioAlunoCommand command)
+    {
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var alunoId))
+            return Unauthorized();
+
+        var cmd = command with { AlunoId = alunoId };
+        var result = await mediator.Send(cmd);
+        if (result.IsFailed) return HandleFailure(result);
+        return Ok(result.Value);
+    }
+
+    [Authorize(Roles = RoleConstants.Aluno)]
+    [HttpGet("me/dashboard")]
+    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(ProblemDetails), 400)]
+    public async Task<IActionResult> ObterMeuDashboardEvolucao()
+    {
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var alunoId))
+            return Unauthorized();
+
+        var query = new ObterDashboardEvolucaoQuery(alunoId);
+        var result = await mediator.Send(query);
+        if (result.IsFailed) return HandleFailure(result);
+        return Ok(result.Value);
+    }
+
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
+    [HttpGet("{id:guid}/dashboard")]
+    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(ProblemDetails), 400)]
+    [ProducesResponseType(typeof(ProblemDetails), 404)]
+    public async Task<IActionResult> ObterDashboardEvolucao(Guid id)
+    {
+        var query = new ObterDashboardEvolucaoQuery(id);
+        var result = await mediator.Send(query);
+        if (result.IsFailed) return HandleFailure(result);
+        return Ok(result.Value);
     }
 }

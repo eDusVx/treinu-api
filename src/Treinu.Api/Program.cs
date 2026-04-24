@@ -17,6 +17,8 @@ using Treinu.Infrastructure.Data;
 using Treinu.Infrastructure.Health;
 using Treinu.Infrastructure.Repositories;
 using Treinu.Infrastructure.Security;
+using Treinu.Infrastructure.Data.Repositories;
+using Treinu.Api.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,6 +72,11 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IConviteRepository, ConviteRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ITemplateEmailRepository, TemplateEmailRepository>();
+builder.Services.AddScoped<ITreinoRepository, TreinoRepository>();
+builder.Services.AddScoped<IExercicioRepository, ExercicioRepository>();
+builder.Services.AddScoped<INotificacaoRepository, NotificacaoRepository>();
+
+builder.Services.AddHostedService<TreinosVencidosWorker>();
 
 builder.Services.AddValidatorsFromAssembly(typeof(RegistrarTreinadorHandler).Assembly);
 builder.Services.AddCustomMediator(typeof(RegistrarTreinadorHandler).Assembly);

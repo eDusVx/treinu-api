@@ -24,6 +24,11 @@ public class AppDbContext : DbContext
 
     public DbSet<Contato> Contatos => Set<Contato>();
 
+    public DbSet<Exercicio> Exercicios => Set<Exercicio>();
+    public DbSet<Treino> Treinos => Set<Treino>();
+    public DbSet<ItemTreino> ItensTreino => Set<ItemTreino>();
+    public DbSet<Notificacao> Notificacoes => Set<Notificacao>();
+
     public DbSet<AvaliacaoFisica> AvaliacoesFisicas => Set<AvaliacaoFisica>();
     public DbSet<Documento> Documentos => Set<Documento>();
     public DbSet<Questionario> Questionarios => Set<Questionario>();
