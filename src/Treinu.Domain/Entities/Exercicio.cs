@@ -29,7 +29,7 @@ public class Exercicio : AggregateRoot
         var instance = new Exercicio(Guid.NewGuid())
         {
             TreinadorId = props.TreinadorId,
-            CriadoEm = DateTime.Now
+            CriadoEm = DateTime.UtcNow
         };
 
         var nomeResult = instance.SetNome(props.Nome);

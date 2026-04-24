@@ -29,7 +29,7 @@ public class TreinosVencidosWorker : BackgroundService
                 var treinoRepository = scope.ServiceProvider.GetRequiredService<ITreinoRepository>();
                 var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-                var vencidosResult = await treinoRepository.BuscarTreinosVencidosAtivosAsync(DateTime.Now, stoppingToken);
+                var vencidosResult = await treinoRepository.BuscarTreinosVencidosAtivosAsync(DateTime.UtcNow, stoppingToken);
 
                 if (vencidosResult.IsSuccess)
                 {

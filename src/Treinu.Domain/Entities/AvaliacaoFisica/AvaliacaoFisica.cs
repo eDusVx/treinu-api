@@ -34,7 +34,7 @@ public abstract class AvaliacaoFisica : AggregateRoot
         if (data == default)
             return Result.Fail("Data da avaliação não pode ser vazia");
 
-        var hoje = DateTime.Now.Date;
+        var hoje = DateTime.UtcNow.Date;
         if (data > hoje)
             return Result.Fail("Data da avaliação não pode ser no futuro");
 

@@ -27,7 +27,7 @@ public class Notificacao : AggregateRoot
         {
             UsuarioId = props.UsuarioId,
             Lida = false,
-            CriadaEm = DateTime.Now
+            CriadaEm = DateTime.UtcNow
         };
 
         var tituloResult = instance.SetTitulo(props.Titulo);

@@ -96,7 +96,7 @@ public class Treino : AggregateRoot
     {
         if (Status == TreinoStatusEnum.CONCLUIDO) return Result.Ok();
 
-        if (DataFim.Date < DateTime.Now.Date && Status != TreinoStatusEnum.VENCIDO)
+        if (DataFim.Date < DateTime.UtcNow.Date && Status != TreinoStatusEnum.VENCIDO)
         {
             Status = TreinoStatusEnum.VENCIDO;
             Apply(new TreinoVencidoEvent(Id, AlunoId, Nome));
