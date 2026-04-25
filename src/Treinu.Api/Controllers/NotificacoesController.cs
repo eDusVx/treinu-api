@@ -12,6 +12,9 @@ namespace Treinu.Api.Controllers;
 [Authorize]
 public class NotificacoesController(IMediator mediator) : ApiController
 {
+    /// <summary>
+    /// Busca as notificações do usuário logado.
+    /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]

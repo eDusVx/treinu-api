@@ -18,6 +18,18 @@ public class AuthController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <summary>
+    /// Realiza o login do usuário (Email/Senha).
+    /// </summary>
+    /// <remarks>
+    /// Exemplo de payload:
+    /// 
+    ///     POST /api/Auth/login
+    ///     {
+    ///       "email": "usuario@email.com",
+    ///       "senha": "SenhaForte123!"
+    ///     }
+    /// </remarks>
     [AllowAnonymous]
     [HttpPost("login")]
     [ProducesResponseType(typeof(TokenDto), 200)]
@@ -27,6 +39,9 @@ public class AuthController : ControllerBase
         return Ok(result.Value);
     }
 
+    /// <summary>
+    /// Renova o token JWT atual utilizando um refresh token.
+    /// </summary>
     [AllowAnonymous]
     [HttpPost("refresh")]
     [ProducesResponseType(typeof(TokenDto), 200)]
@@ -36,6 +51,9 @@ public class AuthController : ControllerBase
         return Ok(result.Value);
     }
 
+    /// <summary>
+    /// Solicita a recuperação de senha (Envia e-mail com token/código).
+    /// </summary>
     [AllowAnonymous]
     [HttpPost("recuperar-senha")]
     [ProducesResponseType(typeof(object), 200)]
@@ -45,6 +63,9 @@ public class AuthController : ControllerBase
         return Ok(result.Value);
     }
 
+    /// <summary>
+    /// Redefine a senha do usuário utilizando o código de recuperação.
+    /// </summary>
     [AllowAnonymous]
     [HttpPost("redefinir-senha")]
     [ProducesResponseType(typeof(object), 200)]

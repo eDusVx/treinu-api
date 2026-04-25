@@ -12,6 +12,9 @@ namespace Treinu.Api.Controllers;
 [Route("api/[controller]")]
 public class UsuariosController(IMediator mediator) : ApiController
 {
+    /// <summary>
+    /// Busca lista de usuários com paginação e filtro por tipo de perfil (Admin/Treinador).
+    /// </summary>
     [Authorize(Roles = $"{RoleConstants.Admin},{RoleConstants.Treinador}")]
     [HttpGet]
     [ProducesResponseType(typeof(PaginationResponse<object>), 200)]

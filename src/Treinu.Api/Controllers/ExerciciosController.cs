@@ -13,6 +13,21 @@ namespace Treinu.Api.Controllers;
 [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
 public class ExerciciosController(IMediator mediator) : ApiController
 {
+    /// <summary>
+    /// Cadastra um novo exercício no banco de dados do treinador.
+    /// </summary>
+    /// <remarks>
+    /// Exemplo de payload:
+    /// 
+    ///     POST /api/exercicios
+    ///     {
+    ///       "nome": "Supino Reto",
+    ///       "descricao": "Exercício de peito em banco plano",
+    ///       "tags": "Peito, Força, Barra",
+    ///       "arquivoDemonstracao": "https://link-para-video.com/video.mp4",
+    ///       "treinadorId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    ///     }
+    /// </remarks>
     [HttpPost]
     [ProducesResponseType(typeof(object), 201)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]
@@ -23,6 +38,9 @@ public class ExerciciosController(IMediator mediator) : ApiController
         return CreatedAtAction(nameof(BuscarExercicios), new { tags = string.Empty }, result.Value);
     }
 
+    /// <summary>
+    /// Busca ou lista os exercícios de um treinador com opções de filtros por tags.
+    /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]

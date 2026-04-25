@@ -11,6 +11,18 @@ namespace Treinu.Api.Controllers;
 [Route("api/convites")]
 public class ConvitesController(IMediator mediator) : ApiController
 {
+    /// <summary>
+    /// Envia um convite por e-mail para um aluno se cadastrar.
+    /// </summary>
+    /// <remarks>
+    /// Exemplo de payload:
+    /// 
+    ///     POST /api/convites/aluno
+    ///     {
+    ///       "email": "aluno@email.com",
+    ///       "treinadorId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    ///     }
+    /// </remarks>
     [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
     [HttpPost("aluno")]
     [ProducesResponseType(200)]

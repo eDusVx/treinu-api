@@ -12,6 +12,9 @@ namespace Treinu.Api.Controllers;
 [Authorize(Roles = RoleConstants.Admin)]
 public class AdminController(IMediator mediator) : ApiController
 {
+    /// <summary>
+    /// Aprova um treinador recém-cadastrado na plataforma, permitindo o seu login.
+    /// </summary>
     [HttpPatch("treinador/{id:guid}/approve")]
     [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]

@@ -12,6 +12,24 @@ namespace Treinu.Api.Controllers;
 [Route("api/treinador")]
 public class TreinadoresController(IMediator mediator) : ApiController
 {
+    /// <summary>
+    /// Registra um novo treinador.
+    /// </summary>
+    /// <remarks>
+    /// Exemplo de payload:
+    /// 
+    ///     POST /api/treinador
+    ///     {
+    ///       "nomeCompleto": "Carlos Treinador",
+    ///       "email": "carlos@esporte.com",
+    ///       "senha": "SenhaForte123!",
+    ///       "dataNascimento": "1990-05-20T00:00:00Z",
+    ///       "genero": "Masculino",
+    ///       "cpf": "09876543211",
+    ///       "aceiteTermoAdesao": true,
+    ///       "cref": "123456-G/SP"
+    ///     }
+    /// </remarks>
     [AllowAnonymous]
     [HttpPost]
     [ProducesResponseType(typeof(object), 201)]
@@ -23,6 +41,9 @@ public class TreinadoresController(IMediator mediator) : ApiController
         return CreatedAtAction(nameof(RegistrarTreinador), result.Value);
     }
 
+    /// <summary>
+    /// Adiciona um contato ao perfil do treinador.
+    /// </summary>
     [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
     [HttpPost("{id:guid}/contatos")]
     [ProducesResponseType(typeof(object), 200)]
@@ -36,6 +57,9 @@ public class TreinadoresController(IMediator mediator) : ApiController
         return Ok(result.Value);
     }
 
+    /// <summary>
+    /// Remove um contato existente do perfil do treinador.
+    /// </summary>
     [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
     [HttpDelete("{id:guid}/contatos/{contatoId:guid}")]
     [ProducesResponseType(204)]
@@ -48,6 +72,12 @@ public class TreinadoresController(IMediator mediator) : ApiController
         return NoContent();
     }
 
+    /// <summary>
+    /// Adiciona uma especialização ao perfil do treinador.
+    /// </summary>
+    /// <remarks>
+    /// Especializações possíveis (Exemplos): Musculacao, Emagrecimento, Funcional, Crossfit, etc.
+    /// </remarks>
     [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
     [HttpPost("{id:guid}/especializacoes")]
     [ProducesResponseType(typeof(object), 200)]
@@ -62,6 +92,9 @@ public class TreinadoresController(IMediator mediator) : ApiController
         return Ok(result.Value);
     }
 
+    /// <summary>
+    /// Remove uma especialização do perfil do treinador.
+    /// </summary>
     [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
     [HttpDelete("{id:guid}/especializacoes")]
     [ProducesResponseType(204)]
