@@ -56,9 +56,9 @@ public class AlunosController(IMediator mediator) : ApiController
     [ProducesResponseType(typeof(ProblemDetails), 400)]
     [ProducesResponseType(typeof(ProblemDetails), 404)]
     public async Task<IActionResult> AdicionarAvaliacaoFisica(Guid id,
-        [FromBody] AdicionarAvaliacaoFisicaAlunoCommand command)
+        [FromBody] Treinu.Domain.Dtos.AvaliacaoFisicaDto dto)
     {
-        var cmd = command with { AlunoId = id };
+        var cmd = new AdicionarAvaliacaoFisicaAlunoCommand(id, dto);
         var result = await mediator.Send(cmd);
         if (result.IsFailed) return HandleFailure(result);
         return Ok(result.Value);
@@ -80,13 +80,13 @@ public class AlunosController(IMediator mediator) : ApiController
     [HttpPost("me/avaliacoes")]
     [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(typeof(ProblemDetails), 400)]
-    public async Task<IActionResult> AdicionarMinhaAvaliacaoFisica([FromBody] AdicionarAvaliacaoFisicaProprioAlunoCommand command)
+    public async Task<IActionResult> AdicionarMinhaAvaliacaoFisica([FromBody] Treinu.Domain.Dtos.AvaliacaoFisicaDto dto)
     {
         var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var alunoId))
             return Unauthorized();
 
-        var cmd = command with { AlunoId = alunoId };
+        var cmd = new AdicionarAvaliacaoFisicaProprioAlunoCommand(alunoId, dto);
         var result = await mediator.Send(cmd);
         if (result.IsFailed) return HandleFailure(result);
         return Ok(result.Value);

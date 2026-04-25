@@ -16,5 +16,5 @@ public record AlunoDto(
     bool Ativo,
     bool AceiteTermoAdesao,
     ObjetivoEnum Objetivo,
-    IReadOnlyCollection<AvaliacaoFisica> AvaliacaoFisica
+    IReadOnlyCollection<Treinu.Domain.Entities.AvaliacaoFisica.AvaliacaoFisica> AvaliacaoFisica
 );

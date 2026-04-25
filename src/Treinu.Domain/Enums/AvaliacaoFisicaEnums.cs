@@ -1,11 +1,5 @@
 namespace Treinu.Domain.Enums;
 
-public enum TipoAvaliacaoEnum
-{
-    DOCUMENTO,
-    QUESTIONARIO
-}
-
 public enum ChaveMedidaEnum
 {
     BRACO_ESQUERDO,

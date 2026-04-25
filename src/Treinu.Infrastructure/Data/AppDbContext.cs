@@ -29,9 +29,7 @@ public class AppDbContext : DbContext
     public DbSet<ItemTreino> ItensTreino => Set<ItemTreino>();
     public DbSet<Notificacao> Notificacoes => Set<Notificacao>();
 
-    public DbSet<AvaliacaoFisica> AvaliacoesFisicas => Set<AvaliacaoFisica>();
-    public DbSet<Documento> Documentos => Set<Documento>();
-    public DbSet<Questionario> Questionarios => Set<Questionario>();
+    public DbSet<Treinu.Domain.Entities.AvaliacaoFisica.AvaliacaoFisica> AvaliacoesFisicas => Set<Treinu.Domain.Entities.AvaliacaoFisica.AvaliacaoFisica>();
     public DbSet<Medida> Medidas => Set<Medida>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

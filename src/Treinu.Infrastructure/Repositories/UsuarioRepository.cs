@@ -54,7 +54,10 @@ public class UsuarioRepository : IUsuarioRepository
     {
         try
         {
-            _context.Usuarios.Update(usuario);
+            if (_context.Entry(usuario).State == EntityState.Detached)
+            {
+                _context.Usuarios.Update(usuario);
+            }
             await _context.SaveChangesAsync();
             return Result.Ok();
         }
@@ -99,6 +102,7 @@ public class UsuarioRepository : IUsuarioRepository
                 .OfType<Aluno>()
                 .Include(a => a.Contato)
                 .Include(a => a.AvaliacaoFisica)
+                    .ThenInclude(av => av.Medidas)
                 .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
 
             if (aluno == null)

@@ -25,7 +25,7 @@ public class ObterDashboardEvolucaoHandler(
             {
                 a.Id,
                 a.Data,
-                Tipo = a.Tipo.ToString(),
+                Tipo = "QUESTIONARIO",
                 // Se fôssemos abrir `a` para propriedades específicas, faríamos um pattern matching.
                 // Como não sabemos, passamos o objeto inteiro.
                 Detalhes = a
