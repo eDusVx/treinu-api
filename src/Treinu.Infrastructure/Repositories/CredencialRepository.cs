@@ -34,6 +34,7 @@ public class CredencialRepository : ICredencialRepository
         try
         {
             var credencial = await _context.Credenciais
+                .Include(c => c.Usuario)
                 .FirstOrDefaultAsync(c => c.Email == email);
             return Result.Ok(credencial);
         }
@@ -48,6 +49,7 @@ public class CredencialRepository : ICredencialRepository
         try
         {
             var credencial = await _context.Credenciais
+                .Include(c => c.Usuario)
                 .FirstOrDefaultAsync(c => c.RefreshToken == refreshToken);
             return Result.Ok(credencial);
         }

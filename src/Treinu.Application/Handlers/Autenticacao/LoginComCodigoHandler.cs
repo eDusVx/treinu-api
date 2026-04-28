@@ -34,7 +34,7 @@ public class LoginComCodigoHandler : IRequestHandler<LoginComCodigoQuery, Result
             if (verifyResult.IsFailed) return Result.Fail<TokenDto>(verifyResult.Errors);
 
             var token = _tokenService.GerarJwt(credencial.Email, credencial.TipoUsuario.ToString(),
-                credencial.UsuarioId.ToString());
+                credencial.UsuarioId.ToString(), credencial.Usuario.NomeCompleto);
             var refreshToken = _tokenService.GerarRefreshToken();
 
             credencial.AtualizarRefreshToken(refreshToken, DateTime.UtcNow.AddDays(7));

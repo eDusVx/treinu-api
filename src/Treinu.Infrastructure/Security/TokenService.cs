@@ -17,7 +17,7 @@ public class TokenService : ITokenService
         _configuration = configuration;
     }
 
-    public string GerarJwt(string email, string role, string sub)
+    public string GerarJwt(string email, string role, string sub, string nome)
     {
         var jwtSettings = _configuration.GetSection("JwtSettings");
         var secret = jwtSettings.GetValue<string>("Secret") ?? "DefaultSecretKeyss";
@@ -32,6 +32,7 @@ public class TokenService : ITokenService
         {
             new(JwtRegisteredClaimNames.Sub, sub),
             new(JwtRegisteredClaimNames.Email, email),
+            new(JwtRegisteredClaimNames.Name, nome),
             new(ClaimTypes.Role, role)
         };
 

@@ -41,7 +41,7 @@ public class RenovarTokenHandler : IRequestHandler<RenovarTokenQuery, Result<Tok
             }
 
             var newToken = _tokenService.GerarJwt(credencial.Email, credencial.TipoUsuario.ToString(),
-                credencial.UsuarioId.ToString());
+                credencial.UsuarioId.ToString(), credencial.Usuario.NomeCompleto);
             var newRefreshToken = _tokenService.GerarRefreshToken();
 
             credencial.AtualizarRefreshToken(newRefreshToken, DateTime.UtcNow.AddDays(7));
