@@ -68,6 +68,7 @@ builder.Services.AddPostgresHealthCheck(connectionString);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IContatoRepository, ContatoRepository>();
 builder.Services.AddScoped<ICredencialRepository, CredencialRepository>();
 builder.Services.AddScoped<IUsuarioFactory, UsuarioFactory>();
 builder.Services.AddScoped<AvaliacaoFisicaFactory>();
