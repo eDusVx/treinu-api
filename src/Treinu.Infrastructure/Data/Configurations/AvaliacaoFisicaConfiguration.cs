@@ -19,6 +19,7 @@ public class AvaliacaoFisicaConfiguration : IEntityTypeConfiguration<Treinu.Doma
 
         builder.HasMany(a => a.Medidas)
             .WithOne()
+            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

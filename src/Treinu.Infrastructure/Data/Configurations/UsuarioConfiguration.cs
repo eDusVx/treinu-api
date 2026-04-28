@@ -70,6 +70,7 @@ public class AlunoConfiguration : IEntityTypeConfiguration<Aluno>
 
         builder.HasMany(a => a.AvaliacaoFisica)
             .WithOne()
+            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(a => a.Treinador)
