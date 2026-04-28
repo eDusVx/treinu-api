@@ -8,7 +8,6 @@ namespace Treinu.Application.Handlers.Alunos;
 
 public class AdicionarAvaliacaoFisicaAlunoHandler(
     IUsuarioRepository usuarioRepository,
-    IAvaliacaoFisicaRepository avaliacaoFisicaRepository,
     AvaliacaoFisicaFactory avaliacaoFisicaFactory)
     : IRequestHandler<AdicionarAvaliacaoFisicaAlunoCommand, Result<object>>
 {
@@ -25,14 +24,13 @@ public class AdicionarAvaliacaoFisicaAlunoHandler(
 
             var avaliacao = avaliacoesResult.Value.First();
 
-            var saveResult = await avaliacaoFisicaRepository.AdicionarAvaliacaoFisicaAsync(avaliacao, request.AlunoId, cancellationToken);
+            var addResult = alunoResult.Value.AdicionarAvaliacaoFisica(avaliacao);
+            if (addResult.IsFailed) return Result.Fail<object>(addResult.Errors);
+
+            var saveResult = await usuarioRepository.AtualizarUsuarioAsync(alunoResult.Value);
             if (saveResult.IsFailed) return Result.Fail<object>(saveResult.Errors);
 
-            // Recarrega o aluno com as avaliações atualizadas para retornar o DTO completo
-            var alunoAtualizado = await usuarioRepository.BuscarAlunoPorIdAsync(request.AlunoId, cancellationToken);
-            if (alunoAtualizado.IsFailed) return Result.Fail<object>(alunoAtualizado.Errors);
-
-            return Result.Ok(alunoAtualizado.Value.ToDto());
+            return Result.Ok(alunoResult.Value.ToDto());
         }
         catch (Exception ex)
         {

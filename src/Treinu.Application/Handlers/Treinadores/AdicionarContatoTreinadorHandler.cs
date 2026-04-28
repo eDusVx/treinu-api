@@ -7,8 +7,7 @@ using Treinu.Domain.Repositories;
 namespace Treinu.Application.Handlers.Treinadores;
 
 public class AdicionarContatoTreinadorHandler(
-    IUsuarioRepository usuarioRepository,
-    IContatoRepository contatoRepository) : IRequestHandler<AdicionarContatoTreinadorCommand, Result<object>>
+    IUsuarioRepository usuarioRepository) : IRequestHandler<AdicionarContatoTreinadorCommand, Result<object>>
 {
     public async Task<Result<object>> Handle(AdicionarContatoTreinadorCommand request,
         CancellationToken cancellationToken)
@@ -29,14 +28,13 @@ public class AdicionarContatoTreinadorHandler(
             ));
             if (contatoResult.IsFailed) return Result.Fail<object>(contatoResult.Errors);
 
-            var saveResult = await contatoRepository.AdicionarContatoAsync(contatoResult.Value, request.TreinadorId, cancellationToken);
+            var addResult = treinadorResult.Value.AdicionarContato(contatoResult.Value);
+            if (addResult.IsFailed) return Result.Fail<object>(addResult.Errors);
+
+            var saveResult = await usuarioRepository.AtualizarUsuarioAsync(treinadorResult.Value);
             if (saveResult.IsFailed) return Result.Fail<object>(saveResult.Errors);
 
-            // Recarrega o treinador com os contatos atualizados para retornar o DTO completo
-            var treinadorAtualizado = await usuarioRepository.BuscarTreinadorPorIdAsync(request.TreinadorId, cancellationToken);
-            if (treinadorAtualizado.IsFailed) return Result.Fail<object>(treinadorAtualizado.Errors);
-
-            return Result.Ok(treinadorAtualizado.Value.ToDto());
+            return Result.Ok(treinadorResult.Value.ToDto());
         }
         catch (Exception ex)
         {

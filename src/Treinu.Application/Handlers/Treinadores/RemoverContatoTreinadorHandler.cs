@@ -6,8 +6,7 @@ using Treinu.Domain.Repositories;
 namespace Treinu.Application.Handlers.Treinadores;
 
 public class RemoverContatoTreinadorHandler(
-    IUsuarioRepository usuarioRepository,
-    IContatoRepository contatoRepository) : IRequestHandler<RemoverContatoTreinadorCommand, Result<object>>
+    IUsuarioRepository usuarioRepository) : IRequestHandler<RemoverContatoTreinadorCommand, Result<object>>
 {
     public async Task<Result<object>> Handle(RemoverContatoTreinadorCommand request,
         CancellationToken cancellationToken)
@@ -18,8 +17,11 @@ public class RemoverContatoTreinadorHandler(
                 await usuarioRepository.BuscarTreinadorPorIdAsync(request.TreinadorId, cancellationToken);
             if (treinadorResult.IsFailed) return Result.Fail<object>(treinadorResult.Errors);
 
-            var removeResult = await contatoRepository.RemoverContatoAsync(request.ContatoId, request.TreinadorId, cancellationToken);
+            var removeResult = treinadorResult.Value.RemoverContato(request.ContatoId);
             if (removeResult.IsFailed) return Result.Fail<object>(removeResult.Errors);
+
+            var saveResult = await usuarioRepository.AtualizarUsuarioAsync(treinadorResult.Value);
+            if (saveResult.IsFailed) return Result.Fail<object>(saveResult.Errors);
 
             return Result.Ok<object>("Contato removido com sucesso.");
         }

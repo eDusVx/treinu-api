@@ -9,7 +9,6 @@ namespace Treinu.Application.Handlers.Alunos;
 
 public class AdicionarAvaliacaoFisicaProprioAlunoHandler(
     IUsuarioRepository usuarioRepository,
-    IAvaliacaoFisicaRepository avaliacaoFisicaRepository,
     AvaliacaoFisicaFactory avaliacaoFisicaFactory)
     : IRequestHandler<AdicionarAvaliacaoFisicaProprioAlunoCommand, Result<object>>
 {
@@ -26,17 +25,16 @@ public class AdicionarAvaliacaoFisicaProprioAlunoHandler(
 
             var avaliacao = avaliacoesResult.Value.First();
 
+            var addResult = alunoResult.Value.AdicionarAvaliacaoFisica(avaliacao);
+            if (addResult.IsFailed) return Result.Fail<object>(addResult.Errors);
+
             // Emit the event so Teacher is notified in DB
             alunoResult.Value.AddDomainEvent(new AvaliacaoFisicaEnviadaEvent(avaliacao.Id, alunoResult.Value.Id, alunoResult.Value.TreinadorId));
 
-            var saveResult = await avaliacaoFisicaRepository.AdicionarAvaliacaoFisicaAsync(avaliacao, request.AlunoId, cancellationToken);
+            var saveResult = await usuarioRepository.AtualizarUsuarioAsync(alunoResult.Value);
             if (saveResult.IsFailed) return Result.Fail<object>(saveResult.Errors);
 
-            // Recarrega o aluno com as avaliações atualizadas para retornar o DTO completo
-            var alunoAtualizado = await usuarioRepository.BuscarAlunoPorIdAsync(request.AlunoId, cancellationToken);
-            if (alunoAtualizado.IsFailed) return Result.Fail<object>(alunoAtualizado.Errors);
-
-            return Result.Ok((object)alunoAtualizado.Value.ToDto());
+            return Result.Ok((object)alunoResult.Value.ToDto());
         }
         catch (Exception ex)
         {

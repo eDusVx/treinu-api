@@ -11,6 +11,7 @@ public class ContatoConfiguration : IEntityTypeConfiguration<Contato>
         builder.ToTable("Contatos");
 
         builder.HasKey(c => c.Id);
+        builder.Property(c => c.Id).ValueGeneratedNever();
 
         builder.Property(c => c.Tipo)
             .IsRequired()
