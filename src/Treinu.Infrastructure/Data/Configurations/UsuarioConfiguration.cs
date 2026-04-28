@@ -50,6 +50,7 @@ public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
         // Relationships
         builder.HasMany(u => u.Contato)
             .WithOne()
+            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(u => u.Credencial)
