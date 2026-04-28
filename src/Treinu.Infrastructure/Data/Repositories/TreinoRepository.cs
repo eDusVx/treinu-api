@@ -30,6 +30,7 @@ public class TreinoRepository : ITreinoRepository
     {
         var query = _context.Treinos
             .Include(t => t.Itens)
+                .ThenInclude(i => i.Exercicio)
             .Where(t => t.AlunoId == alunoId);
 
         if (status.HasValue)
@@ -45,6 +46,7 @@ public class TreinoRepository : ITreinoRepository
     {
         var query = _context.Treinos
             .Include(t => t.Itens)
+                .ThenInclude(i => i.Exercicio)
             .Where(t => t.TreinadorId == treinadorId);
 
         if (status.HasValue)
