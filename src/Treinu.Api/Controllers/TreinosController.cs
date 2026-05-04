@@ -67,4 +67,97 @@ public class TreinosController(IMediator mediator) : ApiController
         if (result.IsFailed) return HandleFailure(result);
         return Ok(result.Value);
     }
+
+    /// <summary>
+    /// Edita as informações básicas de um treino existente.
+    /// </summary>
+    [HttpPut("{id:guid}")]
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
+    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(ProblemDetails), 400)]
+    public async Task<IActionResult> EditarTreino([FromRoute] Guid id, [FromBody] EditarTreinoRequest request)
+    {
+        var userIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var treinadorId))
+            return Unauthorized();
+
+        var command = new EditarTreinoCommand(id, request.Nome, request.Descricao, request.DataInicio, request.DataFim, treinadorId);
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return HandleFailure(result);
+        return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Exclui um treino existente.
+    /// </summary>
+    [HttpDelete("{id:guid}")]
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
+    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(ProblemDetails), 400)]
+    public async Task<IActionResult> ExcluirTreino([FromRoute] Guid id)
+    {
+        var userIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var treinadorId))
+            return Unauthorized();
+
+        var command = new ExcluirTreinoCommand(id, treinadorId);
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return HandleFailure(result);
+        return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Adiciona um exercício a um treino existente.
+    /// </summary>
+    [HttpPost("{id:guid}/itens")]
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
+    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(ProblemDetails), 400)]
+    public async Task<IActionResult> AdicionarItem([FromRoute] Guid id, [FromBody] AdicionarItemTreinoRequest request)
+    {
+        var userIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var treinadorId))
+            return Unauthorized();
+
+        var command = new AdicionarItemTreinoCommand(id, treinadorId, request.ExercicioId, request.Series, request.Repeticoes, request.Carga, request.Pausa, request.Observacoes, request.Ordem);
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return HandleFailure(result);
+        return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Remove um exercício de um treino.
+    /// </summary>
+    [HttpDelete("{id:guid}/itens/{itemId:guid}")]
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
+    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(ProblemDetails), 400)]
+    public async Task<IActionResult> RemoverItem([FromRoute] Guid id, [FromRoute] Guid itemId)
+    {
+        var userIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var treinadorId))
+            return Unauthorized();
+
+        var command = new RemoverItemTreinoCommand(id, itemId, treinadorId);
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return HandleFailure(result);
+        return Ok(result.Value);
+    }
 }
+
+public record EditarTreinoRequest(
+    string Nome,
+    string Descricao,
+    DateTime DataInicio,
+    DateTime DataFim
+);
+
+public record AdicionarItemTreinoRequest(
+    Guid ExercicioId,
+    int Series,
+    string Repeticoes,
+    string Carga,
+    string Pausa,
+    string Observacoes,
+    int Ordem
+);

@@ -81,4 +81,11 @@ public class TreinoRepository : ITreinoRepository
         await _context.SaveChangesAsync();
         return Result.Ok();
     }
+
+    public async Task<Result> ExcluirTreinoAsync(Treino treino)
+    {
+        _context.Treinos.Remove(treino);
+        await _context.SaveChangesAsync();
+        return Result.Ok();
+    }
 }

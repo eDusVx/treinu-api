@@ -66,6 +66,35 @@ public class Treino : AggregateRoot
         return Result.Ok(instance);
     }
 
+    public Result Atualizar(string nome, string descricao, DateTime dataInicio, DateTime dataFim)
+    {
+        var merged = Result.Merge(
+            SetNome(nome),
+            SetDescricao(descricao),
+            SetDatas(dataInicio, dataFim)
+        );
+
+        return merged;
+    }
+
+    public Result AdicionarItem(CriarItemTreinoProps props)
+    {
+        var itemResult = ItemTreino.Criar(props);
+        if (itemResult.IsFailed) return Result.Fail(itemResult.Errors);
+        
+        _itens.Add(itemResult.Value);
+        return Result.Ok();
+    }
+
+    public Result RemoverItem(Guid itemId)
+    {
+        var item = _itens.FirstOrDefault(i => i.Id == itemId);
+        if (item == null) return Result.Fail("Item de treino não encontrado.");
+        
+        _itens.Remove(item);
+        return Result.Ok();
+    }
+
     private Result SetNome(string nome)
     {
         if (string.IsNullOrWhiteSpace(nome))

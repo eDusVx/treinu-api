@@ -31,7 +31,7 @@ public class TokenServiceTests
     [Fact]
     public void GerarJwt_Deve_Criar_Token_Valido()
     {
-        var token = _tokenService.GerarJwt("teste@teste.com", "ALUNO", "id-123");
+        var token = _tokenService.GerarJwt("teste@teste.com", "ALUNO", "id-123", "Nome Teste");
 
         token.Should().NotBeNullOrEmpty();
         token.Split('.').Length.Should().Be(3);

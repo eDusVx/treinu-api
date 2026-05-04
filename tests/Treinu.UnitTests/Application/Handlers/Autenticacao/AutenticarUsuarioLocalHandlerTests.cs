@@ -41,7 +41,7 @@ public class AutenticarUsuarioLocalHandlerTests
         _credencialRepositoryMock.Setup(repo => repo.AtualizarCredencialAsync(It.IsAny<Credencial>()))
             .ReturnsAsync(Result.Ok());
 
-        _tokenServiceMock.Setup(service => service.GerarJwt(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+        _tokenServiceMock.Setup(service => service.GerarJwt(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
             .Returns("fake_jwt_token");
 
         _tokenServiceMock.Setup(service => service.GerarRefreshToken())

@@ -78,7 +78,7 @@ public class RenovarTokenHandlerTests
         _credencialRepositoryMock.Setup(repo => repo.AtualizarCredencialAsync(It.IsAny<Credencial>()))
             .ReturnsAsync(Result.Ok());
 
-        _tokenServiceMock.Setup(service => service.GerarJwt(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+        _tokenServiceMock.Setup(service => service.GerarJwt(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
             .Returns("novo_jwt_valido");
 
         _tokenServiceMock.Setup(service => service.GerarRefreshToken())

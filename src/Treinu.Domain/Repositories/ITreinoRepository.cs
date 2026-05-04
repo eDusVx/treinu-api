@@ -12,4 +12,5 @@ public interface ITreinoRepository
     Task<Result<List<Treino>>> BuscarTreinosVencidosAtivosAsync(DateTime dataVencimento, CancellationToken cancellationToken = default);
     Task<Result> AdicionarTreinoAsync(Treino treino);
     Task<Result> AtualizarTreinoAsync(Treino treino);
+    Task<Result> ExcluirTreinoAsync(Treino treino);
 }
