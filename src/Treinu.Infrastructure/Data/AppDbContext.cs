@@ -32,6 +32,10 @@ public class AppDbContext : DbContext
     public DbSet<Treinu.Domain.Entities.AvaliacaoFisica.AvaliacaoFisica> AvaliacoesFisicas => Set<Treinu.Domain.Entities.AvaliacaoFisica.AvaliacaoFisica>();
     public DbSet<Medida> Medidas => Set<Medida>();
 
+    public DbSet<Treinu.Domain.Entities.Chat.SalaChat> SalasChat => Set<Treinu.Domain.Entities.Chat.SalaChat>();
+    public DbSet<Treinu.Domain.Entities.Chat.MensagemChat> MensagensChat => Set<Treinu.Domain.Entities.Chat.MensagemChat>();
+    public DbSet<Treinu.Domain.Entities.Chat.ParticipanteSala> ParticipantesSala => Set<Treinu.Domain.Entities.Chat.ParticipanteSala>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

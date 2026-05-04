@@ -78,6 +78,8 @@ builder.Services.AddScoped<ITemplateEmailRepository, TemplateEmailRepository>();
 builder.Services.AddScoped<ITreinoRepository, TreinoRepository>();
 builder.Services.AddScoped<IExercicioRepository, ExercicioRepository>();
 builder.Services.AddScoped<INotificacaoRepository, NotificacaoRepository>();
+builder.Services.AddScoped<IChatRepository, ChatRepository>();
+builder.Services.AddScoped<Treinu.Application.Interfaces.IRealTimeChatService, Treinu.Api.Services.RealTimeChatService>();
 
 builder.Services.AddHostedService<TreinosVencidosWorker>();
 
@@ -109,6 +111,8 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 app.UseExceptionHandler();
@@ -121,6 +125,8 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+app.MapHub<Treinu.Api.Hubs.ChatHub>("/chathub");
 
 app.MapCustomHealthChecks();
 
