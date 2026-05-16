@@ -79,6 +79,8 @@ builder.Services.AddScoped<ITreinoRepository, TreinoRepository>();
 builder.Services.AddScoped<IExercicioRepository, ExercicioRepository>();
 builder.Services.AddScoped<INotificacaoRepository, NotificacaoRepository>();
 builder.Services.AddScoped<IChatRepository, ChatRepository>();
+builder.Services.AddScoped<IPlataformaRepository, PlataformaRepository>();
+builder.Services.AddScoped<IExecucaoTreinoRepository, ExecucaoTreinoRepository>();
 builder.Services.AddScoped<Treinu.Application.Interfaces.IRealTimeChatService, Treinu.Api.Services.RealTimeChatService>();
 
 builder.Services.AddHostedService<TreinosVencidosWorker>();
