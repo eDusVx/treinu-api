@@ -52,16 +52,26 @@ public class PlataformaRepository : IPlataformaRepository
             query = query.Where(a => a.TreinadorId == treinadorId.Value);
         }
 
-        var ranking = await query
-            .Select(a => new Treinu.Domain.Dtos.RankingAlunoDto(
+        var rankingQuery = query
+            .Select(a => new
+            {
                 a.Id,
                 a.NomeCompleto,
-                _context.ExecucoesTreino.Count(e => e.AlunoId == a.Id && e.Concluido),
-                _context.ExecucoesTreino.Count(e => e.AlunoId == a.Id && e.Concluido) * 10
+                TreinosConcluidos = _context.ExecucoesTreino.Count(e => e.AlunoId == a.Id && e.Concluido)
+            })
+            .OrderByDescending(x => x.TreinosConcluidos)
+            .Take(50);
+
+        var rankingList = await rankingQuery.ToListAsync();
+
+        var ranking = rankingList
+            .Select(x => new Treinu.Domain.Dtos.RankingAlunoDto(
+                x.Id,
+                x.NomeCompleto,
+                x.TreinosConcluidos,
+                x.TreinosConcluidos * 10
             ))
-            .OrderByDescending(r => r.PontuacaoTotal)
-            .Take(50)
-            .ToListAsync();
+            .ToList();
 
         return Result.Ok(ranking);
     }
