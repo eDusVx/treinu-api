@@ -134,6 +134,15 @@ public class Treino : AggregateRoot
         return Result.Ok();
     }
 
+    public Result Concluir()
+    {
+        if (Status == TreinoStatusEnum.VENCIDO)
+            return Result.Fail("Treinos vencidos não podem ser concluídos.");
+
+        Status = TreinoStatusEnum.CONCLUIDO;
+        return Result.Ok();
+    }
+
     public Treinu.Domain.Dtos.TreinoDto ToDto()
     {
         return new Treinu.Domain.Dtos.TreinoDto(

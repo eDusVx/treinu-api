@@ -5,7 +5,9 @@ using Treinu.Domain.Repositories;
 
 namespace Treinu.Application.Handlers.ExecucoesTreino;
 
-public class ConcluirExecucaoTreinoHandler(IExecucaoTreinoRepository execucaoTreinoRepository)
+public class ConcluirExecucaoTreinoHandler(
+    IExecucaoTreinoRepository execucaoTreinoRepository,
+    ITreinoRepository treinoRepository)
     : IRequestHandler<ConcluirExecucaoTreinoCommand, Result>
 {
     public async Task<Result> Handle(ConcluirExecucaoTreinoCommand request, CancellationToken cancellationToken)
@@ -26,6 +28,17 @@ public class ConcluirExecucaoTreinoHandler(IExecucaoTreinoRepository execucaoTre
         
         if (updateResult.IsFailed)
             return Result.Fail(updateResult.Errors);
+
+        var treinoResult = await treinoRepository.BuscarTreinoPorIdAsync(execucao.TreinoId, cancellationToken);
+        if (treinoResult.IsSuccess && treinoResult.Value != null)
+        {
+            var treino = treinoResult.Value;
+            var concluirTreinoResult = treino.Concluir();
+            if (concluirTreinoResult.IsSuccess)
+            {
+                await treinoRepository.AtualizarTreinoAsync(treino);
+            }
+        }
 
         return Result.Ok();
     }
