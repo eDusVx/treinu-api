@@ -14,7 +14,7 @@ public class PlataformaController(IMediator mediator) : ControllerBase
     [HttpPost("sugestoes")]
     public async Task<IActionResult> EnviarSugestao([FromBody] EnviarSugestaoRequest request)
     {
-        var usuarioIdClaim = User.FindFirst("id")?.Value;
+        var usuarioIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         if (!Guid.TryParse(usuarioIdClaim, out var usuarioId)) return Unauthorized();
 
         var command = new EnviarSugestaoCommand(usuarioId, request.Titulo, request.Descricao);
@@ -29,7 +29,7 @@ public class PlataformaController(IMediator mediator) : ControllerBase
     [HttpPost("avaliacoes")]
     public async Task<IActionResult> RegistrarAvaliacao([FromBody] RegistrarAvaliacaoRequest request)
     {
-        var usuarioIdClaim = User.FindFirst("id")?.Value;
+        var usuarioIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         if (!Guid.TryParse(usuarioIdClaim, out var usuarioId)) return Unauthorized();
 
         var command = new RegistrarAvaliacaoPlataformaCommand(usuarioId, request.Nota, request.Comentario);

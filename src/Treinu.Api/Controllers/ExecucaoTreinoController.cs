@@ -13,7 +13,7 @@ public class ExecucaoTreinoController(IMediator mediator) : ControllerBase
     [HttpPost("iniciar")]
     public async Task<IActionResult> Iniciar([FromBody] IniciarExecucaoTreinoRequest request)
     {
-        var usuarioIdClaim = User.FindFirst("id")?.Value;
+        var usuarioIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         if (!Guid.TryParse(usuarioIdClaim, out var alunoId)) return Unauthorized();
 
         var command = new IniciarExecucaoTreinoCommand(request.TreinoId, alunoId);
@@ -64,7 +64,7 @@ public class ExecucaoTreinoController(IMediator mediator) : ControllerBase
     [HttpGet("ativas")]
     public async Task<IActionResult> ObterExecucaoAtiva([FromQuery] Guid treinoId)
     {
-        var usuarioIdClaim = User.FindFirst("id")?.Value;
+        var usuarioIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         if (!Guid.TryParse(usuarioIdClaim, out var alunoId)) return Unauthorized();
 
         var query = new Treinu.Contracts.Queries.ExecucoesTreino.ObterExecucaoAtivaQuery(alunoId, treinoId);
