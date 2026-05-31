@@ -16,6 +16,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<Usuario> Usuarios => Set<Usuario>();
+    public DbSet<ConfiguracaoNotificacao> ConfiguracoesNotificacao => Set<ConfiguracaoNotificacao>();
     public DbSet<Aluno> Alunos => Set<Aluno>();
     public DbSet<Treinador> Treinadores => Set<Treinador>();
     public DbSet<Credencial> Credenciais => Set<Credencial>();

@@ -75,4 +75,25 @@ public class ExecucaoTreinoRepository : IExecucaoTreinoRepository
 
         return Result.Ok(execucao);
     }
+
+    public async Task<Result<List<Treinu.Domain.Dtos.FeedbackTreinoDto>>> BuscarFeedbacksPorTreinadorAsync(Guid treinadorId)
+    {
+        var feedbacks = await _context.ExecucoesTreino
+            .Where(e => e.Concluido && (e.NotaFeedback != null || !string.IsNullOrEmpty(e.ComentarioFeedback)))
+            .Join(_context.Treinos, e => e.TreinoId, t => t.Id, (e, t) => new { e, t })
+            .Where(x => x.t.TreinadorId == treinadorId)
+            .OrderByDescending(x => x.e.DataFim)
+            .Select(x => new Treinu.Domain.Dtos.FeedbackTreinoDto(
+                x.e.Id,
+                x.e.AlunoId,
+                x.t.Aluno!.NomeCompleto,
+                x.t.Nome,
+                x.e.NotaFeedback,
+                x.e.ComentarioFeedback,
+                x.e.DataFim.Value
+            ))
+            .ToListAsync();
+
+        return Result.Ok(feedbacks);
+    }
 }

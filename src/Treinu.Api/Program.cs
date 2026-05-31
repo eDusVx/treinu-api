@@ -85,6 +85,7 @@ builder.Services.AddScoped<IExecucaoTreinoRepository, ExecucaoTreinoRepository>(
 builder.Services.AddScoped<Treinu.Application.Interfaces.IRealTimeChatService, Treinu.Api.Services.RealTimeChatService>();
 
 builder.Services.AddHostedService<TreinosVencidosWorker>();
+builder.Services.AddHostedService<AvaliacoesProximasWorker>();
 
 builder.Services.AddValidatorsFromAssembly(typeof(RegistrarTreinadorHandler).Assembly);
 builder.Services.AddCustomMediator(typeof(RegistrarTreinadorHandler).Assembly);

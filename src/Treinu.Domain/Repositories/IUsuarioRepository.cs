@@ -16,4 +16,6 @@ public interface IUsuarioRepository
     Task<Result<(int Total, IEnumerable<Usuario> Usuarios)>> BuscarUsuariosPaginadoAsync(PerfilEnum? tipoUsuario,
         int page,
         int limit, CancellationToken cancellationToken);
+    Task<ConfiguracaoNotificacao?> ObterConfiguracaoNotificacaoAsync(Guid usuarioId, CancellationToken cancellationToken);
+    Task SalvarConfiguracaoNotificacaoAsync(ConfiguracaoNotificacao configuracao, CancellationToken cancellationToken);
 }

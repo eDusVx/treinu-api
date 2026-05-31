@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Treinu.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Treinu.Api.BackgroundServices;
 
@@ -39,10 +40,30 @@ public class TreinosVencidosWorker : BackgroundService
                         if (updatedResult.IsSuccess)
                         {
                             await treinoRepository.AtualizarTreinoAsync(treino);
-                            
-                            // Disparar eventos (Mediator.Publish pois AtualizarTreinoAsync não chama _mediator.DispatchDomainEventsAsync do DbContext diretamente pelo repository method dependendo da implementação, mas o DbContext fará no SaveChangesAsync!
-                            // Se o SaveChangesAsync dispara, não precisamos dar Publish manual, mas como o worker não chama um handler CQRS, o SaveChanges do Repositorio já dispara se tiver `await _mediator.DispatchDomainEventsAsync(this);` no AppDbContext.
                         }
+                    }
+                }
+
+                // Check for students with NO active workouts
+                var context = scope.ServiceProvider.GetRequiredService<Treinu.Infrastructure.Data.AppDbContext>();
+                var notificacaoRepository = scope.ServiceProvider.GetRequiredService<INotificacaoRepository>();
+
+                var alunosInativosIds = await context.Set<Treinu.Domain.Entities.Aluno>()
+                    .Where(a => !context.Set<Treinu.Domain.Entities.Treino>().Any(t => t.AlunoId == a.Id && t.Status == Treinu.Domain.Enums.TreinoStatusEnum.ATIVO))
+                    .Select(a => a.Id)
+                    .ToListAsync(stoppingToken);
+
+                foreach (var alunoId in alunosInativosIds)
+                {
+                    var notificacao = Treinu.Domain.Entities.Notificacao.Criar(new Treinu.Domain.Entities.CriarNotificacaoProps(
+                        alunoId,
+                        "Alerta de Abandono",
+                        "Você não possui treinos ativos no momento. Fale com seu treinador!"
+                    ));
+
+                    if (notificacao.IsSuccess)
+                    {
+                        await notificacaoRepository.AdicionarNotificacaoAsync(notificacao.Value);
                     }
                 }
             }

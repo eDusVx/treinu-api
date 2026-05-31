@@ -134,18 +134,37 @@ public class UsuarioRepository : IUsuarioRepository
 
             var skip = (page - 1) * limit;
 
-            var usuariosList = await query
+            var usuarios = await query
                 .OrderBy(u => u.NomeCompleto)
                 .Skip(skip)
                 .Take(limit)
                 .ToListAsync(cancellationToken);
 
-            return Result.Ok((total, (IEnumerable<Usuario>)usuariosList));
+            return Result.Ok((total, (IEnumerable<Usuario>)usuarios));
         }
         catch (Exception ex)
         {
             return Result.Fail<(int Total, IEnumerable<Usuario> Usuarios)>(
                 $"Erro inesperado ao buscar usuários: {ex.Message}");
         }
+    }
+
+    public async Task<ConfiguracaoNotificacao?> ObterConfiguracaoNotificacaoAsync(Guid usuarioId, CancellationToken cancellationToken)
+    {
+        return await _context.ConfiguracoesNotificacao.FirstOrDefaultAsync(c => c.UsuarioId == usuarioId, cancellationToken);
+    }
+
+    public async Task SalvarConfiguracaoNotificacaoAsync(ConfiguracaoNotificacao configuracao, CancellationToken cancellationToken)
+    {
+        var existe = await _context.ConfiguracoesNotificacao.AnyAsync(c => c.Id == configuracao.Id, cancellationToken);
+        if (existe)
+        {
+            _context.ConfiguracoesNotificacao.Update(configuracao);
+        }
+        else
+        {
+            await _context.ConfiguracoesNotificacao.AddAsync(configuracao, cancellationToken);
+        }
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

@@ -87,6 +87,22 @@ public class ExecucaoTreinoController(IMediator mediator) : ControllerBase
 
         return Ok(result.Value);
     }
+
+    [HttpGet("feedbacks")]
+    [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Treinador,Admin")]
+    public async Task<IActionResult> ObterFeedbacks()
+    {
+        var usuarioIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (!Guid.TryParse(usuarioIdClaim, out var treinadorId)) return Unauthorized();
+
+        var query = new Treinu.Contracts.Queries.ExecucoesTreino.ObterFeedbacksTreinadorQuery(treinadorId);
+        var result = await mediator.Send(query);
+
+        if (result.IsFailed)
+            return BadRequest(result.Errors.Select(e => e.Message));
+
+        return Ok(result.Value);
+    }
 }
 
 public record IniciarExecucaoTreinoRequest(Guid TreinoId);

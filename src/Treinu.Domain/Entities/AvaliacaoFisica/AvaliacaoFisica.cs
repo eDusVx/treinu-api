@@ -38,6 +38,7 @@ public class AvaliacaoFisica : AggregateRoot
     public double Peso { get; private set; }
     public double Imc { get; private set; }
     public ClassificacaoIMC Classificacao { get; private set; }
+    public DateTime? DataProximaAvaliacao { get; private set; }
 
     public IReadOnlyCollection<Medida> Medidas => _medidas.AsReadOnly();
 

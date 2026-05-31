@@ -26,4 +26,36 @@ public class UsuariosController(IMediator mediator) : ApiController
         if (result.IsFailed) return HandleFailure(result);
         return Ok(result.Value);
     }
+
+    [HttpPut("{id}/notification-settings")]
+    [Authorize]
+    public async Task<IActionResult> ConfigurarNotificacoes(Guid id, [FromBody] ConfigurarNotificacoesRequest request)
+    {
+        var usuarioIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (!Guid.TryParse(usuarioIdClaim, out var logadoId) || logadoId != id) return Forbid();
+
+        var command = new Treinu.Contracts.Commands.Usuarios.ConfigurarNotificacoesCommand(
+            id,
+            request.ReceberEmail,
+            request.ReceberPush,
+            request.AlertaVencimentoAvaliacao,
+            request.AlertaVencimentoTreino,
+            request.AlertaNovoTreino
+        );
+
+        var result = await mediator.Send(command);
+
+        if (result.IsFailed)
+            return BadRequest(result.Errors.Select(e => e.Message));
+
+        return Ok(new { Mensagem = "Configurações atualizadas com sucesso" });
+    }
 }
+
+public record ConfigurarNotificacoesRequest(
+    bool ReceberEmail,
+    bool ReceberPush,
+    bool AlertaVencimentoAvaliacao,
+    bool AlertaVencimentoTreino,
+    bool AlertaNovoTreino
+);

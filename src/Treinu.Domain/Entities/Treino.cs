@@ -74,6 +74,11 @@ public class Treino : AggregateRoot
             SetDatas(dataInicio, dataFim)
         );
 
+        if (merged.IsSuccess)
+        {
+            Apply(new TreinoAtualizadoEvent(Id, AlunoId, Nome));
+        }
+
         return merged;
     }
 
