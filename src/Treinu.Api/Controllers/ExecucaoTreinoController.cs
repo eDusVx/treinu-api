@@ -2,6 +2,7 @@ using Treinu.Domain.Core.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Treinu.Contracts.Commands.ExecucoesTreino;
+using Treinu.Domain.Enums;
 
 namespace Treinu.Api.Controllers;
 
@@ -89,7 +90,7 @@ public class ExecucaoTreinoController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("feedbacks")]
-    [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Treinador,Admin")]
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
     public async Task<IActionResult> ObterFeedbacks()
     {
         var usuarioIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
