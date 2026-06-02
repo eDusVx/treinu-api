@@ -57,8 +57,16 @@ public class CustomMediator : IMediator
         var method = handlerType.GetMethod("Handle");
         if (method == null) return;
 
-        var tasks = handlers.Select(handler =>
-            (Task)method.Invoke(handler, new object[] { notification, cancellationToken })!);
-        await Task.WhenAll(tasks);
+        foreach (var handler in handlers)
+        {
+            if (handler != null)
+            {
+                var task = (Task)method.Invoke(handler, new object[] { notification, cancellationToken })!;
+                if (task != null)
+                {
+                    await task;
+                }
+            }
+        }
     }
 }
