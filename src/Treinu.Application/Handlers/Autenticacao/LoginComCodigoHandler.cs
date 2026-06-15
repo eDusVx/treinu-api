@@ -5,6 +5,8 @@ using Treinu.Contracts.Responses;
 using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Errors;
 using Treinu.Domain.Repositories;
+using Treinu.Domain.Entities;
+using Treinu.Domain.Enums;
 
 namespace Treinu.Application.Handlers.Autenticacao;
 
@@ -12,11 +14,13 @@ public class LoginComCodigoHandler : IRequestHandler<LoginComCodigoQuery, Result
 {
     private readonly ICredencialRepository _credencialRepository;
     private readonly ITokenService _tokenService;
+    private readonly ITelemetriaRepository _telemetriaRepository;
 
-    public LoginComCodigoHandler(ICredencialRepository credencialRepository, ITokenService tokenService)
+    public LoginComCodigoHandler(ICredencialRepository credencialRepository, ITokenService tokenService, ITelemetriaRepository telemetriaRepository)
     {
         _credencialRepository = credencialRepository;
         _tokenService = tokenService;
+        _telemetriaRepository = telemetriaRepository;
     }
 
     public async Task<Result<TokenDto>> Handle(LoginComCodigoQuery request, CancellationToken cancellationToken)
@@ -41,6 +45,10 @@ public class LoginComCodigoHandler : IRequestHandler<LoginComCodigoQuery, Result
 
             var updateResult = await _credencialRepository.AtualizarCredencialAsync(credencial);
             if (updateResult.IsFailed) return Result.Fail<TokenDto>(updateResult.Errors);
+
+            // Log telemetry event
+            var loginEvent = EventoTelemetria.Criar(credencial.UsuarioId, TipoInteracaoEnum.LOGIN);
+            await _telemetriaRepository.RegistrarEventoAsync(loginEvent, cancellationToken);
 
             return Result.Ok(new TokenDto(token, refreshToken));
         }

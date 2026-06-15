@@ -3,10 +3,11 @@ using Treinu.Domain.Core.Mediator;
 using Treinu.Contracts.Commands.Plataforma;
 using Treinu.Domain.Entities;
 using Treinu.Domain.Repositories;
+using Treinu.Domain.Enums;
 
 namespace Treinu.Application.Handlers.Plataforma;
 
-public class RegistrarAvaliacaoPlataformaHandler(IPlataformaRepository plataformaRepository)
+public class RegistrarAvaliacaoPlataformaHandler(IPlataformaRepository plataformaRepository, ITelemetriaRepository telemetriaRepository)
     : IRequestHandler<RegistrarAvaliacaoPlataformaCommand, Result>
 {
     public async Task<Result> Handle(RegistrarAvaliacaoPlataformaCommand request, CancellationToken cancellationToken)
@@ -20,6 +21,10 @@ public class RegistrarAvaliacaoPlataformaHandler(IPlataformaRepository plataform
         
         if (addResult.IsFailed)
             return Result.Fail(addResult.Errors);
+
+        // Log telemetry event
+        var evalEvent = EventoTelemetria.Criar(request.UsuarioId, TipoInteracaoEnum.SUBMIT_AVALIACAO_PLATAFORMA);
+        await telemetriaRepository.RegistrarEventoAsync(evalEvent, cancellationToken);
 
         return Result.Ok();
     }

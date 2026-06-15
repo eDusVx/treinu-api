@@ -13,17 +13,20 @@ namespace Treinu.UnitTests.Application.Handlers.Autenticacao;
 public class AutenticarUsuarioLocalHandlerTests
 {
     private readonly Mock<ICredencialRepository> _credencialRepositoryMock;
-    private readonly AutenticarUsuarioLocalHandler _handler;
     private readonly Mock<ITokenService> _tokenServiceMock;
+    private readonly Mock<ITelemetriaRepository> _telemetriaRepositoryMock;
+    private readonly AutenticarUsuarioLocalHandler _handler;
 
     public AutenticarUsuarioLocalHandlerTests()
     {
         _credencialRepositoryMock = new Mock<ICredencialRepository>();
         _tokenServiceMock = new Mock<ITokenService>();
+        _telemetriaRepositoryMock = new Mock<ITelemetriaRepository>();
 
         _handler = new AutenticarUsuarioLocalHandler(
             _credencialRepositoryMock.Object,
-            _tokenServiceMock.Object);
+            _tokenServiceMock.Object,
+            _telemetriaRepositoryMock.Object);
     }
 
     [Fact]
@@ -47,6 +50,9 @@ public class AutenticarUsuarioLocalHandlerTests
         _tokenServiceMock.Setup(service => service.GerarRefreshToken())
             .Returns("fake_refresh_token");
 
+        _telemetriaRepositoryMock.Setup(repo => repo.RegistrarEventoAsync(It.IsAny<EventoTelemetria>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Ok());
+
         var result = await _handler.Handle(query, CancellationToken.None);
 
         result.IsSuccess.Should().BeTrue();
@@ -54,6 +60,7 @@ public class AutenticarUsuarioLocalHandlerTests
         result.Value.RefreshToken.Should().Be("fake_refresh_token");
 
         _credencialRepositoryMock.Verify(repo => repo.AtualizarCredencialAsync(It.IsAny<Credencial>()), Times.Once);
+        _telemetriaRepositoryMock.Verify(repo => repo.RegistrarEventoAsync(It.IsAny<EventoTelemetria>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]

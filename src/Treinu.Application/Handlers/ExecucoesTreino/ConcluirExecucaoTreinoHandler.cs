@@ -2,12 +2,15 @@ using FluentResults;
 using Treinu.Domain.Core.Mediator;
 using Treinu.Contracts.Commands.ExecucoesTreino;
 using Treinu.Domain.Repositories;
+using Treinu.Domain.Entities;
+using Treinu.Domain.Enums;
 
 namespace Treinu.Application.Handlers.ExecucoesTreino;
 
 public class ConcluirExecucaoTreinoHandler(
     IExecucaoTreinoRepository execucaoTreinoRepository,
-    ITreinoRepository treinoRepository)
+    ITreinoRepository treinoRepository,
+    ITelemetriaRepository telemetriaRepository)
     : IRequestHandler<ConcluirExecucaoTreinoCommand, Result>
 {
     public async Task<Result> Handle(ConcluirExecucaoTreinoCommand request, CancellationToken cancellationToken)
@@ -39,6 +42,10 @@ public class ConcluirExecucaoTreinoHandler(
                 await treinoRepository.AtualizarTreinoAsync(treino);
             }
         }
+
+        // Log telemetry event
+        var workoutEvent = EventoTelemetria.Criar(execucao.AlunoId, TipoInteracaoEnum.SUBMIT_EXECUCAO_TREINO);
+        await telemetriaRepository.RegistrarEventoAsync(workoutEvent, cancellationToken);
 
         return Result.Ok();
     }

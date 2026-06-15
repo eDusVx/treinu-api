@@ -4,12 +4,15 @@ using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Events;
 using Treinu.Domain.Factories;
 using Treinu.Domain.Repositories;
+using Treinu.Domain.Entities;
+using Treinu.Domain.Enums;
 
 namespace Treinu.Application.Handlers.Alunos;
 
 public class AdicionarAvaliacaoFisicaProprioAlunoHandler(
     IUsuarioRepository usuarioRepository,
-    AvaliacaoFisicaFactory avaliacaoFisicaFactory)
+    AvaliacaoFisicaFactory avaliacaoFisicaFactory,
+    ITelemetriaRepository telemetriaRepository)
     : IRequestHandler<AdicionarAvaliacaoFisicaProprioAlunoCommand, Result<object>>
 {
     public async Task<Result<object>> Handle(AdicionarAvaliacaoFisicaProprioAlunoCommand request,
@@ -33,6 +36,10 @@ public class AdicionarAvaliacaoFisicaProprioAlunoHandler(
 
             var saveResult = await usuarioRepository.AtualizarUsuarioAsync(alunoResult.Value);
             if (saveResult.IsFailed) return Result.Fail<object>(saveResult.Errors);
+
+            // Log telemetry event
+            var evalEvent = EventoTelemetria.Criar(request.AlunoId, TipoInteracaoEnum.SUBMIT_AVALIACAO_FISICA);
+            await telemetriaRepository.RegistrarEventoAsync(evalEvent, cancellationToken);
 
             return Result.Ok((object)alunoResult.Value.ToDto());
         }

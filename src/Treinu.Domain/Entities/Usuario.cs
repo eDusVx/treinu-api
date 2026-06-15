@@ -43,6 +43,7 @@ public abstract class Usuario : AggregateRoot
     public bool Ativo { get; private set; }
     public bool AceiteTermoAdesao { get; private set; }
     public UsuarioStatusEnum Status { get; private set; }
+    public DateTime DataCriacao { get; private set; } = DateTime.UtcNow;
 
     public virtual Credencial? Credencial { get; private set; }
 

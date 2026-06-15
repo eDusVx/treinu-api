@@ -17,6 +17,9 @@ public class AvaliacaoFisicaConfiguration : IEntityTypeConfiguration<Treinu.Doma
             .HasConversion<string>()
             .HasMaxLength(50);
 
+        builder.Property(a => a.PercentualGordura)
+            .IsRequired(false);
+
         builder.HasMany(a => a.Medidas)
             .WithOne()
             .IsRequired()

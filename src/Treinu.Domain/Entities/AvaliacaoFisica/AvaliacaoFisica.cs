@@ -8,7 +8,8 @@ public record CriarAvaliacaoFisicaProps(
     double Altura,
     double Peso,
     List<Medida> Medidas,
-    DateTime Data
+    DateTime Data,
+    double? PercentualGordura = null
 );
 
 public class AvaliacaoFisica : AggregateRoot
@@ -39,13 +40,17 @@ public class AvaliacaoFisica : AggregateRoot
     public double Imc { get; private set; }
     public ClassificacaoIMC Classificacao { get; private set; }
     public DateTime? DataProximaAvaliacao { get; private set; }
+    public double? PercentualGordura { get; private set; }
 
     public IReadOnlyCollection<Medida> Medidas => _medidas.AsReadOnly();
 
     public static Result<AvaliacaoFisica> Criar(CriarAvaliacaoFisicaProps props)
     {
         var id = Guid.NewGuid();
-        var instance = new AvaliacaoFisica(id);
+        var instance = new AvaliacaoFisica(id)
+        {
+            PercentualGordura = props.PercentualGordura
+        };
 
         var result = Result.Merge(
             instance.SetData(props.Data),
@@ -64,7 +69,10 @@ public class AvaliacaoFisica : AggregateRoot
 
     public static AvaliacaoFisica Carregar(CriarAvaliacaoFisicaProps props, Guid id)
     {
-        var instance = new AvaliacaoFisica(id);
+        var instance = new AvaliacaoFisica(id)
+        {
+            PercentualGordura = props.PercentualGordura
+        };
 
         var result = Result.Merge(
             instance.SetData(props.Data),

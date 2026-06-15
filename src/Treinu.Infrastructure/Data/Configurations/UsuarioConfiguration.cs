@@ -41,6 +41,10 @@ public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
             .HasMaxLength(25)
             .IsRequired();
 
+        builder.Property(u => u.DataCriacao)
+            .IsRequired()
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
         // TPH (Table-Per-Hierarchy) Setup
         builder.HasDiscriminator(u => u.Perfil)
             .HasValue<Aluno>(PerfilEnum.ALUNO)

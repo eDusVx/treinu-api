@@ -41,6 +41,8 @@ public class AppDbContext : DbContext
     public DbSet<ExecucaoExercicio> ExecucoesExercicio => Set<ExecucaoExercicio>();
     public DbSet<Sugestao> Sugestoes => Set<Sugestao>();
     public DbSet<AvaliacaoPlataforma> AvaliacoesPlataforma => Set<AvaliacaoPlataforma>();
+    public DbSet<Meta> Metas => Set<Meta>();
+    public DbSet<EventoTelemetria> EventosTelemetria => Set<EventoTelemetria>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

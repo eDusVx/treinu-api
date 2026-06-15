@@ -96,4 +96,33 @@ public class ExecucaoTreinoRepository : IExecucaoTreinoRepository
 
         return Result.Ok(feedbacks);
     }
+
+    public async Task<Result<List<ExecucaoTreino>>> BuscarExecucoesFiltradoAsync(Guid? treinadorId, Guid? alunoId, DateTime? inicio, DateTime? fim, CancellationToken cancellationToken = default)
+    {
+        var query = _context.ExecucoesTreino.AsQueryable();
+
+        if (alunoId.HasValue)
+        {
+            query = query.Where(e => e.AlunoId == alunoId.Value);
+        }
+        else if (treinadorId.HasValue)
+        {
+            query = query.Where(e => _context.Alunos.Any(a => a.Id == e.AlunoId && a.TreinadorId == treinadorId.Value));
+        }
+
+        if (inicio.HasValue)
+        {
+            var inicioUtc = DateTime.SpecifyKind(inicio.Value, DateTimeKind.Utc);
+            query = query.Where(e => e.DataInicio >= inicioUtc);
+        }
+
+        if (fim.HasValue)
+        {
+            var fimUtc = DateTime.SpecifyKind(fim.Value, DateTimeKind.Utc);
+            query = query.Where(e => e.DataInicio <= fimUtc);
+        }
+
+        var list = await query.ToListAsync(cancellationToken);
+        return Result.Ok(list);
+    }
 }

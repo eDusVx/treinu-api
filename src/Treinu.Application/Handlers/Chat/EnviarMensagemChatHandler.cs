@@ -4,12 +4,15 @@ using Treinu.Contracts.Commands.Chat;
 using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Entities.Chat;
 using Treinu.Domain.Repositories;
+using Treinu.Domain.Entities;
+using Treinu.Domain.Enums;
 
 namespace Treinu.Application.Handlers.Chat;
 
 public class EnviarMensagemChatHandler(
     IChatRepository chatRepository,
-    IRealTimeChatService realTimeChatService) 
+    IRealTimeChatService realTimeChatService,
+    ITelemetriaRepository telemetriaRepository) 
     : IRequestHandler<EnviarMensagemChatCommand, Result<object>>
 {
     public async Task<Result<object>> Handle(EnviarMensagemChatCommand request, CancellationToken cancellationToken)
@@ -37,6 +40,10 @@ public class EnviarMensagemChatHandler(
             {
                 await realTimeChatService.NotificarMensagemNaoLidaAsync(participante.UsuarioId, sala.Id, participante.MensagensNaoLidas, cancellationToken);
             }
+
+            // Log telemetry event
+            var msgEvent = EventoTelemetria.Criar(request.RemetenteId, TipoInteracaoEnum.MENSAGEM_CHAT);
+            await telemetriaRepository.RegistrarEventoAsync(msgEvent, cancellationToken);
 
             return Result.Ok((object)new { MensagemId = mensagem.Id });
         }

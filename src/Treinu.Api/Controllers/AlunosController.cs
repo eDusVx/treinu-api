@@ -4,6 +4,7 @@ using Treinu.Api.Controllers.Base;
 using Treinu.Contracts.Commands.Alunos;
 using Treinu.Contracts.Commands.Usuarios;
 using Treinu.Contracts.Queries.Alunos;
+using Treinu.Contracts.Queries.Metas;
 using Treinu.Domain.Core.Mediator;
 using Treinu.Domain.Enums;
 using System.Security.Claims;
@@ -201,4 +202,106 @@ public class AlunosController(IMediator mediator) : ApiController
         if (result.IsFailed) return HandleFailure(result);
         return Ok(result.Value);
     }
+
+    /// <summary>
+    /// Retorna a performance comparativa e frequência de treinos dos alunos.
+    /// </summary>
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
+    [HttpGet("comparativo-performance")]
+    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(ProblemDetails), 400)]
+    public async Task<IActionResult> ObterComparativoPerformance(
+        [FromQuery] DateTime? dataInicio,
+        [FromQuery] DateTime? dataFim,
+        [FromQuery] string? agrupamento)
+    {
+        Guid? treinadorId = null;
+        if (User.IsInRole(RoleConstants.Treinador))
+        {
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var parsedId))
+                return Unauthorized();
+            treinadorId = parsedId;
+        }
+
+        var query = new ObterComparativoPerformanceAlunosQuery(treinadorId, dataInicio, dataFim, agrupamento);
+        var result = await mediator.Send(query);
+        if (result.IsFailed) return HandleFailure(result);
+        return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Cadastra uma nova meta para o aluno.
+    /// </summary>
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
+    [HttpPost("{id:guid}/metas")]
+    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(ProblemDetails), 400)]
+    public async Task<IActionResult> CadastrarMeta(Guid id, [FromBody] CadastrarMetaRequest request)
+    {
+        var command = new Treinu.Contracts.Commands.Metas.CadastrarMetaCommand(id, request.Tipo, request.ValorAlvo, request.DataLimite);
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return HandleFailure(result);
+        return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Retorna todas as metas cadastradas de um aluno.
+    /// </summary>
+    [Authorize(Roles = $"{RoleConstants.Aluno},{RoleConstants.Treinador},{RoleConstants.Admin}")]
+    [HttpGet("{id:guid}/metas")]
+    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(ProblemDetails), 400)]
+    public async Task<IActionResult> ObterMetas(Guid id)
+    {
+        var query = new Treinu.Contracts.Queries.Metas.ObterMetasQuery(id);
+        var result = await mediator.Send(query);
+        if (result.IsFailed) return HandleFailure(result);
+        return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Retorna as métricas de evolução física consolidada do aluno logado.
+    /// </summary>
+    [Authorize(Roles = RoleConstants.Aluno)]
+    [HttpGet("me/evolucao-fisica")]
+    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(ProblemDetails), 400)]
+    public async Task<IActionResult> ObterMinhaEvolucaoFisica(
+        [FromQuery] DateTime? dataInicio,
+        [FromQuery] DateTime? dataFim)
+    {
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var alunoId))
+            return Unauthorized();
+
+        var query = new ObterEvolucaoFisicaQuery(alunoId, dataInicio, dataFim);
+        var result = await mediator.Send(query);
+        if (result.IsFailed) return HandleFailure(result);
+        return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Retorna as métricas de evolução física consolidada de um aluno específico.
+    /// </summary>
+    [Authorize(Roles = $"{RoleConstants.Treinador},{RoleConstants.Admin}")]
+    [HttpGet("{id:guid}/evolucao-fisica")]
+    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(ProblemDetails), 400)]
+    public async Task<IActionResult> ObterEvolucaoFisica(
+        Guid id,
+        [FromQuery] DateTime? dataInicio,
+        [FromQuery] DateTime? dataFim)
+    {
+        var query = new ObterEvolucaoFisicaQuery(id, dataInicio, dataFim);
+        var result = await mediator.Send(query);
+        if (result.IsFailed) return HandleFailure(result);
+        return Ok(result.Value);
+    }
 }
+
+public record CadastrarMetaRequest(
+    TipoMetaEnum Tipo,
+    decimal ValorAlvo,
+    DateTime DataLimite
+);

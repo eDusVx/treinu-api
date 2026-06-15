@@ -28,4 +28,20 @@ public class AdminController(IMediator mediator) : ApiController
 
         return NoContent();
     }
+
+    /// <summary>
+    /// Retorna as métricas e relatórios gerais da plataforma (cadastros e status operacional).
+    /// </summary>
+    [HttpGet("metricas-plataforma")]
+    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(ProblemDetails), 400)]
+    public async Task<IActionResult> ObterMetricasPlataforma(
+        [FromQuery] DateTime dataInicio,
+        [FromQuery] DateTime dataFim)
+    {
+        var query = new Treinu.Contracts.Queries.Admin.ObterMetricasPlataformaQuery(dataInicio, dataFim);
+        var result = await mediator.Send(query);
+        if (result.IsFailed) return HandleFailure(result);
+        return Ok(result.Value);
+    }
 }

@@ -31,7 +31,8 @@ public class AvaliacaoFisicaFactory
             props.Altura,
             props.Peso,
             medidasResult.Value,
-            props.Data
+            props.Data,
+            props.PercentualGordura
         ));
     }
 

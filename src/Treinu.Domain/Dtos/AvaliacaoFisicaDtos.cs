@@ -14,4 +14,13 @@ public record AvaliacaoFisicaDto
     public double Altura { get; init; }
     public double Peso { get; init; }
     public List<MedidaDto> Medidas { get; init; } = new();
+
+    [JsonPropertyName("gorduraCorporal")]
+    public double? GorduraCorporal { get; init; }
+
+    [JsonPropertyName("gorduraCorpora")]
+    public double? GorduraCorpora { get; init; }
+
+    [JsonIgnore]
+    public double? PercentualGordura => GorduraCorporal ?? GorduraCorpora;
 }

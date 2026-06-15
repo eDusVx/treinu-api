@@ -11,4 +11,5 @@ public interface IExecucaoTreinoRepository
     Task<Result<List<ExecucaoTreino>>> BuscarPorAlunoAsync(Guid alunoId);
     Task<Result<ExecucaoTreino?>> BuscarExecucaoAtivaAsync(Guid alunoId, Guid treinoId);
     Task<Result<List<Treinu.Domain.Dtos.FeedbackTreinoDto>>> BuscarFeedbacksPorTreinadorAsync(Guid treinadorId);
+    Task<Result<List<ExecucaoTreino>>> BuscarExecucoesFiltradoAsync(Guid? treinadorId, Guid? alunoId, DateTime? inicio, DateTime? fim, CancellationToken cancellationToken = default);
 }

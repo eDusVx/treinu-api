@@ -70,6 +70,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ICredencialRepository, CredencialRepository>();
+builder.Services.AddScoped<IMetaRepository, MetaRepository>();
+builder.Services.AddScoped<ITelemetriaRepository, TelemetriaRepository>();
 builder.Services.AddScoped<IUsuarioFactory, UsuarioFactory>();
 builder.Services.AddScoped<AvaliacaoFisicaFactory>();
 builder.Services.AddScoped<ITokenService, TokenService>();
