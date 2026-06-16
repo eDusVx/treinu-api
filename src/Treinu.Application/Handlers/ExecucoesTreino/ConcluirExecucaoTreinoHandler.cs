@@ -9,7 +9,6 @@ namespace Treinu.Application.Handlers.ExecucoesTreino;
 
 public class ConcluirExecucaoTreinoHandler(
     IExecucaoTreinoRepository execucaoTreinoRepository,
-    ITreinoRepository treinoRepository,
     ITelemetriaRepository telemetriaRepository)
     : IRequestHandler<ConcluirExecucaoTreinoCommand, Result>
 {
@@ -31,17 +30,6 @@ public class ConcluirExecucaoTreinoHandler(
         
         if (updateResult.IsFailed)
             return Result.Fail(updateResult.Errors);
-
-        var treinoResult = await treinoRepository.BuscarTreinoPorIdAsync(execucao.TreinoId, cancellationToken);
-        if (treinoResult.IsSuccess && treinoResult.Value != null)
-        {
-            var treino = treinoResult.Value;
-            var concluirTreinoResult = treino.Concluir();
-            if (concluirTreinoResult.IsSuccess)
-            {
-                await treinoRepository.AtualizarTreinoAsync(treino);
-            }
-        }
 
         // Log telemetry event
         var workoutEvent = EventoTelemetria.Criar(execucao.AlunoId, TipoInteracaoEnum.SUBMIT_EXECUCAO_TREINO);
