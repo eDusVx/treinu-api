@@ -128,23 +128,12 @@ public class Treino : AggregateRoot
 
     public Result AtualizarStatus()
     {
-        if (Status == TreinoStatusEnum.CONCLUIDO) return Result.Ok();
-
         if (DataFim.Date < DateTime.UtcNow.Date && Status != TreinoStatusEnum.VENCIDO)
         {
             Status = TreinoStatusEnum.VENCIDO;
             Apply(new TreinoVencidoEvent(Id, AlunoId, Nome));
         }
 
-        return Result.Ok();
-    }
-
-    public Result Concluir()
-    {
-        if (Status == TreinoStatusEnum.VENCIDO)
-            return Result.Fail("Treinos vencidos não podem ser concluídos.");
-
-        Status = TreinoStatusEnum.CONCLUIDO;
         return Result.Ok();
     }
 
