@@ -92,7 +92,9 @@ public class AvaliacaoFisica : AggregateRoot
 
     private Result SetData(DateTime data)
     {
-        Data = DateTime.UtcNow.Date;
+        Data = data.Kind == DateTimeKind.Unspecified
+            ? DateTime.SpecifyKind(data, DateTimeKind.Utc)
+            : data.ToUniversalTime();
         return Result.Ok();
     }
 
