@@ -81,7 +81,25 @@ public class TreinosController(IMediator mediator) : ApiController
         if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var treinadorId))
             return Unauthorized();
 
-        var command = new EditarTreinoCommand(id, request.Nome, request.Descricao, request.DataInicio, request.DataFim, treinadorId);
+        var command = new EditarTreinoCommand(
+            id, 
+            request.Nome, 
+            request.Descricao, 
+            request.DataInicio, 
+            request.DataFim, 
+            treinadorId,
+            request.NomeDivisaoA,
+            request.NomeDivisaoB,
+            request.NomeDivisaoC,
+            request.NomeDivisaoD,
+            request.DivisaoSegunda,
+            request.DivisaoTerca,
+            request.DivisaoQuarta,
+            request.DivisaoQuinta,
+            request.DivisaoSexta,
+            request.DivisaoSabado,
+            request.DivisaoDomingo);
+
         var result = await mediator.Send(command);
         if (result.IsFailed) return HandleFailure(result);
         return Ok(result.Value);
@@ -119,7 +137,7 @@ public class TreinosController(IMediator mediator) : ApiController
         if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var treinadorId))
             return Unauthorized();
 
-        var command = new AdicionarItemTreinoCommand(id, treinadorId, request.ExercicioId, request.Series, request.Repeticoes, request.Carga, request.Pausa, request.Observacoes, request.Ordem);
+        var command = new AdicionarItemTreinoCommand(id, treinadorId, request.ExercicioId, request.Series, request.Repeticoes, request.Carga, request.Pausa, request.Observacoes, request.Ordem, request.Divisao);
         var result = await mediator.Send(command);
         if (result.IsFailed) return HandleFailure(result);
         return Ok(result.Value);
@@ -149,7 +167,18 @@ public record EditarTreinoRequest(
     string Nome,
     string Descricao,
     DateTime DataInicio,
-    DateTime DataFim
+    DateTime DataFim,
+    string? NomeDivisaoA,
+    string? NomeDivisaoB,
+    string? NomeDivisaoC,
+    string? NomeDivisaoD,
+    string? DivisaoSegunda,
+    string? DivisaoTerca,
+    string? DivisaoQuarta,
+    string? DivisaoQuinta,
+    string? DivisaoSexta,
+    string? DivisaoSabado,
+    string? DivisaoDomingo
 );
 
 public record AdicionarItemTreinoRequest(
@@ -159,5 +188,6 @@ public record AdicionarItemTreinoRequest(
     string Carga,
     string Pausa,
     string Observacoes,
-    int Ordem
+    int Ordem,
+    string Divisao
 );

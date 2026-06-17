@@ -12,5 +12,6 @@ public record AdicionarItemTreinoCommand(
     string Carga,
     string Pausa,
     string Observacoes,
-    int Ordem
+    int Ordem,
+    string Divisao
 ) : IRequest<Result<object>>;

@@ -29,7 +29,8 @@ public class AdicionarItemTreinoHandler(ITreinoRepository treinoRepository) : IR
                 request.Carga,
                 request.Pausa,
                 request.Observacoes,
-                request.Ordem
+                request.Ordem,
+                request.Divisao
             );
 
             var addResult = treino.AdicionarItem(props);

@@ -9,5 +9,16 @@ public record EditarTreinoCommand(
     string Descricao,
     DateTime DataInicio,
     DateTime DataFim,
-    Guid TreinadorId
+    Guid TreinadorId,
+    string? NomeDivisaoA,
+    string? NomeDivisaoB,
+    string? NomeDivisaoC,
+    string? NomeDivisaoD,
+    string? DivisaoSegunda,
+    string? DivisaoTerca,
+    string? DivisaoQuarta,
+    string? DivisaoQuinta,
+    string? DivisaoSexta,
+    string? DivisaoSabado,
+    string? DivisaoDomingo
 ) : IRequest<Result<object>>;

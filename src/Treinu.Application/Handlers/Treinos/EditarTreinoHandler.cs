@@ -21,7 +21,22 @@ public class EditarTreinoHandler(ITreinoRepository treinoRepository) : IRequestH
                 return Result.Fail<object>("Você não tem permissão para editar este treino.");
             }
 
-            var atualizarResult = treino.Atualizar(request.Nome, request.Descricao, request.DataInicio, request.DataFim);
+            var atualizarResult = treino.Atualizar(
+                request.Nome,
+                request.Descricao,
+                request.DataInicio,
+                request.DataFim,
+                request.NomeDivisaoA,
+                request.NomeDivisaoB,
+                request.NomeDivisaoC,
+                request.NomeDivisaoD,
+                request.DivisaoSegunda,
+                request.DivisaoTerca,
+                request.DivisaoQuarta,
+                request.DivisaoQuinta,
+                request.DivisaoSexta,
+                request.DivisaoSabado,
+                request.DivisaoDomingo);
             if (atualizarResult.IsFailed) return Result.Fail<object>(atualizarResult.Errors);
 
             var saveResult = await treinoRepository.AtualizarTreinoAsync(treino);

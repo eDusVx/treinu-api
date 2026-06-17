@@ -10,7 +10,8 @@ public record CriarItemTreinoCommand(
     string Carga,
     string Pausa,
     string Observacoes,
-    int Ordem
+    int Ordem,
+    string Divisao
 );
 
 public record CriarTreinoCommand(
@@ -20,5 +21,16 @@ public record CriarTreinoCommand(
     DateTime DataFim,
     Guid TreinadorId,
     Guid AlunoId,
-    List<CriarItemTreinoCommand> Itens
+    List<CriarItemTreinoCommand> Itens,
+    string? NomeDivisaoA,
+    string? NomeDivisaoB,
+    string? NomeDivisaoC,
+    string? NomeDivisaoD,
+    string? DivisaoSegunda,
+    string? DivisaoTerca,
+    string? DivisaoQuarta,
+    string? DivisaoQuinta,
+    string? DivisaoSexta,
+    string? DivisaoSabado,
+    string? DivisaoDomingo
 ) : IRequest<Result<object>>;

@@ -16,7 +16,11 @@ public class FiltrarTreinosHandler(ITreinoRepository treinoRepository) : IReques
             {
                 var result = await treinoRepository.BuscarTreinosPorAlunoAsync(request.AlunoId.Value, request.Status, cancellationToken);
                 if (result.IsFailed) return Result.Fail<object>(result.Errors);
-                return Result.Ok((object)result.Value.Select(t => t.ToDto()).ToList());
+                
+                var localTime = DateTime.UtcNow.AddHours(-3);
+                var dayOfWeek = localTime.DayOfWeek;
+                
+                return Result.Ok((object)result.Value.Select(t => t.ToDto(dayOfWeek)).ToList());
             }
 
             if (request.TreinadorId.HasValue)

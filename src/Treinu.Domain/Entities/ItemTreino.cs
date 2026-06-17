@@ -10,11 +10,14 @@ public record CriarItemTreinoProps(
     string Carga,
     string Pausa,
     string Observacoes,
-    int Ordem
+    int Ordem,
+    string Divisao
 );
 
 public class ItemTreino : Entity
 {
+    private static readonly HashSet<string> DivisoesValidas = new() { "A", "B", "C", "D" };
+
     protected ItemTreino() { }
 
     private ItemTreino(Guid id) : base(id) { }
@@ -29,9 +32,12 @@ public class ItemTreino : Entity
     public string Pausa { get; private set; } = string.Empty;
     public string Observacoes { get; private set; } = string.Empty;
     public int Ordem { get; private set; }
+    public string Divisao { get; private set; } = "A";
 
     internal static Result<ItemTreino> Criar(CriarItemTreinoProps props)
     {
+        var divisao = props.Divisao?.Trim().ToUpper() ?? "A";
+
         var instance = new ItemTreino(Guid.NewGuid())
         {
             ExercicioId = props.ExercicioId,
@@ -40,7 +46,8 @@ public class ItemTreino : Entity
             Carga = props.Carga ?? string.Empty,
             Pausa = props.Pausa ?? string.Empty,
             Observacoes = props.Observacoes ?? string.Empty,
-            Ordem = props.Ordem
+            Ordem = props.Ordem,
+            Divisao = divisao
         };
 
         if (props.ExercicioId == Guid.Empty)
@@ -48,6 +55,9 @@ public class ItemTreino : Entity
             
         if (props.Series <= 0)
             return Result.Fail("O número de séries deve ser maior que zero.");
+
+        if (!DivisoesValidas.Contains(divisao))
+            return Result.Fail("Divisão inválida para o item de treino. Deve ser A, B, C ou D.");
 
         return Result.Ok(instance);
     }
@@ -63,7 +73,8 @@ public class ItemTreino : Entity
             Carga, 
             Pausa, 
             Observacoes, 
-            Ordem
+            Ordem,
+            Divisao
         );
     }
 }

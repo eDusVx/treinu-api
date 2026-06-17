@@ -31,6 +31,10 @@ public class ItemTreinoConfiguration : IEntityTypeConfiguration<ItemTreino>
         builder.Property(i => i.Ordem)
             .IsRequired();
 
+        builder.Property(i => i.Divisao)
+            .IsRequired()
+            .HasMaxLength(1);
+
         // Foreign keys
         builder.HasOne<Treino>()
             .WithMany(t => t.Itens)

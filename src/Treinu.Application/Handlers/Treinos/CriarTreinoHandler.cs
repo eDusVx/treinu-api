@@ -28,7 +28,8 @@ public class CriarTreinoHandler(
                 i.Carga,
                 i.Pausa,
                 i.Observacoes,
-                i.Ordem
+                i.Ordem,
+                i.Divisao
             )).ToList();
 
             var props = new CriarTreinoProps(
@@ -38,7 +39,18 @@ public class CriarTreinoHandler(
                 request.DataFim,
                 request.TreinadorId,
                 request.AlunoId,
-                itensProps
+                itensProps,
+                request.NomeDivisaoA,
+                request.NomeDivisaoB,
+                request.NomeDivisaoC,
+                request.NomeDivisaoD,
+                request.DivisaoSegunda,
+                request.DivisaoTerca,
+                request.DivisaoQuarta,
+                request.DivisaoQuinta,
+                request.DivisaoSexta,
+                request.DivisaoSabado,
+                request.DivisaoDomingo
             );
 
             var treinoResult = Treino.Criar(props);
