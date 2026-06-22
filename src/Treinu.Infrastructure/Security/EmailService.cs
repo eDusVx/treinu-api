@@ -26,7 +26,7 @@ public class EmailService : IEmailService
         _fromName = Environment.GetEnvironmentVariable("SendGrid__FromName")
                      ?? configuration.GetValue<string>("SendGrid:FromName") ?? "Treinu App";
         _appUrl = Environment.GetEnvironmentVariable("AppUrl")
-                  ?? configuration.GetValue<string>("AppUrl") ?? "https://treinu.app";
+                  ?? configuration.GetValue<string>("AppUrl") ?? "https://treinu-frontend.vercel.app";
         _templateRepository = templateRepository;
     }
 
